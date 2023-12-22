@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+	<Properties>
+		<Property name="LOG_PATTERN">%d{ISO8601} %highlight{%-5level} [%t] [%logger{36}] %C{1.}.%L: %msg%n%throwable</Property>
+		<Property name="APP_LOG_ROOT">/data/tiramis/logs/ecovernote</Property>
+	</Properties>
+
+	<Appenders>
+
+		<Console name="ApplicationLog" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console> 
+    	<RollingFile name="ConsoleLog"
+            fileName="${APP_LOG_ROOT}/Application.log"
+            filePattern="${APP_LOG_ROOT}/Application.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>       
+		
+		<RollingFile name="CoverNoteSubmissionLog"
+            fileName="${APP_LOG_ROOT}/CoverNoteSubmissionApi.log"
+            filePattern="${APP_LOG_ROOT}/CoverNoteSubmissionApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        
+        <RollingFile name="PolicySubmissionLog"
+            fileName="${APP_LOG_ROOT}/PolicySubmissionApi.log"
+            filePattern="${APP_LOG_ROOT}/PolicySubmissionApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        
+        <RollingFile name="ReinsuranceDeclarationLog"
+            fileName="${APP_LOG_ROOT}/ReinsuranceDeclarationApi.log"
+            filePattern="${APP_LOG_ROOT}/ReinsuranceDeclarationApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        
+        <RollingFile name="ProductLog"
+            fileName="${APP_LOG_ROOT}/Product.log"
+            filePattern="${APP_LOG_ROOT}/Product.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        
+        <RollingFile name="CoverNoteScheduleLog"
+            fileName="${APP_LOG_ROOT}/CoverNoteSchedule.log"
+            filePattern="${APP_LOG_ROOT}/CoverNoteSchedule.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        
+        <RollingFile name="CoverNoteVerificationLog"
+            fileName="${APP_LOG_ROOT}/CoverNoteVerificationApi.log"
+            filePattern="${APP_LOG_ROOT}/CoverNoteVerificationApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+		
+	</Appenders>
+
+	<Loggers>
+		<Logger name="CoverNoteSubmission" additivity="false"
+			level="info">
+			<Appender-ref ref="CoverNoteSubmissionLog" />
+		</Logger>
+		<Logger name="PolicySubmission" additivity="false"
+			level="info">
+			<Appender-ref ref="PolicySubmissionLog" />
+		</Logger>
+		<Logger name="ReinsuranceDeclaration" additivity="false"
+			level="info">
+			<Appender-ref ref="ReinsuranceDeclarationLog" />
+		</Logger>
+		<Logger name="Product" additivity="false"
+			level="info">
+			<Appender-ref ref="ProductLog" />
+		</Logger>
+		<Logger name="CoverNoteSchedule" additivity="false"
+			level="info">
+			<Appender-ref ref="CoverNoteScheduleLog" />
+		</Logger>
+		<Logger name="CoverNoteVerification" additivity="false"
+			level="info">
+			<Appender-ref ref="CoverNoteVerificationLog" />
+		</Logger>
+		<Root level="info">
+			<AppenderRef ref="ApplicationLog" />
+			<AppenderRef ref="ConsoleLog" />
+		</Root>
+
+	</Loggers>
+
+</Configuration>

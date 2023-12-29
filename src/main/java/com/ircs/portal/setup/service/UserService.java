@@ -34,4 +34,5 @@ public interface UserService {
 	public List<User> getByUserName(String userName);
 	
 	public List<User> getByEmailAddressOrMobileNumberAndNotUserName(String emailAddress,String mobileNumber,String userName);
+
 }

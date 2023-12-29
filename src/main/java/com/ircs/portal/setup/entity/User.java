@@ -69,12 +69,18 @@ public class User extends CommonEntity implements Serializable {
 	@NotEmpty(message="Invalid username. Username cannot be empty.")
 	@Column(name="user_name",nullable = false,length = 50, unique = true)
 	private String userName;
+	
+	@Column(name = "gender",nullable = false,length = 6)
+	private String gender;
+	
+	@Column(name = "designation",nullable = false,length = 50)
+	private String designation;
 
 	@Column(name="password",length = 1000)
 	private String password;
 
-	@Column(name="address",length = 100)
-	private String address;
+	@Column(name="postal_address",length = 100)
+	private String postalAddress;
 	
 	@Column(name="email_address",nullable = false, length = 100)
 	private String emailAddress;
@@ -94,37 +100,58 @@ public class User extends CommonEntity implements Serializable {
 	
 	@Column(name = "last_lLogin", nullable = true)
 	private Date lastLogin;
+
+	@Column(name = "is_enabled", nullable = false)
+	private Boolean isEnabled = true;
+
+	@Column(name = "is_account_non_expired", nullable = false)
+	private Boolean isAccountNonExpired = true;
+
+	@Column(name = "is_credentials_non_expired", nullable = false)
+	private Boolean isCredentialsNonExpired = true;
+
+	@Column(name = "is_account_non_locked", nullable = false)
+	private Boolean isAccountNonLocked = true;
+	
+	@Column(name = "is_first_login", nullable = false)
+	private Boolean isFirstLogin = false;
+	
+	@Column(name = "is_reset_password", nullable = false)
+	private Boolean isResetPassword = false;
+	
+	@Column(name = "password_expiry_date", nullable = true)
+	private Date passwordExpiryDate;
+	
+	@Column(name = "email_confirmed", nullable = false)
+	private Boolean emailConfirmed;
+
+	@Column(name = "phone_number_confirmed", nullable = false)
+	private Boolean phoneNumberConfirmed;
+	
+	@Column(name = "sms_confirmation_token_count", nullable = true)
+	private Integer smsConfirmationTokenCount = 0;
+	
+	@Column(name = "email_confirmation_token_count", nullable = true)
+	private Integer emailConfirmationTokenCount = 0;
+
+	@Column(name = "record_status_id", nullable = false)
+	private Long recordStatusId = 1L;
 	
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(name = "service_department_id", nullable = false)
 	private ServiceDepartment serviceDepartment;
+	
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(name = "work_station_id", nullable = true)
+	private WorkStation workStation;
+	
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_category_id", nullable = false)
+	private UserCategory userCategory;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "tab_user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
 	inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private Set<Role> role = new HashSet<>();
 
-	@Column(name="profile_picture",nullable = true)
-	private String profilePicture;
-
-	@Column(name = "is_enabled", nullable = true)
-	private boolean enabled;
-
-	@Column(name = "is_non_expired", nullable = true)
-	private boolean nonExpired;
-
-	@Column(name = "is_non_locked", nullable = true)
-	private boolean nonLocked;
-	
-	@Column(name = "is_credentials_non_expired", nullable = true)
-	private boolean credentialsNonExpired;
-
-	@Column(name = "is_reset_password", nullable = true)
-	private boolean resetPassword;
-	
-	@Column(name = "password_expiry_date", nullable = true)
-	private Date passwordExpiryDate;
-
-	@Column(name = "record_status_id", nullable = false)
-	private Long recordStatusId = 1L;
 }

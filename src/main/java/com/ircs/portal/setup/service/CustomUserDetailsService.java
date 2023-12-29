@@ -51,7 +51,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     		LocalDateTime lastFailedLogin = user.get().getLastFailedLogin().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     	
     		Duration timelocked = Duration.between(lastFailedLogin, now);
-    		if(!user.get().isNonLocked()) {
+    		if(!user.get().getIsAccountNonLocked()) {
     			
     			if(timelocked.getSeconds() > Constants.USER_ACCOUNT_AUTOLOCK_TIME) {
         			unlockAccount(user.get());
@@ -74,7 +74,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
     
     private void unlockAccount(User user) {
-		user.setNonLocked(true);
+		user.setIsAccountNonLocked(true);
 		user.setLoginAttemptCount(0);
 		user.setLastFailedLogin(null);
 		userRepository.save(user);

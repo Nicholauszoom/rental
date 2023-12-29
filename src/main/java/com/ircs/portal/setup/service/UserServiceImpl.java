@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
 		try {
 
 			if (loginAttempts > Constants.MAX_LOGIN_ATTEMPTS) {
-				user.get().setNonLocked(true);
+				user.get().setIsAccountNonLocked(true);
 				userRepository.save(user.get());
 				return true;
 			} else {

@@ -34,18 +34,18 @@ public class CommonEntity {
 	@Column(name="created_by", nullable=false,updatable = false)
 	private UUID createdBy;
 	
-	@Column(name="created_by_username", nullable=false,updatable = false)
-	private String createdByUsername;
+	@Column(name="created_by_user_name", nullable=false,updatable = false)
+	private String createdByUserName;
 	
 	@Column(name="updated_by", nullable=true)
 	private UUID updatedBy;
 	
-	@Column(name="updated_by_username", nullable=true,updatable = true)
-	private Long updatedByUsername;
+	@Column(name="updated_by_user_name", nullable=true,updatable = true)
+	private String updatedByUserName;
 
-	public CommonEntity(UUID createdBy, String createdByUsername) {
+	public CommonEntity(UUID createdBy, String createdByUserName) {
 		super();
 		this.createdBy = createdBy;
-		this.createdByUsername = createdByUsername;
+		this.createdByUserName = createdByUserName;
 	}
 }

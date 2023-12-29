@@ -30,10 +30,6 @@ public class UserPrincipal implements UserDetails {
 	
 	private String phoneNumber;
 	
-	private String district;
-	
-	private String region;
-	
 	private String fullName;
 	
     public UserPrincipal(User user) {
@@ -42,6 +38,8 @@ public class UserPrincipal implements UserDetails {
         this.email = user.getEmailAddress();
         this.phoneNumber = user.getMobileNumber();
         this.fullName = user.getFirstName()+(user.getMiddleName()==null?" ":" "+user.getMiddleName()+" ")+user.getLastName();
+        user.getEmailConfirmed();
+        user.getPhoneNumberConfirmed();
     }
     
     @Override
@@ -65,7 +63,6 @@ public class UserPrincipal implements UserDetails {
 			 * SimpleGrantedAuthority(permission.getPermissionName())); }
 			 */
 		}
-		System.out.println("authorities*******************************"+authorities);
 		return authorities;
     }
 
@@ -86,7 +83,19 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-    	return user.isEnabled();
+		/*
+		 * if(user.getEmailConfirmed() && user.getPhoneNumberConfirmed()) return true;
+		 * else return false;
+		 */
+    	return true;
+    }
+    
+    public boolean isEmailConfirmed() {
+        return user.getEmailConfirmed();
+    }
+
+    public boolean isPhoneNumberConfirmed() {
+        return user.getPhoneNumberConfirmed();
     }
     
     public User getUser() {

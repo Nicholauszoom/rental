@@ -36,6 +36,7 @@ public class InvoiceController {
 
 	String message = "";
 
+    //	the end point of create invoice
 	@GetMapping({ "", "/create" })
 	public String getInvoiceCreate(Model model, InvoiceDto invoice) {
 		model.addAttribute("invoice", invoice);

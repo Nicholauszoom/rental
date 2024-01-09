@@ -1,0 +1,19 @@
+########### Default Application Properties
+
+##Database Connection
+#spring.datasource.url=jdbc:postgresql://localhost:5432/ircs-portal?currentSchema=ircs-portal
+#spring.datasource.username=postgres
+#spring.datasource.password=password
+
+spring.datasource.url=jdbc:postgresql://173.249.32.32:5434/ircs-portal-core?currentSchema=ircs
+spring.datasource.username=postgres
+spring.datasource.password=irCsM4l4wi
+
+
+##Authentication Verification
+spring.oauth2.server.uri = http://127.0.0.1:8081
+
+app.phonenumber.verification.token.life = 300
+app.email.verification.link.life = 86400
+app.user.one-time-password.life-span = 86400
+app.user.password.life-span = 90

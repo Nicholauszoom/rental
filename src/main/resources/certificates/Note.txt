@@ -1,0 +1,12 @@
+IRCS - public and private key
+-----------------------------
+filename : ircs.pfx
+password : ircs@123#
+alias : ircs
+
+
+IRCS CLIENT - public and private key
+-----------------------------
+filename : ircsclient.pfx
+password : ircsclient@123#
+alias : ircsclient

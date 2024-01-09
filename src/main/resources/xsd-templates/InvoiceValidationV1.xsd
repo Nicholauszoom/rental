@@ -3,7 +3,11 @@
   <xs:complexType name="invoiceType">
     <xs:sequence>
       <xs:element type="strrequestid" name="requestid"/>
-      <xs:element type="strpaymentnumber" name="paymentnumber"/>
+      <xs:element type="strsearchparam1" name="param1"/>
+      <xs:element type="strsearchparam" name="param2"/>
+      <xs:element type="strsearchparam" name="param3"/>
+      <xs:element type="strsearchparam" name="param4"/>
+      <xs:element type="strsearchparam" name="param5"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ircsType">
@@ -19,10 +23,17 @@
       	<xs:maxLength value="100" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="strpaymentnumber">
+  <xs:simpleType name="strsearchparam1">
     <xs:restriction base="xs:string">
     	<xs:pattern value="([0-9]*)"/>
       	<xs:minLength value="15" />
+      	<xs:maxLength value="20" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="strsearchparam">
+    <xs:restriction base="xs:string">
+    	<xs:pattern value="([\p{IsBasicLatin}\p{IsLatin-1Supplement}\w\s\\:.+=\-^,^;?|*\[\]{}()@/#$%^'~`&amp;&quot;&apos;&lt;&gt;\n\r]*)"/>
+      	<xs:minLength value="0" />
       	<xs:maxLength value="20" />
     </xs:restriction>
   </xs:simpleType>

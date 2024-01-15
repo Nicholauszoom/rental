@@ -184,7 +184,7 @@ public class InvoiceValidationApiController {
 															
 															if (pkiUtils.verifySignature(requestSignature, requestMessage,certificatePassPhrase, certificateAlias, certificateFile)) {
 																
-																List<Invoice> invoiceList = invoiceService.findByPaymentNumber(invoiceValidationApiReqBody.getPaymentnumber());
+																List<Invoice> invoiceList = invoiceService.findByPaymentNumber(invoiceValidationApiReqBody.getParam1());
 																if(invoiceList != null && !invoiceList.isEmpty()) {
 
 																	invoiceType = String.valueOf(invoiceList.get(0).getInvoiceTypeId());

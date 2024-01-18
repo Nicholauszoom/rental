@@ -1,109 +1,57 @@
 package com.dflex.ircs.portal.payment.api.dto;
 
 
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter @Setter
+@ToString
+@XmlRootElement(name = "paymentDtls")
+@XmlAccessorType(jakarta.xml.bind.annotation.XmlAccessType.FIELD)
 public class PaymentDetailDTO {
 
-    private String transactionnumber;
-    private String transactionreference;
-    private String serviceinstitution;
-    private String serviceinstitutionname;
-    private String invoicepaymentnumber;
-    private double paymentamount;
-    private String currency;
-    private String paymentdate;
-    private String paymentmethod;
-    private String payername;
-    private String payerphonenumber;
-    private String payeremail;
-
     @XmlElement(name = "transactionnumber")
-    public String getTransactionnumber() {return transactionnumber;
-    }
-
-    public void setTransactionnumber(String transactionnumber) {this.transactionnumber = transactionnumber;
-    }
+    private String transactionnumber;
 
     @XmlElement(name = "transactionreference")
-    public String getTransactionreference() {return transactionreference;
-    }
-
-    public void setTransactionreference(String transactionreference) {this.transactionreference = transactionreference;
-    }
+    private String transactionreference;
 
     @XmlElement(name = "serviceinstitution")
-    public String getServiceinstitution() {return serviceinstitution;
-    }
-
-    public void setServiceinstitution(String serviceinstitution) {this.serviceinstitution = serviceinstitution;
-    }
+    private String serviceinstitution;
 
     @XmlElement(name = "serviceinstitutionname")
-    public String getServiceinstitutionname() {return serviceinstitutionname;
-    }
-
-    public void setServiceinstitutionname(String serviceinstitutionname) {this.serviceinstitutionname = serviceinstitutionname;
-    }
+    private String serviceinstitutionname;
 
     @XmlElement(name = "invoicepaymentnumber")
-    public String getInvoicepaymentnumber() {return invoicepaymentnumber;
-    }
-
-    public void setInvoicepaymentnumber(String invoicepaymentnumber) {this.invoicepaymentnumber = invoicepaymentnumber;
-    }
+    private String invoicepaymentnumber;
 
     @XmlElement(name = "paymentamount")
-    public double getPaymentamount() {return paymentamount;
-    }
-
-    public void setPaymentamount(double paymentamount) {this.paymentamount = paymentamount;
-    }
+    private BigDecimal paymentamount;
 
     @XmlElement(name = "currency")
-    public String getCurrency() {return currency;
-    }
-
-    public void setCurrency(String currency) {this.currency = currency;
-    }
+    private String currency;
 
     @XmlElement(name = "paymentdate")
-    public String getPaymentdate() {return paymentdate;
-    }
-
-    public void setPaymentdate(String paymentdate) {
-        this.paymentdate = paymentdate;
-    }
+    private String paymentdate;
 
     @XmlElement(name = "paymentmethod")
-    public String getPaymentmethod() {return paymentmethod;
-    }
+    private String paymentmethod;
 
-    public void setPaymentmethod(String paymentmethod) {this.paymentmethod = paymentmethod;
-    }
     @XmlElement(name = "payername")
-    public String getPayername() {return payername;
-    }
+    private String payername;
 
-    public void setPayername(String payername) {
-        this.payername = payername;
-    }
     @XmlElement(name = "payerphonenumber")
-    public String getPayerphonenumber() {return payerphonenumber;
-    }
-
-    public void setPayerphonenumber(String payerphonenumber) {this.payerphonenumber = payerphonenumber;
-    }
+    private String payerphonenumber;
 
     @XmlElement(name = "payeremail")
-    public String getPayeremail() {return payeremail;
-    }
-    public void setPayeremail(String payeremail) {this.payeremail = payeremail;
-    }
+    private String payeremail;
+
+
 }

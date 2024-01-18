@@ -1,47 +1,32 @@
 package com.dflex.ircs.portal.payment.api.dto;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.*;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Getter @Setter
+@XmlRootElement(name = "paymentHr")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentHeaderDTO {
 
-    private String ackid;
-    private String requestid;
-    private int dtlcount;
-    private String paymentnumber;
-
-    public String getAckid() {
-        return ackid;
-    }
-
     @XmlElement(name = "ackid")
-    public void setAckid(String ackid) {
-        this.ackid = ackid;
-    }
-
-    public String getRequestid() {
-        return requestid;
-    }
+    private String ackid;
 
     @XmlElement(name = "requestid")
-    public void setRequestid(String requestid) {
-        this.requestid = requestid;
-    }
-
-    public int getDtlcount() {
-        return dtlcount;
-    }
+    private String requestid;
 
     @XmlElement(name = "dtlcount")
-    public void setDtlcount(int dtlcount) {
-        this.dtlcount = dtlcount;
-    }
-
-    public String getPaymentnumber() {
-        return paymentnumber;
-    }
+    private int dtlcount;
 
     @XmlElement(name = "paymentnumber")
-    public void setPaymentnumber(String paymentnumber) {
-        this.paymentnumber = paymentnumber;
-    }
+    private String paymentnumber;
+
+
 }

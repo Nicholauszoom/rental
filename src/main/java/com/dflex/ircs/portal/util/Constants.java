@@ -27,6 +27,13 @@ public class Constants {
 	//Response Codes
 	public static final String DEFAULT_SUCCESS = "1001";
 	public static final String DEFAULT_FAILURE = "1002";
+	public static final String  INVALID_CLIENT_KEY="1003";
+    public static final String  INACTIVE_OR_INVALID_CLIENT = "1013";
+	public static final String INACTIVE_OR_DISABLED_CLIENT_CONFIGURATION ="1012";
+
+	public static String CLIENT_SYSTEM_CONFIGURATION_NOT_FOUND="1011";
+
+	public static final String INVOICE_NOTFOUND= "1028";
 	
 	//User Category
 	public static final Long USER_CATEGORY_OFFICER = 1L;

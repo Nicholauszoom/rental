@@ -2,25 +2,21 @@ package com.dflex.ircs.portal.payment.api.dto;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter @Getter
+@ToString
 @XmlRootElement(name = "ircs")
 public class PaymentValidationDTO {
 
+    @XmlElement(name = "payment")
     private PaymentDTO payment;
+
+    @XmlElement(name = "hash")
     private String hash;
 
-    @XmlElement(name = "payment")
-    public PaymentDTO getPayment() {return payment;}
-    public void setPayment(PaymentDTO payment) {this.payment = payment;}
-    public String getHash() {return hash;}
-    @XmlElement(name = "hash")
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
+
 }

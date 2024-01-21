@@ -65,12 +65,12 @@ public class Invoice extends CommonEntity implements Serializable {
 	
 	@Column(name = "invoice_number", length = 100, nullable = false)
 	private String invoiceNumber;
-
-	@Column(name = "invoice_description", length = 500, nullable = false)
-	private String invoiceDescription;
 	
 	@Column(name = "invoice_type_id", nullable = false)
 	private Integer invoiceTypeId;
+
+	@Column(name = "invoice_description", length = 500, nullable = false)
+	private String invoiceDescription;
 	
 	@Column(name = "payment_number", nullable = false, length = 50, unique = true)
 	private String paymentNumber;
@@ -120,11 +120,11 @@ public class Invoice extends CommonEntity implements Serializable {
 	@Column(name = "invoice_amount", nullable = false)
 	private BigDecimal invoiceAmount;
 	
-	@Column(name = "minimum_payment_amount", nullable = false)
-	private BigDecimal minimumPaymentAmount;
-
 	@Column(name = "paid_amount", nullable = false)
 	private BigDecimal paidAmount = new BigDecimal("0.00");
+	
+	@Column(name = "minimum_payment_amount", nullable = false)
+	private BigDecimal minimumPaymentAmount;
 
 	@Column(name = "currency_code", length = 3)
 	private String currencyCode;
@@ -146,6 +146,9 @@ public class Invoice extends CommonEntity implements Serializable {
 
 	@Column(name = "reminder_status_id", nullable = false)
 	private Long reminderStatusId;
+	
+	@Column(name = "detail_count", nullable = false)
+	private Integer detailCount;
 
 	@Column(name = "service_institution_code", nullable = false, length = 10)
 	private String serviceInstitutionCode;

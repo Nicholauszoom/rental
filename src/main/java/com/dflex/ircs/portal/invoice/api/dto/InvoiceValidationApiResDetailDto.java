@@ -61,7 +61,7 @@ public class InvoiceValidationApiResDetailDto {
 	@XmlElement(name = "invoiceamount")
 	private BigDecimal invoiceAmount;
 	
-	@XmlElement(name = "minpayamount")
+	@XmlElement(name = "minpaymentamount")
 	private BigDecimal minimumPaymentAmount;
 	
 	@XmlElement(name = "paidamount")

@@ -3,32 +3,22 @@ package com.dflex.ircs.portal.invoice.api.controller;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
+import com.dflex.ircs.portal.invoice.api.dto.*;
+import com.dflex.ircs.portal.payment.api.controller.PaymentApiController;
+import com.dflex.ircs.portal.util.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiReqBodyDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiReqDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResBodyDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResDetailDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResDetailsDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResHeaderDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResServiceDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResServicesDto;
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 import com.dflex.ircs.portal.invoice.entity.InvoiceItem;
 import com.dflex.ircs.portal.invoice.service.InvoiceItemService;
@@ -80,6 +70,8 @@ public class InvoiceValidationApiController {
 	
 	@Autowired
 	private MessageSource messageSource;
+
+
 	
 	
 	/**
@@ -420,6 +412,72 @@ public class InvoiceValidationApiController {
 		
 		return signedResponse;
 	}
-	
+
+
+
+
+
+	/**
+	 * return all the invoice
+	 *
+	 * @return String
+	 */
+
+
+	@GetMapping(value = "/InvoiceAll")
+	public ResponseEntity<InvoiceDto> getAllInvoice(){
+		try {
+			List<Invoice> invoice = invoiceService.findAll();
+			InvoiceDto response = new InvoiceDto(invoice);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+
+		} catch (Exception e) {
+			InvoiceDto errorResponse = new InvoiceDto();
+			Response response = new Response();
+			response.setMessage("Failed to retrieve invoice by ID");
+			return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * return invoice
+	 *
+	 * @return id
+	 */
+	@GetMapping(value = "/InvoiceById/{id}")
+	public ResponseEntity<InvoiceDto> invoiceDtoResponseEntity(@PathVariable("id") Long id) {
+		try {
+			Optional<Invoice> invoice = invoiceService.findById(id);
+				InvoiceDto response = new InvoiceDto(invoice);
+				return new ResponseEntity<>(response, HttpStatus.OK);
+
+		} catch (Exception e) {
+			InvoiceDto errorResponse = new InvoiceDto();
+			Response response = new Response();
+			response.setMessage("Failed to retrieve invoice by ID");
+			return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * Delete the invoice
+	 *
+	 * @return id
+	 */
+	@DeleteMapping(value = "/InvoiceById/{id}")
+	public ResponseEntity<Response> deleteInvoiceById(@PathVariable("id") Long id) {
+		try {
+			this.invoiceService.deleteById(id);
+			Response response = new Response();
+			response.setMessage("Invoice deleted successfully");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+
+		}  catch (Exception e) {
+
+			Response response = new Response();
+			response.setMessage("Failed to delete invoice by ID");
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }

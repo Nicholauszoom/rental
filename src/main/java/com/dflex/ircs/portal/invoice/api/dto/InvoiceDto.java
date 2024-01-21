@@ -3,6 +3,10 @@ package com.dflex.ircs.portal.invoice.api.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import com.dflex.ircs.portal.invoice.entity.Invoice;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
@@ -73,5 +77,11 @@ public class InvoiceDto implements Serializable {
   
   @NotNull(message = "Specify service charged from the list.")
   private Long serviceType;
-  
+
+  public InvoiceDto(Optional<Invoice> invoice) {
+
+  }
+
+  public InvoiceDto(List<Invoice> invoice) {
+  }
 }

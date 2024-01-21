@@ -98,6 +98,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/api/user/request/password-reset-link/**", "/api/user/reset-password").permitAll()
 						.requestMatchers("/api/user/verify/password-reset-link/**","/api/employee/**").permitAll()
 						.requestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1").permitAll()
+						.requestMatchers("/api/invoice/InvoiceAll","/api/invoice/InvoiceById/{id}").permitAll()
 						.anyRequest().authenticated())
 				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher)
 						.ignoringRequestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1")

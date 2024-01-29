@@ -24,7 +24,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     	res.setContentType("application/json;charset=UTF-8");
 		res.setStatus(403);
 		res.setStatus(HttpStatus.UNAUTHORIZED.value());
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),String.valueOf(HttpStatus.UNAUTHORIZED.value()),true,authException.getMessage(),null,request.getRequestURI());
+		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),String.valueOf(HttpStatus.UNAUTHORIZED.value()),true,authException.getMessage(),null,request.getRequestURI());
 		res.getOutputStream().println(objectMapper.writeValueAsString(response));
 
     }

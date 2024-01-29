@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Response  {
+public class Response<R> {
 	
 	private String timestamp;
 	private String status;
 	private Boolean error;
+	private String code;
 	private String message;
 	private Object data;
 	private String path;

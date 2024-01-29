@@ -43,5 +43,9 @@ public class PaymentServiceImpl implements PaymentService{
 		return paymentRepository.findByInvoicePaymentNumberAndRecordStatusId(invoicePaymentNumber,recordStatusId);
 	}
 
+	public Payment findByInvoicePaymentNumber(String invoicePaymentNumber) {
+		return paymentRepository.findByInvoicePaymentNumber(invoicePaymentNumber);
+	}
+
 	
 }

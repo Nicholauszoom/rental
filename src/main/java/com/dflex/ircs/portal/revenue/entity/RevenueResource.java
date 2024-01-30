@@ -19,7 +19,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name = "resouce_revenue")
-public class ResourceRevenue extends CommonEntity implements Serializable {
+public class RevenueResource extends CommonEntity implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false, precision = 11)

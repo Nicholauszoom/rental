@@ -46,7 +46,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-public class OauthController {
+public class OauthController<R> {
 	
 	@Autowired
 	private Utils util;

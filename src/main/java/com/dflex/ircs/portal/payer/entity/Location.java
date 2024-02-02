@@ -23,6 +23,7 @@ public class Location implements Serializable {
 
     @Column(name = "location_details")
     private String locationDetails;
+
     @Column(name = "lat_code")
     private Float latCode;
 

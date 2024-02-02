@@ -17,5 +17,11 @@ public interface PayerService {
 
     Location save(Location location);
 
+    Optional<Institution> findByInstitutionId(Long institutionId);
+
     PaymentServiceProvider save(PaymentServiceProvider paymentServiceProvider);
+
+    Optional<PaymentServiceProvider> findByProviderId(Long providerId);
+
+    Optional<Location> findByLocationId(Long locationId);
 }

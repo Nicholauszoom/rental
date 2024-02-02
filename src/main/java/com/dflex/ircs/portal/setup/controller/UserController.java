@@ -159,7 +159,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -205,7 +205,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -244,7 +244,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -320,7 +320,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1009",null, currentLocale);
 			isError  = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetails,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetails,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -401,7 +401,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1009", null, currentLocale);
 			isError = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()), status, isError, message,
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()), status, isError, message,
 				userDetails, request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
@@ -522,7 +522,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,createdUserId,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,createdUserId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
@@ -646,7 +646,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetail,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetail,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
@@ -701,7 +701,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,updateUser,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,updateUser,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
@@ -768,7 +768,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userMinDetail,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userMinDetail,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1017,7 +1017,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1104,7 +1104,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1214,7 +1214,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1310,7 +1310,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1389,7 +1389,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1440,7 +1440,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1505,7 +1505,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<R> response = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	

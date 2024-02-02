@@ -19,6 +19,7 @@ public class Estimate  extends CommonEntity implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false, precision = 11)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "sub_revenue_code")

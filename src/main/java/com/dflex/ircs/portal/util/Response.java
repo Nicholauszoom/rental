@@ -14,9 +14,9 @@ public class Response<R> {
 
 
 
-	private String timestamp;
-	private String status;
-	private Boolean error;
+//	private String timestamp;
+//	private String status;
+//	private Boolean error;
 	private String code;
 	private String message;
 	private Object data;
@@ -24,9 +24,9 @@ public class Response<R> {
 
 
 	public Response(String s, String status, Boolean isError, String message, Object o, String requestURI) {
-		this.timestamp = s;
-		this.status = status;
-		this.error = isError;
+//		this.timestamp = s;
+//		this.status = status;
+//		this.error = isError;
 		this.message = message;
 		this.data = o;
 		this.path = requestURI;

@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/revenueSource")
 public class RevenueSourceController {
@@ -23,11 +26,11 @@ public class RevenueSourceController {
     protected Logger logger = LoggerFactory.getLogger(RevenueSourceController.class);
 
     @PostMapping("/createRevenueSource")
-    public ResponseEntity<Response<RevenueSourceDTO>> createRevenueSource(
+    public ResponseEntity<Response<RevenueResource>> createRevenueSource(
             @RequestBody RevenueResource revenueSource) {
 
         logger.info("Received request to create revenue source: {}", revenueSource);
-        Response<RevenueSourceDTO> response = new Response<>();
+        Response<RevenueResource> response = new Response<>();
 
         try {
             RevenueResource createdSource = service.addSource(revenueSource);
@@ -54,6 +57,68 @@ public class RevenueSourceController {
         }
     }
 
+    @GetMapping ("/revenueSourceById/{id}")
+    public ResponseEntity<Response<RevenueResource>> getRevenueSourceById(@PathVariable Long id) {
+
+        logger.info("Received request to create revenue source: {}", id);
+        Response<RevenueResource> response = new Response<>();
+
+        try {
+            Optional<RevenueResource> createdSource = service.findById(id);
+            if (createdSource != null) {
+                response.setCode("200");
+                response.setMessage("Revenue Source Created Successfully");
+                response.setData(createdSource);
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+
+                response.setCode("500");
+                response.setMessage("Failed to create revenue source");
+
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logger.error("Error creating revenue source", e);
+
+            response.setCode("500");
+            response.setMessage("Internal Server Error");
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping ("/revenueSourceAll")
+    public ResponseEntity<Response<RevenueResource>> getRevenueSource() {
+
+        Response<RevenueResource> response = new Response<>();
+
+        try {
+            List<RevenueResource> createdSource = service.findAll();
+            if (createdSource != null) {
+                response.setCode("200");
+                response.setMessage("Revenue Source Created Successfully");
+                response.setData(createdSource);
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+
+                response.setCode("500");
+                response.setMessage("Failed to get revenue source");
+
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logger.error("Error creating revenue source", e);
+
+            response.setCode("500");
+            response.setMessage("Internal Server Error");
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //sub revenue source.
     @PostMapping("/createSubRevenueSource")
     public ResponseEntity<Response<SubRevenueResource>> createSubRevenueSource(
             @RequestBody SubRevenueResource subRevenue) {

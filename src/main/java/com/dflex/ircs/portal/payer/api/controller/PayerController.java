@@ -1,7 +1,6 @@
 package com.dflex.ircs.portal.payer.api.controller;
 
-import com.dflex.ircs.portal.payer.entity.Contact;
-import com.dflex.ircs.portal.payer.entity.Location;
+import com.dflex.ircs.portal.payer.entity.*;
 import com.dflex.ircs.portal.payer.service.PayerServiceImpl;
 
 import com.dflex.ircs.portal.util.Response;
@@ -69,6 +68,103 @@ public class PayerController {
                 response.setCode("200");
                 response.setMessage(" Created Successfully");
                 response.setData(locationAdded);
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+
+                response.setCode("500");
+                response.setMessage("Failed to create");
+
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logger.error("Error Failed to create", e);
+
+            response.setCode("500");
+            response.setMessage("Internal Server Error");
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping("/add_institution")
+    public ResponseEntity<Response<Institution>> addInstitution(
+            @RequestBody Institution institution) {
+
+        logger.info("Received request to create revenue source: {}", institution);
+        Response<Institution> response = new Response<>();
+
+        try {
+            Institution institutionAdded = service.save(institution);
+            if (institutionAdded != null) {
+                response.setCode("200");
+                response.setMessage(" Created Successfully");
+                response.setData(institutionAdded);
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+
+                response.setCode("500");
+                response.setMessage("Failed to create");
+
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logger.error("Error Failed to create", e);
+
+            response.setCode("500");
+            response.setMessage("Internal Server Error");
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/add_paymentProvider")
+    public ResponseEntity<Response<PaymentServiceProvider>> addPaymentProvider(
+            @RequestBody PaymentServiceProvider paymentServiceProvider) {
+
+        logger.info("Received request to create revenue source: {}", paymentServiceProvider);
+        Response<PaymentServiceProvider> response = new Response<>();
+
+        try {
+            PaymentServiceProvider providerAdded = service.save(paymentServiceProvider);
+            if (providerAdded != null) {
+                response.setCode("200");
+                response.setMessage(" Created Successfully");
+                response.setData(providerAdded);
+
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+
+                response.setCode("500");
+                response.setMessage("Failed to create");
+
+                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logger.error("Error Failed to create", e);
+
+            response.setCode("500");
+            response.setMessage("Internal Server Error");
+
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/register_payer")
+    public ResponseEntity<Response<Payer>> createPayer(
+            @RequestBody Payer payer) {
+
+        logger.info("Received request to create revenue source: {}", payer);
+        Response<Payer> response = new Response<>();
+
+        try {
+            Payer createdPayer = service.save(payer);
+            if (createdPayer != null) {
+                response.setCode("200");
+                response.setMessage(" Created Successfully");
+                response.setData(createdPayer);
 
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {

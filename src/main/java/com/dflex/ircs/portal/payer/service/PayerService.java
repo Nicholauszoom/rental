@@ -24,4 +24,6 @@ public interface PayerService {
     Optional<PaymentServiceProvider> findByProviderId(Long providerId);
 
     Optional<Location> findByLocationId(Long locationId);
+
+    Location findAllLocation();
 }

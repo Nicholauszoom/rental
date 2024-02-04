@@ -24,19 +24,19 @@ public class PayerController {
 
     protected Logger logger = LoggerFactory.getLogger(PayerController.class);
 
-    @PostMapping("/addContact")
-    public ResponseEntity<Response<Contact>> addContact(
-            @RequestBody Contact contact) {
+    @PostMapping("/register_payer")
+    public ResponseEntity<Response<Payer>> createPayer(
+            @RequestBody Payer payer) {
 
-        logger.info("Received request to create revenue source: {}", contact);
-        Response<Contact> response = new Response<>();
+        logger.info("Received request to create revenue source: {}", payer);
+        Response<Payer> response = new Response<>();
 
         try {
-            Contact contactAdded = service.save(contact);
-            if (contactAdded != null) {
+            Payer createdPayer = service.save(payer);
+            if (createdPayer != null){
                 response.setCode("200");
                 response.setMessage(" Created Successfully");
-                response.setData(contactAdded);
+                response.setData(createdPayer);
 
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
@@ -56,37 +56,6 @@ public class PayerController {
         }
     }
 
-    @PostMapping("/add_location")
-    public ResponseEntity<Response<Location>> addLocation(
-            @RequestBody Location location) {
-
-        logger.info("Received request to create revenue source: {}", location);
-        Response<Location> response = new Response<>();
-
-        try {
-            Location locationAdded = service.save(location);
-            if (locationAdded != null) {
-                response.setCode("200");
-                response.setMessage(" Created Successfully");
-                response.setData(locationAdded);
-
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
-
-                response.setCode("500");
-                response.setMessage("Failed to create");
-
-                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            logger.error("Error Failed to create", e);
-
-            response.setCode("500");
-            response.setMessage("Internal Server Error");
-
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 
     @PostMapping("/add_institution")
@@ -153,37 +122,7 @@ public class PayerController {
         }
     }
 
-    @PostMapping("/register_payer")
-    public ResponseEntity<Response<Payer>> createPayer(
-            @RequestBody Payer payer) {
 
-        logger.info("Received request to create revenue source: {}", payer);
-        Response<Payer> response = new Response<>();
-
-        try {
-            Payer createdPayer = service.save(payer);
-            if (createdPayer != null) {
-                response.setCode("200");
-                response.setMessage(" Created Successfully");
-                response.setData(createdPayer);
-
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
-
-                response.setCode("500");
-                response.setMessage("Failed to create");
-
-                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            logger.error("Error Failed to create", e);
-
-            response.setCode("500");
-            response.setMessage("Internal Server Error");
-
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @GetMapping("/findPayerByID/{id}")
     public ResponseEntity<Response<Payer>> getPayerById(@PathVariable Long id) {

@@ -73,4 +73,9 @@ public class PayerServiceImpl implements PayerService{
          return locationRepository.findById(locationId);
      }
 
+    @Override
+    public Location findAllLocation() {
+        return (Location) locationRepository.findAll();
+    }
+
 }

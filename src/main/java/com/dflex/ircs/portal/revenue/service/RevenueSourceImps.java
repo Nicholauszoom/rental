@@ -34,15 +34,9 @@ public class RevenueSourceImps  implements RevenueSourceService{
         source.setInstitutionCode(revenueSource.getInstitutionCode());
         source.setGlCode(revenueSource.getGlCode());
         source.setUnityCode(revenueSource.getUnityCode());
-        source.setCreatedDate(date);
-        source.setUpdatedDate(date);
-        source.setCreatedBy(revenueSource.getCreatedBy());
-        source.setUpdatedBy(revenueSource.getUpdatedBy());
-        source.setCreatedByUserName(revenueSource.getCreatedByUserName());
-        source.setUpdatedByUserName(revenueSource.getUpdatedByUserName());
-
+        source.setCreatedAt(date);
+        source.setUpdatedAt(date);
         return revenueSourceRepository.save(source);
-
 
     }
     @Override
@@ -55,9 +49,7 @@ public class RevenueSourceImps  implements RevenueSourceService{
         return  revenueSourceRepository.findAll();
     }
 
-    public SubRevenueResource addSubRevenueSource(SubRevenueResource subRevenue) {
-        return subRevenueSourceRepository.save(subRevenue);
-    }
+
     @Override
     public Optional<SubRevenueResource> findSubById(Long id) {
         return subRevenueSourceRepository.findById(id);

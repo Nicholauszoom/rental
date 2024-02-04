@@ -19,8 +19,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 @Entity
-@Table(name = "tab_resouce_revenue")
-public class RevenueResource extends CommonEntity implements Serializable {
+@Table(name = "tab_resource_revenue")
+public class RevenueResource  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,14 +43,13 @@ public class RevenueResource extends CommonEntity implements Serializable {
     private String institutionCode;
 
 
-    public RevenueResource(Date createdDate, Date updatedDate, UUID createdBy, String createdByUserName, UUID updatedBy, String updatedByUserName, Long id, String revenueCode, String revenueDesc, String unityCode, String GLCode, String institutionCode, Date createdAt, Date updatedAt) {
-        super(createdDate, updatedDate, createdBy, createdByUserName, updatedBy, updatedByUserName);
-        this.id = id;
-        this.revenueCode = revenueCode;
-        this.revenueDesc = revenueDesc;
-        this.unityCode = unityCode;
-        this.glCode = GLCode;
-        this.institutionCode = institutionCode;
+    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
 
-    }
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
+
 }

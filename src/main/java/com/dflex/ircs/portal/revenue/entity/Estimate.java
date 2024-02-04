@@ -14,8 +14,8 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @Entity
-@Table(name = "estimate")
-public class Estimate  extends CommonEntity implements Serializable {
+@Table(name = "estimate_tbl")
+public class Estimate  implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false, precision = 11)

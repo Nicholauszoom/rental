@@ -20,12 +20,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "sub_resouce_revenue_tbl",indexes = {
-@Index(name = "idx_sub_resouce_revenue", columnList = "revenue_resource_id")},
-        uniqueConstraints = {
-@UniqueConstraint(columnNames = {"revenue_resource_id"})
-        })
-public class SubRevenueResource extends CommonEntity implements Serializable {
+@Table(name = "sub_resource_revenue_tbl")
+public class SubRevenueResource  implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false, precision = 11)
@@ -45,21 +41,16 @@ public class SubRevenueResource extends CommonEntity implements Serializable {
     private  String paymentOptions;
 
     @ManyToOne
-    @JoinColumn(name = "revenue_resource_id", nullable = false)
+    @JoinColumn(name = "revenue_resource_id", nullable = true)
     private RevenueResource revenueResource;
-    public void setRevenueResourceId(Long id) {
-        this.revenueResource = new RevenueResource();
-        this.revenueResource.setId(id);
-    }
 
-    public SubRevenueResource(Date createdDate, Date updatedDate, UUID createdBy, String createdByUserName, UUID updatedBy, String updatedByUserName, Long id, String subRevenueCode, String subRevenueDesc, String revenueCode, String paymentOptions, RevenueResource revenueResource) {
-        super(createdDate, updatedDate, createdBy, createdByUserName, updatedBy, updatedByUserName);
-        this.id = id;
-        this.subRevenueCode = subRevenueCode;
-        this.subRevenueDesc = subRevenueDesc;
-        this.revenueCode = revenueCode;
-        this.paymentOptions = paymentOptions;
-        this.revenueResource = revenueResource;
-    }
+    @Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
 
 }

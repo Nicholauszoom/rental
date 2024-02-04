@@ -8,6 +8,8 @@ import com.dflex.ircs.portal.application.entity.ApprovalWorkFlowItem;
 import java.util.Optional;
 
 public interface ApplicationService {
+    Application getAllApplication();
+
     Optional<Application> findApplicationById(Long id);
 
     Optional<ApplicationDetails> findAppDetailById(Long id);

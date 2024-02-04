@@ -119,37 +119,7 @@ public class RevenueSourceController {
     }
 
     //sub revenue source.
-    @PostMapping("/createSubRevenueSource")
-    public ResponseEntity<Response<SubRevenueResource>> createSubRevenueSource(
-            @RequestBody SubRevenueResource subRevenue) {
 
-        logger.info("Received request to create sub revenue source: {}", subRevenue);
-        Response<SubRevenueResource> response = new Response<>();
-
-        try {
-
-            SubRevenueResource createdSub = service.addSubRevenueSource(subRevenue);
-
-            if (createdSub != null) {
-
-                response.setCode("200");
-                response.setMessage("Revenue Source Created Successfully");
-                response.setData(createdSub);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
-
-                response.setCode("500");
-                response.setMessage("Failed to create revenue source");
-                return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            logger.error("Error creating revenue source", e);
-            response.setCode("500");
-            response.setMessage("Internal Server Error");
-
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @PostMapping("/createEstimate")
     public ResponseEntity<Response<Estimate>> createEstimate(

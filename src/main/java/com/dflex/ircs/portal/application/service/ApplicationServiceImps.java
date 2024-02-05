@@ -70,7 +70,7 @@ public class ApplicationServiceImps implements ApplicationService{
 
      @Override
      public Application getAllApplication(){
-        return  applicationRepository.findAll().get(0);
+        return (Application) applicationRepository.findAll();
      }
     @Override
     public Optional<Application> findApplicationById(Long id){

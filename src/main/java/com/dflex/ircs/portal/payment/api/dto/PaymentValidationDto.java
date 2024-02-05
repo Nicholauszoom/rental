@@ -10,10 +10,10 @@ import lombok.*;
 @Setter @Getter
 @ToString
 @XmlRootElement(name = "ircs")
-public class PaymentValidationDTO {
+public class PaymentValidationDto {
 
     @XmlElement(name = "payment")
-    private PaymentDTO payment;
+    private PaymentDto payment;
 
     @XmlElement(name = "hash")
     private String hash;

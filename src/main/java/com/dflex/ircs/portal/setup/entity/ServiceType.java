@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.dflex.ircs.portal.module.entity.AppForm;
 import com.dflex.ircs.portal.util.CommonEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -68,6 +69,16 @@ public class ServiceType extends CommonEntity implements Serializable {
 	//@JsonManagedReference
 	@JsonBackReference
 	private ServiceType parentServiceType;
+	
+	@Column(name = "service_type_level", nullable = false)
+	private Integer serviceTypeLevel;
+	
+	@Column(name = "app_module_id", nullable = true)
+	private Long appModuleId;
+	
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "app_form_id", nullable = false)
+	private AppForm appForm;
 
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;

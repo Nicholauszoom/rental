@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @ToString
 @XmlRootElement(name = "paymentDtls")
 @XmlAccessorType(jakarta.xml.bind.annotation.XmlAccessType.FIELD)
-public class PaymentDetailDTO {
+public class PaymentDetailDto {
 
     @XmlElement(name = "transactionnumber")
     private String transactionnumber;
@@ -52,6 +52,5 @@ public class PaymentDetailDTO {
 
     @XmlElement(name = "payeremail")
     private String payeremail;
-
 
 }

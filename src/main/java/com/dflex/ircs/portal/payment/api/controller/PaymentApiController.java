@@ -2,10 +2,10 @@ package com.dflex.ircs.portal.payment.api.controller;
 
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 import com.dflex.ircs.portal.invoice.service.InvoiceService;
-import com.dflex.ircs.portal.payment.api.dto.PaymentDTO;
-import com.dflex.ircs.portal.payment.api.dto.PaymentDetailDTO;
-import com.dflex.ircs.portal.payment.api.dto.PaymentHeaderDTO;
-import com.dflex.ircs.portal.payment.api.dto.PaymentValidationDTO;
+import com.dflex.ircs.portal.payment.api.dto.PaymentDto;
+import com.dflex.ircs.portal.payment.api.dto.PaymentDetailDto;
+import com.dflex.ircs.portal.payment.api.dto.PaymentHeaderDto;
+import com.dflex.ircs.portal.payment.api.dto.PaymentValidationDto;
 import com.dflex.ircs.portal.payment.entity.Payment;
 import com.dflex.ircs.portal.payment.service.PaymentService;
 import com.dflex.ircs.portal.setup.dto.ClientDetailsDto;
@@ -69,7 +69,7 @@ public class PaymentApiController {
      * @return String
      */
     @PostMapping("/validation-v1")
-    public PaymentDTO receivePaymentValidationRequest(@RequestBody String requestContent,
+    public PaymentDto receivePaymentValidationRequest(@RequestBody String requestContent,
                                                       @RequestHeader Map<String, String> requestHeaders,
                                                       HttpServletRequest request) {
         Logger logger = LoggerFactory.getLogger(PaymentApiController.class);
@@ -98,9 +98,9 @@ public class PaymentApiController {
 
         CommunicationApiDetailsDto commApi = null;
 
-        PaymentHeaderDTO paymentHeaderDTO = null;
-        PaymentDetailDTO paymentDetailDTO = null;
-        List<PaymentDetailDTO> paymentDetail = new ArrayList<>();
+        PaymentHeaderDto paymentHeaderDTO = null;
+        PaymentDetailDto paymentDetailDTO = null;
+        List<PaymentDetailDto> paymentDetail = new ArrayList<>();
         url = request.getRequestURI();
 
         logger.info("Event : Payment  Validation Api Request,EventId :"+processRequestId+",RequestId :"+requestId+""
@@ -121,14 +121,14 @@ public class PaymentApiController {
                     if (schemaValidationResult.get("code").equals("1001")) {
                        // TO BE CONTINUE
 
-                        JAXBContext jaxbContext = JAXBContext.newInstance(PaymentValidationDTO.class);
+                        JAXBContext jaxbContext = JAXBContext.newInstance(PaymentValidationDto.class);
                         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
                         StringReader stringReader = new StringReader(requestContent);
-                        PaymentValidationDTO validationDTO = (PaymentValidationDTO) unmarshaller.unmarshal(stringReader);
+                        PaymentValidationDto validationDTO = (PaymentValidationDto) unmarshaller.unmarshal(stringReader);
 
                         String requestMessage = utils.getStringWithinXml(requestContent, "payment");
                         String requestSignature = validationDTO.getHash();
-                        PaymentDTO paymentDetails = (PaymentDTO) validationDTO.getPayment().getPaymentdtls();
+                        PaymentDto paymentDetails = (PaymentDto) validationDTO.getPayment().getPaymentdtls();
 
                         logger.info("after reading from xml requestMessage {} ,the  signature {} , the details {}", requestMessage, requestSignature,paymentDetails);
                         try {
@@ -248,13 +248,13 @@ public class PaymentApiController {
                 }
             }
 
-            paymentHeaderDTO = new PaymentHeaderDTO(ackid,paymentNumber, detailCount, requestId);
+            paymentHeaderDTO = new PaymentHeaderDto(ackid,paymentNumber, detailCount, requestId);
 
         } catch (Exception e) {
-            paymentHeaderDTO = new PaymentHeaderDTO(ackid,paymentNumber, detailCount, requestId);
+            paymentHeaderDTO = new PaymentHeaderDto(ackid,paymentNumber, detailCount, requestId);
 
         }
-       PaymentDTO paymentsDetails = new PaymentDTO(paymentHeaderDTO, (List<PaymentDetailDTO>) paymentDetailDTO);
+       PaymentDto paymentsDetails = new PaymentDto(paymentHeaderDTO, (List<PaymentDetailDto>) paymentDetailDTO);
         return paymentsDetails;
     }
 

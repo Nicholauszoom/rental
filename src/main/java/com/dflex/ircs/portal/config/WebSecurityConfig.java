@@ -153,6 +153,26 @@ public class WebSecurityConfig {
 						.build())
 				.build();
 		registrations.add(portalClient);
+
+		RegisteredClient mobileClient = RegisteredClient.withId(UUID.randomUUID().toString())
+				.clientId("mobile")
+				.clientSecret(passwordEncoder().encode("mobile321"))
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+				.redirectUri(oauthServer + "/oauth2/authorized")
+				.scope(OidcScopes.OPENID)
+				.scope("message.read")
+				.scope("message.write")
+				.clientSettings(
+						ClientSettings.builder().requireAuthorizationConsent(false).requireProofKey(false).build())
+				.tokenSettings(TokenSettings.builder().reuseRefreshTokens(true)
+						.idTokenSignatureAlgorithm(SignatureAlgorithm.RS256)
+						.accessTokenTimeToLive(Duration.ofSeconds(300)).refreshTokenTimeToLive(Duration.ofSeconds(1800))
+						.build())
+				.build();
+		registrations.add(mobileClient);
 		
 		RegisteredClient portalCore = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("portalcore")

@@ -14,7 +14,7 @@ import lombok.*;
 @Getter @Setter
 @XmlRootElement(name = "paymentHr")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentHeaderDTO {
+public class PaymentHeaderDto {
 
     @XmlElement(name = "ackid")
     private String ackid;

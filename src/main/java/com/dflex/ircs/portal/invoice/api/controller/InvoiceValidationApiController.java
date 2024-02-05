@@ -4,9 +4,11 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.dflex.ircs.portal.invoice.api.dto.*;
-import com.dflex.ircs.portal.payment.api.controller.PaymentApiController;
+import com.dflex.ircs.portal.revenue.api.controller.RevenueSourceController;
+import com.dflex.ircs.portal.revenue.api.dto.RevenueSourceDTO;
 import com.dflex.ircs.portal.util.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +72,7 @@ public class InvoiceValidationApiController {
 	@Autowired
 	private MessageSource messageSource;
 
-
+	protected org.slf4j.Logger logger = LoggerFactory.getLogger(InvoiceValidationApiController.class);
 	
 	
 	/**
@@ -82,7 +83,7 @@ public class InvoiceValidationApiController {
 	 * @return String
 	 */	
 	@PostMapping("/validation-v1")
-	public String receiveInvoiceValidationRequest(@RequestBody String requestContent, @RequestHeader Map<String, String> requestHeaders
+	public String receiveInvoiceValidationRequest(@RequestBody String requestContent, @RequestHeader Map<String, String> 	requestHeaders
 			,HttpServletRequest request) {
 		
 		Locale currentLocale = LocaleContextHolder.getLocale();
@@ -176,7 +177,7 @@ public class InvoiceValidationApiController {
 															
 															if (pkiUtils.verifySignature(requestSignature, requestMessage,certificatePassPhrase, certificateAlias, certificateFile)) {
 																
-																List<Invoice> invoiceList = invoiceService.findByPaymentNumber(invoiceValidationApiReqBody.getParam1());
+																List<Invoice> invoiceList = invoiceService.findByPaymentNumber(invoiceValidationApiReqBody.getInvoiceType());
 																if(invoiceList != null && !invoiceList.isEmpty()) {
 
 																	invoiceType = String.valueOf(invoiceList.get(0).getInvoiceTypeId());
@@ -424,20 +425,30 @@ public class InvoiceValidationApiController {
 	 */
 
 
-	@GetMapping(value = "/InvoiceAll")
-	public ResponseEntity<InvoiceDto> getAllInvoice(){
-		try {
-			List<Invoice> invoice = invoiceService.findAll();
-			InvoiceDto response = new InvoiceDto(invoice);
-			return new ResponseEntity<>(response, HttpStatus.OK);
+		@GetMapping(value = "/InvoiceAll")
+		public ResponseEntity<List<InvoiceDto>> getAllInvoices() {
+			Response<List<InvoiceDto>> response = new Response<>();
+			try {
+				List<Invoice> invoices = invoiceService.findAll();
 
-		} catch (Exception e) {
-			InvoiceDto errorResponse = new InvoiceDto();
-			Response response = new Response();
-			response.setMessage("Failed to retrieve invoice by ID");
-			return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+				List<InvoiceDto> invoiceDtos = invoices.stream()
+						.map(invoice -> new InvoiceDto(/* pass relevant fields from 'invoice' */))
+						.collect(Collectors.toList());
+
+				response.setData(invoiceDtos);
+				response.setCode("200");
+				response.setMessage("All invoices retrieved successfully");
+
+				return new ResponseEntity<>(invoiceDtos, HttpStatus.OK);
+
+			} catch (Exception e) {
+				logger.error("Error retrieving all invoices", e);
+				response.setCode("500");
+				response.setMessage("Failed to retrieve all invoices");
+
+				return new ResponseEntity<List<InvoiceDto>>((List<InvoiceDto>) response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
-	}
 
 	/**
 	 * return invoice
@@ -445,17 +456,29 @@ public class InvoiceValidationApiController {
 	 * @return id
 	 */
 	@GetMapping(value = "/InvoiceById/{id}")
-	public ResponseEntity<InvoiceDto> invoiceDtoResponseEntity(@PathVariable("id") Long id) {
+	public ResponseEntity<Response<InvoiceDto>> getInvoiceById(@PathVariable("id") Long id) {
+		Response<InvoiceDto> response = new Response<>();
+
 		try {
 			Optional<Invoice> invoice = invoiceService.findById(id);
-				InvoiceDto response = new InvoiceDto(invoice);
+
+			if (invoice.isPresent()) {
+				response.setData(invoice);
+				response.setCode("200");
+				response.setMessage("Invoice retrieved successfully");
+
 				return new ResponseEntity<>(response, HttpStatus.OK);
+			} else {
+				response.setCode("404");
+				response.setMessage("Invoice not found");
+				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+			}
 
 		} catch (Exception e) {
-			InvoiceDto errorResponse = new InvoiceDto();
-			Response response = new Response();
+			logger.error("Error retrieving invoice by ID", e);
+			response.setCode("500");
 			response.setMessage("Failed to retrieve invoice by ID");
-			return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -464,17 +487,17 @@ public class InvoiceValidationApiController {
 	 *
 	 * @return id
 	 */
-	@DeleteMapping(value = "/InvoiceById/{id}")
-	public ResponseEntity<Response> deleteInvoiceById(@PathVariable("id") Long id) {
+	@DeleteMapping(value = "/invoiceById/{id}")
+	public ResponseEntity<Response<Void>> deleteInvoiceById(@PathVariable("id") Long id) {
+		Response<Void> response = new Response<>();
 		try {
 			this.invoiceService.deleteById(id);
-			Response response = new Response();
 			response.setMessage("Invoice deleted successfully");
 			return new ResponseEntity<>(response, HttpStatus.OK);
 
-		}  catch (Exception e) {
+		} catch (Exception e) {
+			logger.error("Error deleting invoice by ID", e);
 
-			Response response = new Response();
 			response.setMessage("Failed to delete invoice by ID");
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

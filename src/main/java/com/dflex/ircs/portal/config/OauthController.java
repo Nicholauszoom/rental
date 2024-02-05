@@ -34,7 +34,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dflex.ircs.portal.util.Constants;
@@ -47,7 +46,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-public class OauthController {
+public class OauthController<R> {
 	
 	@Autowired
 	private Utils util;
@@ -122,14 +121,14 @@ public class OauthController {
 								message = messageSource.getMessage("message.1001",null, currentLocale);
 								status = messageSource.getMessage("code.1001",null, currentLocale);
 								isError  = false;
-								Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
+								Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
 								return ResponseEntity.status(HttpStatus.OK).body(res);
 								
 							} else {
 								message = messageSource.getMessage("message.1065",null, currentLocale);
 								status = messageSource.getMessage("code.1065",null, currentLocale);
 								isError  = true;
-								Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+								Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 						        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 						        
 							}
@@ -137,28 +136,28 @@ public class OauthController {
 							message = messageSource.getMessage("message.1065",null, currentLocale);
 							status = messageSource.getMessage("code.1065",null, currentLocale);
 							isError  = true;
-							Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+							Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 					        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 						}
 					} else {
 						message = messageSource.getMessage("message.1064",null, currentLocale);
 						status = messageSource.getMessage("code.1064",null, currentLocale);
 						isError  = true;
-						Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+						Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 				        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 					}
 				} else {
 					message = messageSource.getMessage("message.1064",null, currentLocale);
 					status = messageSource.getMessage("code.1064",null, currentLocale);
 					isError  = true;
-					Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+					Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 			        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 				}
 			} else {
 				message = messageSource.getMessage("message.1064",null, currentLocale);
 				status = messageSource.getMessage("code.1064",null, currentLocale);
 				isError  = true;
-				Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+				Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 			}
 		} catch (BadCredentialsException ex) {
@@ -166,7 +165,7 @@ public class OauthController {
 			message = messageSource.getMessage("message.1064",null, currentLocale);
 			status = messageSource.getMessage("code.1064",null, currentLocale);
 			isError  = true;
-			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		
 		} catch (DisabledException ex) {
@@ -176,7 +175,7 @@ public class OauthController {
 			//message = messageSource.getMessage("message.1022",null, currentLocale);
 			//status = messageSource.getMessage("code.1022",null, currentLocale);
 			isError  = true;
-			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		
 		} catch (Exception ex) {
@@ -184,7 +183,7 @@ public class OauthController {
 			message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
-			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		}
 		
@@ -313,7 +312,7 @@ public class OauthController {
 	@PostMapping("/api/token")
     public ResponseEntity<?> getAuthorizationToken(HttpServletRequest request, HttpServletResponse response) {
 		
-		Response res = null;
+		Response<R> res = null;
 		try {
 			
 			String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("ClientKey"):request.getHeader("clientkey");
@@ -369,28 +368,28 @@ public class OauthController {
 						message = messageSource.getMessage("message.1001",null, currentLocale);
 						status = messageSource.getMessage("code.1001",null, currentLocale);
 						isError  = false;
-						res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
+						res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
 						return ResponseEntity.status(HttpStatus.OK).body(res);
 						
 					} else {
 						message = messageSource.getMessage("message.1065",null, currentLocale);
 						status = messageSource.getMessage("code.1065",null, currentLocale);
 						isError  = true;
-						res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+						res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 						return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 					}
 				} else {
 					message = messageSource.getMessage("message.1064",null, currentLocale);
 					status = messageSource.getMessage("code.1064",null, currentLocale);
 					isError  = true;
-					res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+					res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 				}
 			} else {
 				message = messageSource.getMessage("message.1005",null, currentLocale);
 				status = messageSource.getMessage("code.1005",null, currentLocale);
 				isError  = true;
-				res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+				res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 			}
 		} catch (Exception ex) {
@@ -398,7 +397,7 @@ public class OauthController {
 			message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
-			res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		}
 		 		
@@ -437,11 +436,11 @@ public class OauthController {
 	}
 	
 	@GetMapping({"/error",""})
-	public ResponseEntity<Response>  requireFullAuthentication(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<Response<R>>  requireFullAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		message = messageSource.getMessage("message.1004",null, currentLocale);
 		status = messageSource.getMessage("code.1004",null, currentLocale);
 		isError  = true;
-		Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+		Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 	

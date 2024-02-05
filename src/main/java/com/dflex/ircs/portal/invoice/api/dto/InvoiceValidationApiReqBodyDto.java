@@ -31,19 +31,13 @@ public class InvoiceValidationApiReqBodyDto {
 	@XmlElement(name = "requestid")
 	private String requestIdentity;
 	
-	@XmlElement(name = "param1") //Invoice Payment Number
-	private String param1;
-	
-	@XmlElement(name = "param2")
-	private String param2;
-	
-	@XmlElement(name = "param3")
-	private String param3;
-	
-	@XmlElement(name = "param4")
-	private String param4;
-	
-	@XmlElement(name = "param5")
-	private String param5;
+	@XmlElement(name = "paymentnumber") //Invoice Payment Number
+	private String paymentnumber;
+
+	@XmlElement(name = "invoicetype")
+	private String invoiceType;
+
+	@XmlElement(name = "dtlcount")
+	private String detailCount;;
 	
 }

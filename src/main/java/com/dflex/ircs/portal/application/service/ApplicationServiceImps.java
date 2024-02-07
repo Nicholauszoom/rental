@@ -46,6 +46,7 @@ public class ApplicationServiceImps implements ApplicationService{
 
         if (payerOptional.isPresent() && subRevenueOptional.isPresent()) {
             Payer payer = payerOptional.get();
+
             SubRevenueResource subRevenue = subRevenueOptional.get();
 
             Application newApplication = new Application();

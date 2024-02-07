@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,4 +50,13 @@ public class SubRevenueSourceServices {
             throw new RuntimeException("RevenueResource with ID " + subRevenue.getRevenueResource().getId() + " not found");
         }
     }
+
+    public Optional<SubRevenueResource> subRevenueSourceById(Long id) {
+        return subRevenueSourceRepository.findById(id);
+    }
+
+    public List<SubRevenueResource> subRevenueResourceAll() {
+        return  subRevenueSourceRepository.findAll();
+    }
+
 }

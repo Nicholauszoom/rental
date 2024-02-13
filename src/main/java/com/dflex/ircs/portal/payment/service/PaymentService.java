@@ -23,5 +23,8 @@ public interface PaymentService {
 	
 	public List<Payment> findByInvoicePaymentNumberAndRecordStatusId(String invoicePaymentNumber,
 			Long recordStatusId);
-	
+
+	public List<Payment> findAll();
+
+
 }

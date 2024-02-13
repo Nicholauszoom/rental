@@ -47,5 +47,10 @@ public class PaymentServiceImpl implements PaymentService{
 		return paymentRepository.findByInvoicePaymentNumber(invoicePaymentNumber);
 	}
 
+	@Override
+	public List<Payment> findAll(){
+		return paymentRepository.findAll();
+	}
+
 	
 }

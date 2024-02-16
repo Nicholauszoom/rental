@@ -19,9 +19,9 @@ public interface PayerService {
 
     Optional<Institution> findByInstitutionId(Long institutionId);
 
-    PaymentServiceProvider save(PaymentServiceProvider paymentServiceProvider);
-
-    Optional<PaymentServiceProvider> findByProviderId(Long providerId);
+//    PaymentServiceProvider save(PaymentServiceProvider paymentServiceProvider);
+//
+//    Optional<PaymentServiceProvider> findByProviderId(Long providerId);
 
     Optional<Location> findByLocationId(Long locationId);
 

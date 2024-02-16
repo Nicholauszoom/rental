@@ -1,5 +1,8 @@
 package com.dflex.ircs.portal.payment.api.controller;
 
+import com.dflex.ircs.portal.auth.dto.ClientDetailsDto;
+import com.dflex.ircs.portal.auth.dto.CommunicationApiDetailsDto;
+import com.dflex.ircs.portal.auth.service.CommunicationApiService;
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 import com.dflex.ircs.portal.invoice.service.InvoiceService;
 import com.dflex.ircs.portal.payment.api.dto.PaymentDto;
@@ -8,9 +11,6 @@ import com.dflex.ircs.portal.payment.api.dto.PaymentHeaderDto;
 import com.dflex.ircs.portal.payment.api.dto.PaymentValidationDto;
 import com.dflex.ircs.portal.payment.entity.Payment;
 import com.dflex.ircs.portal.payment.service.PaymentService;
-import com.dflex.ircs.portal.setup.dto.ClientDetailsDto;
-import com.dflex.ircs.portal.setup.dto.CommunicationApiDetailsDto;
-import com.dflex.ircs.portal.setup.service.CommunicationApiService;
 import com.dflex.ircs.portal.setup.service.OtherServiceInstitutionService;
 import com.dflex.ircs.portal.setup.service.ServiceInstitutionService;
 import com.dflex.ircs.portal.util.Constants;

@@ -89,7 +89,7 @@ public class PayerController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+/**
     @PostMapping("/add_paymentProvider")
     public ResponseEntity<Response<PaymentServiceProvider>> addPaymentProvider(
             @RequestBody PaymentServiceProvider paymentServiceProvider) {
@@ -121,7 +121,7 @@ public class PayerController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+**/
 
 
     @GetMapping("/findPayerByID/{id}")

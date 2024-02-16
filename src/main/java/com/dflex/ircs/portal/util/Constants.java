@@ -19,6 +19,8 @@ public class Constants {
 	//Spring Security
 	public static final String  CLIENT_ID_PORTAL =  "portal";
 	public static final String  CLIENT_SECRET_PORTAL =  "portal321";
+	public static final String  CLIENT_ID_MOBILE =  "mobile";
+	public static final String  CLIENT_SECRET_MOBILE =  "mobile321";
 	public static final String  OAUTH2_AUTHORIZE_URL =  "/oauth2/authorize";
 	public static final String  OAUTH2_AUTHORIZE_REDIRECT_URL =  "/oauth2/authorized";
 	public static final String  OAUTH2_ACCESS_TOKEN_URL =  "/oauth2/token";

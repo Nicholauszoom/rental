@@ -83,6 +83,7 @@ public class OauthController<R> {
 			
 			final String authorization = request.getHeader("Authorization")!=null?request.getHeader("Authorization"):request.getHeader("authorization");
 			final String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("clientKey"):request.getHeader("clientkey");
+			final String clientId = request.getHeader("ClientId")!=null?request.getHeader("clientId"):request.getHeader("clientid");
 			if (authorization != null && authorization.toLowerCase().startsWith("basic") && !util.isNullOrEmpty(clientKey)) {
 			    
 			    String base64Credentials = authorization.substring("Basic".length()).trim();
@@ -103,8 +104,21 @@ public class OauthController<R> {
 					HttpSession session = request.getSession(true);
 					session.setAttribute("SPRING_SECURITY_CONTEXT", context);
 					
-					Map<String,String> clientDetails = validateClientDetails(clientKey);
-					if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
+					String clientStatus = "";
+					String clientSecret = "";
+					if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
+						clientSecret = Constants.CLIENT_SECRET_PORTAL;
+						clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+					} else {
+						clientSecret = Constants.CLIENT_SECRET_MOBILE;
+						clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+					}
+					
+					if(clientStatus.equals(Constants.DEFAULT_SUCCESS)) {
+						
+						Map<String,String> clientDetails = new HashMap<>();
+						clientDetails.put("clientId", clientId);
+						clientDetails.put("clientSecret", clientSecret);
 						
 						Map<String, String> codeDetails = getAuthorizationCode(session, clientDetails);
 						if(codeDetails.get("status").equals("302") && !codeDetails.get("code").isBlank()) {
@@ -316,13 +330,22 @@ public class OauthController<R> {
 		try {
 			
 			String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("ClientKey"):request.getHeader("clientkey");
-			if (!util.isNullOrEmpty(clientKey)) {
+			String clientId = request.getHeader("ClientId")!=null?request.getHeader("ClientId"):request.getHeader("clientid");
+			if (!util.isNullOrEmpty(clientKey) && !util.isNullOrEmpty(clientId)) {
 				
-				Map<String,String> clientDetails = validateClientDetails(clientKey);
-				if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
+				String clientStatus = "";
+				String clientSecret = "";
+				if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
+					clientSecret = Constants.CLIENT_SECRET_PORTAL;
+					clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+				} else {
+					clientSecret = Constants.CLIENT_SECRET_MOBILE;
+					clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+				}
+				
+				if(clientStatus.equals(Constants.DEFAULT_SUCCESS)) {
 					
-					String clientId = clientDetails.get("clientId");
-					String clientSecret = clientDetails.get("clientSecret");
+					
 					String grantType = "client_credentials";
 					
 					URL obj = new URL(oauthServer+Constants.OAUTH2_ACCESS_TOKEN_URL);
@@ -406,9 +429,30 @@ public class OauthController<R> {
 	/**
 	 * Validate Authorization client details
 	 * @param clientKey
+	 * @return String
+	 */
+	private String validateClientDetails(String clientKey,String clientId,String clientSecret){
+		
+		String data = clientId+clientSecret;
+		System.out.println("data*********"+data);
+		String hashData= util.generateHexHMacHash(clientSecret, data);
+		System.out.println("hashData*********"+hashData);
+		if(hashData.equals(clientKey)) {
+			
+			return Constants.DEFAULT_SUCCESS;
+			
+		} else {
+			return Constants.DEFAULT_FAILURE;
+		}
+		
+	}
+	
+	/**
+	 * Validate Authorization client details
+	 * @param clientKey
 	 * @return Map<String,String>
 	 */
-	private Map<String,String> validateClientDetails(String clientKey){
+	private Map<String,String> validateClientDetailsV2(String clientKey){
 		
 		Map<String,String> clientDetails = new HashMap<>();
 		

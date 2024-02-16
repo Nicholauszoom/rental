@@ -3,7 +3,7 @@ package com.dflex.ircs.portal.setup.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.dflex.ircs.portal.setup.dto.ClientDetailsDto;
+import com.dflex.ircs.portal.auth.dto.ClientDetailsDto;
 import com.dflex.ircs.portal.setup.entity.ServiceInstitution;
 
 

@@ -61,8 +61,8 @@ public class ServiceType extends CommonEntity implements Serializable {
 	@Column(name = "service_type_code", nullable = false, length = 10)
 	private String serviceTypeCode;
 
-	@Column(name = "service_type_description", nullable = false, length = 100)
-	private String serviceTypeDescription;
+	@Column(name = "service_type_name", nullable = false, length = 100)
+	private String serviceTypeName;
 
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "parent_service_type_id", nullable = true)
@@ -73,13 +73,6 @@ public class ServiceType extends CommonEntity implements Serializable {
 	@Column(name = "service_type_level", nullable = false)
 	private Integer serviceTypeLevel;
 	
-	@Column(name = "app_module_id", nullable = true)
-	private Long appModuleId;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "app_form_id", nullable = false)
-	private AppForm appForm;
-
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 }

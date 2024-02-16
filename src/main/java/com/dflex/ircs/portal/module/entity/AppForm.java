@@ -77,8 +77,4 @@ public class AppForm extends CommonEntity implements Serializable {
 	@JoinColumn(name = "app_form_data_table_id", nullable = false)
 	private AppFormDataTable appFormDataTable;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "app_module_id", nullable = false)
-	private AppModule appModule;
-
 }

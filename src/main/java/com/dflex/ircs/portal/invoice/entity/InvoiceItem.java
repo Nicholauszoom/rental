@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import com.dflex.ircs.portal.setup.entity.ServiceTypeSource;
+import com.dflex.ircs.portal.setup.entity.RevenueSource;
 import com.dflex.ircs.portal.util.CommonEntity;
 
 import jakarta.persistence.Column;
@@ -70,9 +70,9 @@ public class InvoiceItem extends CommonEntity implements Serializable {
 	@Column(name = "service_type_name", length = 200, nullable = false)
 	private String serviceTypeName;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "service_type_source_id", nullable = false)
-	private ServiceTypeSource serviceTypeSource;
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "revenue_source_id", nullable = false)
+	private RevenueSource revenueSource;
 	
 	@Column(name = "service_reference", length = 200, nullable = true)
 	private String serviceReference;
@@ -89,12 +89,12 @@ public class InvoiceItem extends CommonEntity implements Serializable {
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 
-	public InvoiceItem(String serviceDepartmentCode, String serviceTypeCode, ServiceTypeSource serviceTypeSource,
+	public InvoiceItem(String serviceDepartmentCode, String serviceTypeCode, RevenueSource revenueSource,
 			String serviceReference, BigDecimal serviceAmount, Long invoiceId, Integer paymentPriority) {
 		super();
 		this.serviceDepartmentCode = serviceDepartmentCode;
 		this.serviceTypeCode = serviceTypeCode;
-		this.serviceTypeSource = serviceTypeSource;
+		this.revenueSource = revenueSource;
 		this.serviceReference = serviceReference;
 		this.serviceAmount = serviceAmount;
 		this.invoiceId = invoiceId;

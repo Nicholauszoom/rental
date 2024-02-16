@@ -1,4 +1,4 @@
-package com.dflex.ircs.portal.application.entity;
+/**package com.dflex.ircs.portal.application.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -39,4 +39,4 @@ public class ApprovalWorkFlowItem implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
-}
+}**/

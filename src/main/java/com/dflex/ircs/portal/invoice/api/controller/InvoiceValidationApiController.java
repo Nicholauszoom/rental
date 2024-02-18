@@ -10,6 +10,7 @@ import com.dflex.ircs.portal.invoice.api.dto.*;
 import com.dflex.ircs.portal.revenue.api.controller.RevenueSourceController;
 import com.dflex.ircs.portal.revenue.api.dto.RevenueSourceDTO;
 import com.dflex.ircs.portal.util.Response;
+import jakarta.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -346,8 +347,9 @@ public class InvoiceValidationApiController {
 		return prepareInvoiceValidationApiRes(invoiceValidationApiRes,currentLocale,commApi,processRequestId,requestId,remark,url
 				,clientCode,clientKey,logLevel);
 	}
-		
-	
+
+
+
 	/**
 	 * Prepare invoice validation api request acknowledgement
 	 * @param invoiceValidationApiRes
@@ -416,14 +418,49 @@ public class InvoiceValidationApiController {
 
 
 
+	@PostMapping("/submission-v1")
+	public String invoiceSubmission(@RequestBody InvoiceSubmissionApiReqDto submissionApiRequest) {
+		String signedResponse = "";
+		String signature = "";
+		String requestResponse = "";
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+		String responseTimeTime = utils.getLocalDateTime(new Date()).format(dateTimeFormatter);
 
 
 
-	/**
-	 * return all the invoice
-	 *
-	 * @return String
-	 */
+
+		try {
+
+			// Read xml
+			JAXBContext jaxbContext = JAXBContext.newInstance(InvoiceSubmissionApiResDto.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			//			StringReader stringReader = new StringReader(submissionApiRequest);
+			//			InvoiceSubmissionApiReqDto request = (InvoiceSubmissionApiReqDto) unmarshaller.unmarshal(stringReader);
+			//
+			//			Object invoiceValidationApiReq;
+			//			String requestSignature = invoiceValidationApiReq.getMessageHash();
+			//			InvoiceValidationApiReqBodyDto invoiceValidationApiReqBody = invoiceValidationApiReq.getMessageBody();
+			//			requestResponse = utils.generateXmlString(JAXBContext.newInstance(InvoiceSubmissionApiResDto.class), submissionApiRequest);
+			//			requestResponse = utils.getStringWithinXml(requestResponse, "invoice");
+			//			signature = pkiUtils.createSignature(requestResponse, pkiUtils.appPassphrase, pkiUtils.appAlias, pkiUtils.appKeyFile);
+			//			InvoiceSubmissionApiResDto submissionApiRes = new InvoiceSubmissionApiResDto(submissionApiRequest, signature);
+			//			signedResponse = utils.generateXmlString(JAXBContext.newInstance(InvoiceSubmissionApiResDto.class), submissionApiRes);
+
+			logger.info("the invoice for the submission:{} with the signature {}", submissionApiRequest, signature);
+
+
+			return null;
+		} catch (JAXBException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
+        /**
+         * return all the invoice
+         *
+         * @return String
+         */
 
 
 		@GetMapping(value = "/InvoiceAll")
@@ -435,12 +472,22 @@ public class InvoiceValidationApiController {
 				List<InvoiceDto> invoiceDtos = invoices.stream()
 						.map(invoice -> new InvoiceDto(/* pass relevant fields from 'invoice' */))
 						.collect(Collectors.toList());
+                if(invoiceDtos != null && invoiceDtos.size() != 0){
+					response.setData(invoiceDtos);
+					response.setCode("200");
+					logger.info("Invoice Data{}",invoiceDtos);
+					response.setMessage("All invoices retrieved successfully");
+					return new ResponseEntity<>(invoiceDtos, HttpStatus.OK);
+				}else {
 
-				response.setData(invoiceDtos);
-				response.setCode("200");
-				response.setMessage("All invoices retrieved successfully");
+					response.setCode("200");
+					//response.setData(invoiceDtos);
+					response.setMessage("No Invoice Has been Created.");
+					logger.info("No Invoice Data or Empty: {}", invoiceDtos); // Log no invoice data or empty
+					response.setMessage("No Invoice Has been Created.");
+					return new ResponseEntity<>(invoiceDtos, HttpStatus.OK);
+				}
 
-				return new ResponseEntity<>(invoiceDtos, HttpStatus.OK);
 
 			} catch (Exception e) {
 				logger.error("Error retrieving all invoices", e);

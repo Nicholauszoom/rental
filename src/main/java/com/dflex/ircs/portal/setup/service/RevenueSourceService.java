@@ -13,13 +13,10 @@ public interface RevenueSourceService {
 
 	public RevenueSource saveRevenueSource(RevenueSource revenueSource);
 
-    public List<RevenueSource> findByServiceInstitutionIdAndAppModuleIdAndRecordStatusId(Long serviceInstitutionId,
-    		Long appModuleId,Long recordStatusId);
-    
     public List<RevenueSourceDetailsDto> findDetailsByServiceInstitutionUidAndAppModuleUidAndRecordStatusId(UUID serviceInstitutionUid,
     		UUID appModuleUid,Long recordStatusId);
 
-	public List<RevenueSourceDetailsDto> findDetailsByServiceInstitutionCodeAndAppModuleIdAndRecordStatusId(
-			String institutionCode, Long moduleId, Long recordStatusId);
+	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
+			Long departmentId, Long moduleId, Long recordStatusId);
 
 }

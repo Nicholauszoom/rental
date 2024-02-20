@@ -9,7 +9,7 @@ import com.dflex.ircs.portal.setup.entity.RevenueSourceEstimate;
 
 public interface RevenueSourceEstimateRepository extends JpaRepository<RevenueSourceEstimate, Long> {
 
-	@Query("from RevenueSourceEstimate e where e.revenueSource.serviceInstitution.id =:serviceInstitutionId "
+	@Query("from RevenueSourceEstimate e where e.revenueSource.serviceDepartment.serviceInstitution.id =:serviceInstitutionId "
 			+ " and e.financialYearId =:financialYearId and e.recordStatusId =:recordStatusId ")
 	public List<RevenueSourceEstimate> findByServiceInstitutionIdAndFinacialYearIdAndRecordStatusId(Long serviceInstitutionId,
 			Long financialYearId,Long recordStatusId);

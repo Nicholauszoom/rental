@@ -119,7 +119,7 @@ public class RevenueSourceEstimateController {
 				} else {
 					revenueSourceEstimate = oldRevenueSourceEstimate;
 					message = messageSource.getMessage("general.current.exists", new Object[] { "Revenue Source Estimate" }, currentLocale);
-					status = messageSource.getMessage("code.1008", null, currentLocale);
+					status = messageSource.getMessage("code.1069", null, currentLocale);
 					error = true;
 				}
 			} else {

@@ -70,8 +70,8 @@ public class RevenueSource extends CommonEntity implements Serializable {
 	private Long appModuleId;
 	
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_institution_id", nullable = false)
-	private ServiceInstitution serviceInstitution;
+	@JoinColumn(name = "service_department", nullable = false)
+	private ServiceDepartment serviceDepartment;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "service_type_id", nullable = false)

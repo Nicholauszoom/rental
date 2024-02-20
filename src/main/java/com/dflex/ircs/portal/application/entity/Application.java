@@ -2,6 +2,7 @@
 
 import com.dflex.ircs.portal.payer.entity.Payer;
 import com.dflex.ircs.portal.revenue.entity.SubRevenueResource;
+import com.dflex.ircs.portal.util.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -35,8 +36,11 @@ public class Application implements Serializable {
     @Column(name = "sub_verenue_code")
     private String subRevenueCode;
 
-     @Column(name = "payer_code")
+    @Column(name = "payer_code")
     private String payerCode;
+
+    @Column(name = "status")
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "sub_revenue_resource_id")

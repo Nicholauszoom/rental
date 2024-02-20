@@ -40,7 +40,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(final String username) {
 		System.out.println("username*****************" + username);
 		final Optional<User> user = userRepository.findByUserName(username);
-		System.out.println("username*****************" + user.get());
 		setUsername(username);
 		if (!user.isPresent()) {
 			throw new UsernameNotFoundException(username);
@@ -60,7 +59,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		}
 		
 		UserPrincipal userPrincipal = new UserPrincipal(user.get());
-		System.out.println("userPrincipal*****************" + userPrincipal);
 		return userPrincipal;
 	}
    

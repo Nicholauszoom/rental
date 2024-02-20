@@ -31,10 +31,10 @@ public class RevenueSourceServiceImpl implements RevenueSourceService {
 	}
 
 	@Override
-	public List<RevenueSource> findByServiceInstitutionIdAndAppModuleIdAndRecordStatusId(Long serviceInstitutionId,
-			Long appModuleId, Long recordStatusId) {
-		return revenueSourceRepository.findByServiceInstitutionIdAndAppModuleIdAndRecordStatusId(serviceInstitutionId,
-				appModuleId,recordStatusId);
+	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
+			Long departmentId, Long moduleId, Long recordStatusId) {
+		return revenueSourceRepository.findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
+				departmentId,moduleId,recordStatusId);
 	}
 
 	@Override
@@ -42,13 +42,6 @@ public class RevenueSourceServiceImpl implements RevenueSourceService {
 			UUID serviceInstitutionUid, UUID appModuleUid, Long recordStatusId) {
 		return revenueSourceRepository.findDetailsByServiceInstitutionUidAndAppModuleUidAndRecordStatusId(
 				serviceInstitutionUid,appModuleUid,recordStatusId);
-	}
-
-	@Override
-	public List<RevenueSourceDetailsDto> findDetailsByServiceInstitutionCodeAndAppModuleIdAndRecordStatusId(
-			String institutionCode, Long moduleId, Long recordStatusId) {
-		return revenueSourceRepository.findDetailsByServiceInstitutionCodeAndAppModuleIdAndRecordStatusId(
-				institutionCode,moduleId,recordStatusId);
 	}
 
 }

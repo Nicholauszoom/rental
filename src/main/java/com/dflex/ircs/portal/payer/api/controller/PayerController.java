@@ -4,7 +4,7 @@ import com.dflex.ircs.portal.payer.api.dto.InstitutionDTO;
 import com.dflex.ircs.portal.payer.entity.*;
 import com.dflex.ircs.portal.payer.service.PayerServiceImpl;
 
-import com.dflex.ircs.portal.util.Response;
+import com.dflex.ircs.portal.util.CustomResponse;
 import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +25,11 @@ public class PayerController {
     protected Logger logger = LoggerFactory.getLogger(PayerController.class);
 
     @PostMapping("/register_payer")
-    public ResponseEntity<Response<Payer>> createPayer(
+    public ResponseEntity<CustomResponse<Payer>> createPayer(
             @RequestBody Payer payer) {
 
         logger.info("Received request to create revenue source: {}", payer);
-        Response<Payer> response = new Response<>();
+        CustomResponse<Payer> response = new CustomResponse<>();
 
         try {
             Payer createdPayer = service.save(payer);
@@ -59,11 +59,11 @@ public class PayerController {
 
 
     @PostMapping("/add_institution")
-    public ResponseEntity<Response<InstitutionDTO>> addInstitution(
+    public ResponseEntity<CustomResponse<InstitutionDTO>> addInstitution(
             @RequestBody Institution institution) {
 
         logger.info("Received request to create revenue source: {}", institution);
-        Response<InstitutionDTO> response = new Response<>();
+        CustomResponse<InstitutionDTO> response = new CustomResponse<>();
 
         try {
             Institution institutionAdded = service.save(institution);
@@ -91,7 +91,7 @@ public class PayerController {
     }
 /**
     @PostMapping("/add_paymentProvider")
-    public ResponseEntity<Response<PaymentServiceProvider>> addPaymentProvider(
+    public ResponseEntity<CustomResponse<PaymentServiceProvider>> addPaymentProvider(
             @RequestBody PaymentServiceProvider paymentServiceProvider) {
 
         logger.info("Received request to create revenue source: {}", paymentServiceProvider);
@@ -125,10 +125,10 @@ public class PayerController {
 
 
     @GetMapping("/findPayerByID/{id}")
-    public ResponseEntity<Response<Payer>> getPayerById(@PathVariable Long id) {
+    public ResponseEntity<CustomResponse<Payer>> getPayerById(@PathVariable Long id) {
 
         logger.info("Received request to create revenue source: {}", id);
-        Response<Payer> response = new Response<>();
+        CustomResponse<Payer> response = new CustomResponse<>();
 
         try {
             Optional<Payer> getPayer = service.findByPayerId(id);

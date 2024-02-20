@@ -159,7 +159,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -205,7 +205,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -244,7 +244,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -284,9 +284,6 @@ public class UserController {
 			userDetails.setAccountNonExpired(user.get().getIsAccountNonExpired()==null?false:user.get().getIsAccountNonExpired());
 			userDetails.setCredentialsNonExpired(user.get().getIsCredentialsNonExpired()==null?false:user.get().getIsCredentialsNonExpired());
 			userDetails.setAccountNonLocked(user.get().getIsAccountNonLocked()==null?false:user.get().getIsAccountNonLocked());
-			userDetails.setInstitutionUId(user.get().getServiceDepartment().getServiceInstitution().getServiceInstitutionUid().toString());
-			userDetails.setInstitutionCode(user.get().getServiceDepartment().getServiceInstitution().getInstitutionCode());
-			userDetails.setInstitutionName(user.get().getServiceDepartment().getServiceInstitution().getInstitutionName());
 			
 			if (user.get().getRole() != null && !user.get().getRole().isEmpty()) {
 
@@ -323,7 +320,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1009",null, currentLocale);
 			isError  = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetails,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetails,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -368,10 +365,7 @@ public class UserController {
 					user.get().getIsCredentialsNonExpired() == null ? false : user.get().getIsCredentialsNonExpired());
 			userDetails.setAccountNonLocked(
 					user.get().getIsAccountNonLocked() == null ? false : user.get().getIsAccountNonLocked());
-			userDetails.setInstitutionUId(user.get().getServiceDepartment().getServiceInstitution().getServiceInstitutionUid().toString());
-			userDetails.setInstitutionCode(user.get().getServiceDepartment().getServiceInstitution().getInstitutionCode());
-			userDetails.setInstitutionName(user.get().getServiceDepartment().getServiceInstitution().getInstitutionName());
-			
+
 			if (user.get().getRole() != null && !user.get().getRole().isEmpty()) {
 
 				Set<RoleDetailsDto> userRoles = new HashSet<RoleDetailsDto>();
@@ -407,7 +401,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1009", null, currentLocale);
 			isError = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()), status, isError, message,
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, isError, message,
 				userDetails, request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
@@ -528,7 +522,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,createdUserId,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,createdUserId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
@@ -652,7 +646,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetail,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userDetail,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
@@ -707,7 +701,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,updateUser,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,updateUser,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 	}
@@ -774,7 +768,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userMinDetail,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userMinDetail,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1023,7 +1017,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1110,7 +1104,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1220,7 +1214,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1316,7 +1310,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1395,7 +1389,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userId,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1446,7 +1440,7 @@ public class UserController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError = true;
 		}
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -1511,7 +1505,7 @@ public class UserController {
 			isError = true;
 		}
 		
-		Response<Response> response = new Response<Response>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	

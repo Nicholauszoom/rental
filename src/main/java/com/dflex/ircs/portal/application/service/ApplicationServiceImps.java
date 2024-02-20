@@ -12,6 +12,7 @@ import com.dflex.ircs.portal.payer.entity.Payer;
 import com.dflex.ircs.portal.payer.service.PayerServiceImpl;
 import com.dflex.ircs.portal.revenue.entity.SubRevenueResource;
 import com.dflex.ircs.portal.revenue.service.RevenueSourceImps;
+import com.dflex.ircs.portal.util.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,7 @@ public class ApplicationServiceImps implements ApplicationService{
             newApplication.setApplicationStatus(application.getApplicationStatus());
             newApplication.setSubRevenueCode(subRevenue.getSubRevenueCode());
             newApplication.setSubRevenueResource(subRevenue);
+            newApplication.setStatus(Status.ACTIVE);
             newApplication.setPayer(payer);
             newApplication.setCreatedAt(date);
             newApplication.setUpdatedAt(date);

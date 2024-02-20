@@ -1,12 +1,32 @@
 package com.dflex.ircs.portal.payment.api.controller;
 
+import java.io.InputStream;
+import java.io.StringReader;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.dflex.ircs.portal.auth.dto.ClientDetailsDto;
 import com.dflex.ircs.portal.auth.dto.CommunicationApiDetailsDto;
 import com.dflex.ircs.portal.auth.service.CommunicationApiService;
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 import com.dflex.ircs.portal.invoice.service.InvoiceService;
-import com.dflex.ircs.portal.payment.api.dto.PaymentDto;
 import com.dflex.ircs.portal.payment.api.dto.PaymentDetailDto;
+import com.dflex.ircs.portal.payment.api.dto.PaymentDto;
 import com.dflex.ircs.portal.payment.api.dto.PaymentHeaderDto;
 import com.dflex.ircs.portal.payment.api.dto.PaymentValidationDto;
 import com.dflex.ircs.portal.payment.entity.Payment;
@@ -16,21 +36,10 @@ import com.dflex.ircs.portal.setup.service.ServiceInstitutionService;
 import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.PKIUtils;
 import com.dflex.ircs.portal.util.Utils;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.InputStream;
-import java.io.StringReader;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -60,6 +69,8 @@ public class PaymentApiController {
 
     @Autowired
     private MessageSource messageSource;
+
+    protected org.slf4j.Logger logger = LoggerFactory.getLogger(PaymentApiController.class);
     /**
      * payment  Validation Api for Portal Core Clients
      *
@@ -257,5 +268,60 @@ public class PaymentApiController {
        PaymentDto paymentsDetails = new PaymentDto(paymentHeaderDTO, (List<PaymentDetailDto>) paymentDetailDTO);
         return paymentsDetails;
     }
+
+
+    /**
+     * return all the invoice
+     *
+     * @return String
+     */
+
+
+//    @GetMapping(value = "/paymentAll")
+//    public ResponseEntity<Response<List<PaymentDTO>>> getAllPayments() {
+//        Response<List<PaymentDTO>> response = new Response<>();
+//        try {
+//            List<Payment> payments = paymentService.findAll();
+//
+//            List<PaymentDTO> paymentDTOs = payments.stream()
+//                    .map(payment -> new PaymentDTO(/* pass relevant fields from 'invoice' */))
+//                    .collect(Collectors.toList());
+//            response.setData(paymentDTOs);
+//            response.setCode("200");
+//            response.setMessage("All payments retrieved successfully");
+//
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            logger.error("Error retrieving all payments", e);
+//            response.setCode("500");
+//            response.setMessage("Failed to retrieve all payments");
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+
+//    @GetMapping("/paymentById/{id}")
+//    public ResponseEntity<Response<PaymentDTO>> getPaymentById(@PathVariable Long id) {
+//        Response<PaymentDTO> response = new Response<>();
+//        try {
+//            Optional<Payment> payment = paymentService.findById(id);
+//            if (payment == null) {
+//                response.setCode("404");
+//                response.setMessage("Payment not found");
+//                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//            }
+//            response.setData(payment);
+//            response.setCode("200");
+//            response.setMessage("Payment retrieved successfully");
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//        } catch (Exception e) {
+//            logger.error("Error retrieving payment by id", e);
+//            response.setCode("500");
+//            response.setMessage("Failed to retrieve payment by id");
+//            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
 
 }

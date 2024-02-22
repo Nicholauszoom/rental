@@ -31,10 +31,10 @@ public class RevenueSourceServiceImpl implements RevenueSourceService {
 	}
 
 	@Override
-	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
-			Long departmentId, Long moduleId, Long recordStatusId) {
-		return revenueSourceRepository.findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
-				departmentId,moduleId,recordStatusId);
+	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
+			UUID departmentUid, UUID moduleUid, Long recordStatusId) {
+		return revenueSourceRepository.findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
+				departmentUid,moduleUid,recordStatusId);
 	}
 
 	@Override

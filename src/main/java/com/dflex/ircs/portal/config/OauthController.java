@@ -94,9 +94,9 @@ public class OauthController<R> {
 			    UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken
 						.unauthenticated(username,password);
 				authentication = authenticationManager.authenticate(authToken);
-				
+
 				if(authentication != null) {
-					
+
 					SecurityContext context = SecurityContextHolder.getContext();
 					context.setAuthentication(authentication);
 					securityContextRepository.saveContext(context, request, response);
@@ -105,8 +105,9 @@ public class OauthController<R> {
 					
 					Map<String,String> clientDetails = validateClientDetails(clientKey);
 					if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
-						
+
 						Map<String, String> codeDetails = getAuthorizationCode(session, clientDetails);
+						System.out.println("Inspection: "+clientDetails);
 						if(codeDetails.get("status").equals("302") && !codeDetails.get("code").isBlank()) {
 						
 							String authorizationCode = codeDetails.get("code");

@@ -481,11 +481,10 @@ public class InvoiceValidationApiController {
 				}else {
 
 					response.setCode("200");
-					//response.setData(invoiceDtos);
-					response.setMessage("No Invoice Has been Created.");
+					response.setData(invoiceDtos);
 					logger.info("No Invoice Data or Empty: {}", invoiceDtos); // Log no invoice data or empty
 					response.setMessage("No Invoice Has been Created.");
-					return new ResponseEntity<>(invoiceDtos, HttpStatus.OK);
+					return new ResponseEntity<>(invoiceDtos, HttpStatus.NO_CONTENT);
 				}
 
 

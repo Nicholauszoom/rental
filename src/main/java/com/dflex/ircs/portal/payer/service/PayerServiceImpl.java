@@ -23,8 +23,8 @@ public class PayerServiceImpl implements PayerService{
     @Autowired
     private ContactRepository contactRepository;
 
-    @Autowired
-    private PaymentServiceProviderRepository  paymentRepository;
+//    @Autowired
+//    private PaymentServiceProviderRepository  paymentRepository;
 
 
     @Override
@@ -58,15 +58,15 @@ public class PayerServiceImpl implements PayerService{
          return institutionRepository.findById(institutionId);
      }
 
-     @Override
-    public PaymentServiceProvider save(PaymentServiceProvider paymentServiceProvider) {
-         return paymentRepository.save(paymentServiceProvider);
-     }
-
-     @Override
-    public Optional<PaymentServiceProvider> findByProviderId(Long providerId) {
-         return paymentRepository.findById(providerId);
-     }
+//     @Override
+//    public PaymentServiceProvider save(PaymentServiceProvider paymentServiceProvider) {
+//         return paymentRepository.save(paymentServiceProvider);
+//     }
+//
+//     @Override
+//    public Optional<PaymentServiceProvider> findByProviderId(Long providerId) {
+//         return paymentRepository.findById(providerId);
+//     }
 
      @Override
     public Optional<Location> findByLocationId(Long locationId) {

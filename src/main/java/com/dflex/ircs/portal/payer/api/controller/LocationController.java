@@ -3,7 +3,7 @@ package com.dflex.ircs.portal.payer.api.controller;
 import com.dflex.ircs.portal.payer.entity.Location;
 import com.dflex.ircs.portal.payer.entity.Payer;
 import com.dflex.ircs.portal.payer.service.PayerServiceImpl;
-import com.dflex.ircs.portal.util.Response;
+import com.dflex.ircs.portal.util.CustomResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ public class LocationController {
 
     protected Logger logger = LoggerFactory.getLogger(LocationController.class);
     @PostMapping("/addLocation")
-    public ResponseEntity<Response<Location>> addLocation(
+    public ResponseEntity<CustomResponse<Location>> addLocation(
             @RequestBody Location location) {
 
         logger.info("Received request to create revenue source: {}", location);
-        Response<Location> response = new Response<>();
+        CustomResponse<Location> response = new CustomResponse<>();
 
         try {
             Location locationAdded = service.save(location);
@@ -54,10 +54,10 @@ public class LocationController {
     }
 
     @GetMapping("/findLocation/{id}")
-    public ResponseEntity<Response<Location>> getLocationById(@PathVariable Long id) {
+    public ResponseEntity<CustomResponse<Location>> getLocationById(@PathVariable Long id) {
 
         logger.info("Received request to create revenue source: {}", id);
-        Response<Location> response = new Response<>();
+        CustomResponse<Location> response = new CustomResponse<>();
 
         try {
             Optional<Location> getLocation = service.findByLocationId(id);
@@ -85,9 +85,9 @@ public class LocationController {
     }
 
     @GetMapping("/getLocationAll")
-    public ResponseEntity<Response<Location>> getLocationAll() {
+    public ResponseEntity<CustomResponse<Location>> getLocationAll() {
 
-        Response<Location> response = new Response<>();
+        CustomResponse<Location> response = new CustomResponse<>();
 
         try {
               Location getLocation = service.findAllLocation();

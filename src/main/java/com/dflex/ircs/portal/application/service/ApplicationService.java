@@ -1,4 +1,4 @@
-package com.dflex.ircs.portal.application.service;
+/**package com.dflex.ircs.portal.application.service;
 
 import com.dflex.ircs.portal.application.entity.Application;
 import com.dflex.ircs.portal.application.entity.ApplicationDetails;
@@ -18,3 +18,4 @@ public interface ApplicationService {
 
     Optional<ApprovalWorkFlowItem> workFlowItemFindByID(Long id);
 }
+**/

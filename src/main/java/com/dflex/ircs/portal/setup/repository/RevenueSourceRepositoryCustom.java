@@ -10,7 +10,7 @@ public interface RevenueSourceRepositoryCustom {
 	public List<RevenueSourceDetailsDto> findDetailsByServiceInstitutionUidAndAppModuleUidAndRecordStatusId(
 			UUID serviceInstitutionUid, UUID appModuleUid, Long recordStatusId);
 
-	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
-			Long departmentId, Long moduleId, Long recordStatusId);
+	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
+			UUID departmentUid, UUID moduleUid, Long recordStatusId);
 
 }

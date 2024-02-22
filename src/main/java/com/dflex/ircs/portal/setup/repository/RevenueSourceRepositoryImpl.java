@@ -84,8 +84,8 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 	}
 
 	@Override
-	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
-			Long departmentId, Long moduleId, Long recordStatusId) {
+	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
+			UUID departmentUid, UUID moduleUid, Long recordStatusId) {
 		List<RevenueSourceDetailsDto> revenueSources = null;
 
 		String sqlQuery = "select r.id,r.revenue_source_uid,r.is_fixed_amount,r.fixed_amount,app_module_uid, "
@@ -99,12 +99,12 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 				+ "left join tab_revenue_source_work_flow w on r.id = w.revenue_source_id "
 				+ "join tab_work_flow f on f.id = w.work_flow_id "
 				+ "join tab_app_form a on a.id = w.app_form_id "
-				+ "where d.id =:departmentId "
-				+ "and m.app_module_uid =:moduleId "
+				+ "where d.service_department_uid =:departmentUid "
+				+ "and m.app_module_uid =:moduleUid "
 				+ "and r.record_status_id =:recordStatusId";
 		Query q = entityManager.createNativeQuery(sqlQuery);
-		q.setParameter("departmentId", departmentId);
-		q.setParameter("moduleId", moduleId);
+		q.setParameter("departmentUid", departmentUid);
+		q.setParameter("moduleUid", moduleUid);
 		q.setParameter("recordStatusId", recordStatusId);
 		
 		

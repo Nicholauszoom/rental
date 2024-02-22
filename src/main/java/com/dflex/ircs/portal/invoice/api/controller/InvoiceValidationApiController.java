@@ -3,31 +3,42 @@ package com.dflex.ircs.portal.invoice.api.controller;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import com.dflex.ircs.portal.invoice.api.dto.*;
-import com.dflex.ircs.portal.revenue.api.controller.RevenueSourceController;
-import com.dflex.ircs.portal.revenue.api.dto.RevenueSourceDTO;
-import com.dflex.ircs.portal.util.Response;
-import jakarta.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.dflex.ircs.portal.auth.dto.ClientDetailsDto;
+import com.dflex.ircs.portal.auth.dto.CommunicationApiDetailsDto;
+import com.dflex.ircs.portal.auth.service.CommunicationApiService;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiReqDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiResDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiReqBodyDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiReqDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResBodyDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResDetailDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResDetailsDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResHeaderDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResServiceDto;
+import com.dflex.ircs.portal.invoice.api.dto.InvoiceValidationApiResServicesDto;
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 import com.dflex.ircs.portal.invoice.entity.InvoiceItem;
 import com.dflex.ircs.portal.invoice.service.InvoiceItemService;
 import com.dflex.ircs.portal.invoice.service.InvoiceService;
-import com.dflex.ircs.portal.setup.dto.ClientDetailsDto;
-import com.dflex.ircs.portal.setup.dto.CommunicationApiDetailsDto;
-import com.dflex.ircs.portal.setup.service.CommunicationApiService;
 import com.dflex.ircs.portal.setup.service.OtherServiceInstitutionService;
 import com.dflex.ircs.portal.setup.service.ServiceInstitutionService;
 import com.dflex.ircs.portal.util.Constants;
@@ -36,6 +47,7 @@ import com.dflex.ircs.portal.util.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 /**
@@ -463,14 +475,14 @@ public class InvoiceValidationApiController {
          */
 
 
-		@GetMapping(value = "/InvoiceAll")
+/**		@GetMapping(value = "/InvoiceAll")
 		public ResponseEntity<List<InvoiceDto>> getAllInvoices() {
 			Response<List<InvoiceDto>> response = new Response<>();
 			try {
 				List<Invoice> invoices = invoiceService.findAll();
 
 				List<InvoiceDto> invoiceDtos = invoices.stream()
-						.map(invoice -> new InvoiceDto(/* pass relevant fields from 'invoice' */))
+						.map(invoice -> new InvoiceDto())//pass relevant fields from 'invoice'
 						.collect(Collectors.toList());
                 if(invoiceDtos != null && invoiceDtos.size() != 0){
 					response.setData(invoiceDtos);
@@ -503,7 +515,7 @@ public class InvoiceValidationApiController {
 	 *
 	 * @return id
 	 */
-	@GetMapping(value = "/InvoiceById/{id}")
+/**	@GetMapping(value = "/InvoiceById/{id}")
 	public ResponseEntity<Response<InvoiceDto>> getInvoiceById(@PathVariable("id") Long id) {
 		Response<InvoiceDto> response = new Response<>();
 
@@ -527,6 +539,8 @@ public class InvoiceValidationApiController {
 			response.setCode("500");
 			response.setMessage("Failed to retrieve invoice by ID");
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		}
 	}
 
@@ -535,7 +549,7 @@ public class InvoiceValidationApiController {
 	 *
 	 * @return id
 	 */
-	@DeleteMapping(value = "/invoiceById/{id}")
+/**	@DeleteMapping(value = "/invoiceById/{id}")
 	public ResponseEntity<Response<Void>> deleteInvoiceById(@PathVariable("id") Long id) {
 		Response<Void> response = new Response<>();
 		try {
@@ -550,5 +564,5 @@ public class InvoiceValidationApiController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+**/
 }

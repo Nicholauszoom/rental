@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import com.dflex.ircs.portal.setup.entity.ServiceTypeSource;
+import com.dflex.ircs.portal.setup.entity.RevenueSource;
 import com.dflex.ircs.portal.util.CommonEntity;
 
 import jakarta.persistence.Column;
@@ -61,8 +61,8 @@ public class PaidInvoiceItem extends CommonEntity implements Serializable {
 	private String serviceTypeCode;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "service_type_source_id", nullable = false)
-	private ServiceTypeSource serviceTypeSource;
+	@JoinColumn(name = "revenue_source_id", nullable = false)
+	private RevenueSource revenueSource;
 
 	@Column(name = "service_reference", length = 200, nullable = true)
 	private String serviceReference;

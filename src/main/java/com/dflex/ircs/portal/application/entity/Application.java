@@ -1,4 +1,4 @@
-package com.dflex.ircs.portal.application.entity;
+/**package com.dflex.ircs.portal.application.entity;
 
 import com.dflex.ircs.portal.payer.entity.Payer;
 import com.dflex.ircs.portal.revenue.entity.SubRevenueResource;
@@ -60,3 +60,4 @@ public class Application implements Serializable {
     private Date updatedAt;
 
 }
+**/

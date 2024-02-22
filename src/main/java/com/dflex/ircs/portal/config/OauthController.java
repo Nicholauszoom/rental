@@ -46,7 +46,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-public class OauthController<R> {
+public class OauthController {
 	
 	@Autowired
 	private Utils util;
@@ -69,10 +69,8 @@ public class OauthController<R> {
 
 	/**
 	 * Authorize Resource Owner and Client Details
-	 * @param authentication
 	 * @param request
 	 * @param response
-	 * @param OauthDetails
 	 * @return String
 	 */
 	@PostMapping("/api/authorize")
@@ -83,7 +81,9 @@ public class OauthController<R> {
 			
 			final String authorization = request.getHeader("Authorization")!=null?request.getHeader("Authorization"):request.getHeader("authorization");
 			final String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("clientKey"):request.getHeader("clientkey");
-			if (authorization != null && authorization.toLowerCase().startsWith("basic") && !util.isNullOrEmpty(clientKey)) {
+			final String clientId = request.getHeader("ClientId")!=null?request.getHeader("clientId"):request.getHeader("clientid");
+			if (authorization != null && authorization.toLowerCase().startsWith("basic") && !util.isNullOrEmpty(clientKey)
+					&& !util.isNullOrEmpty(clientId)) {
 			    
 			    String base64Credentials = authorization.substring("Basic".length()).trim();
 			    byte[] credDecoded = Base64.decodeBase64(base64Credentials);
@@ -102,10 +102,22 @@ public class OauthController<R> {
 					securityContextRepository.saveContext(context, request, response);
 					HttpSession session = request.getSession(true);
 					session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-					
-					Map<String,String> clientDetails = validateClientDetails(clientKey);
-					if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
 
+					String clientStatus = "";
+					String clientSecret = "";
+					if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
+						clientSecret = Constants.CLIENT_SECRET_PORTAL;
+						clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+					} else {
+						clientSecret = Constants.CLIENT_SECRET_MOBILE;
+						clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+					}
+					
+					if(clientStatus.equals(Constants.DEFAULT_SUCCESS)) {
+						
+						Map<String,String> clientDetails = new HashMap<>();
+						clientDetails.put("clientId", clientId);
+						clientDetails.put("clientSecret", clientSecret);
 						Map<String, String> codeDetails = getAuthorizationCode(session, clientDetails);
 						System.out.println("Inspection: "+clientDetails);
 						if(codeDetails.get("status").equals("302") && !codeDetails.get("code").isBlank()) {
@@ -122,14 +134,14 @@ public class OauthController<R> {
 								message = messageSource.getMessage("message.1001",null, currentLocale);
 								status = messageSource.getMessage("code.1001",null, currentLocale);
 								isError  = false;
-								Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
+								Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
 								return ResponseEntity.status(HttpStatus.OK).body(res);
 								
 							} else {
 								message = messageSource.getMessage("message.1065",null, currentLocale);
 								status = messageSource.getMessage("code.1065",null, currentLocale);
 								isError  = true;
-								Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+								Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 						        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 						        
 							}
@@ -137,28 +149,28 @@ public class OauthController<R> {
 							message = messageSource.getMessage("message.1065",null, currentLocale);
 							status = messageSource.getMessage("code.1065",null, currentLocale);
 							isError  = true;
-							Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+							Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 					        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 						}
 					} else {
 						message = messageSource.getMessage("message.1064",null, currentLocale);
 						status = messageSource.getMessage("code.1064",null, currentLocale);
 						isError  = true;
-						Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+						Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 				        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 					}
 				} else {
 					message = messageSource.getMessage("message.1064",null, currentLocale);
 					status = messageSource.getMessage("code.1064",null, currentLocale);
 					isError  = true;
-					Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+					Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 			        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 				}
 			} else {
 				message = messageSource.getMessage("message.1064",null, currentLocale);
 				status = messageSource.getMessage("code.1064",null, currentLocale);
 				isError  = true;
-				Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+				Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 			}
 		} catch (BadCredentialsException ex) {
@@ -166,17 +178,15 @@ public class OauthController<R> {
 			message = messageSource.getMessage("message.1064",null, currentLocale);
 			status = messageSource.getMessage("code.1064",null, currentLocale);
 			isError  = true;
-			Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		
 		} catch (DisabledException ex) {
 			ex.printStackTrace();
 			message = messageSource.getMessage("message.1064",null, currentLocale);
 			status = messageSource.getMessage("code.1064",null, currentLocale);
-			//message = messageSource.getMessage("message.1022",null, currentLocale);
-			//status = messageSource.getMessage("code.1022",null, currentLocale);
 			isError  = true;
-			Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		
 		} catch (Exception ex) {
@@ -184,7 +194,7 @@ public class OauthController<R> {
 			message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
-			Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		}
 		
@@ -193,7 +203,6 @@ public class OauthController<R> {
 	/**
 	 * Get Authorization Code
 	 * @param session
-	 * @param oauthDetails
 	 * @return Map<String, String>
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -244,8 +253,6 @@ public class OauthController<R> {
 	
 	/**
 	 * Get Outh2 Token
-	 * @param oauthDetails
-	 * @param clientId
 	 * @param authorizationCode
 	 * @param codeVerifier
 	 * @param sessionId
@@ -304,26 +311,32 @@ public class OauthController<R> {
 	
 	/**
 	 * Authorize Resource Owner and Client Details
-	 * @param authentication
 	 * @param request
 	 * @param response
-	 * @param OauthDetails
 	 * @return String
 	 */
 	@PostMapping("/api/token")
     public ResponseEntity<?> getAuthorizationToken(HttpServletRequest request, HttpServletResponse response) {
 		
-		Response<R> res = null;
+		Response res = null;
 		try {
 			
 			String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("ClientKey"):request.getHeader("clientkey");
-			if (!util.isNullOrEmpty(clientKey)) {
+			String clientId = request.getHeader("ClientId")!=null?request.getHeader("ClientId"):request.getHeader("clientid");
+			if (!util.isNullOrEmpty(clientKey) && !util.isNullOrEmpty(clientId)) {
 				
-				Map<String,String> clientDetails = validateClientDetails(clientKey);
-				if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
+				String clientStatus = "";
+				String clientSecret = "";
+				if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
+					clientSecret = Constants.CLIENT_SECRET_PORTAL;
+					clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+				} else {
+					clientSecret = Constants.CLIENT_SECRET_MOBILE;
+					clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+				}
+				
+				if(clientStatus.equals(Constants.DEFAULT_SUCCESS)) {
 					
-					String clientId = clientDetails.get("clientId");
-					String clientSecret = clientDetails.get("clientSecret");
 					String grantType = "client_credentials";
 					
 					URL obj = new URL(oauthServer+Constants.OAUTH2_ACCESS_TOKEN_URL);
@@ -369,28 +382,28 @@ public class OauthController<R> {
 						message = messageSource.getMessage("message.1001",null, currentLocale);
 						status = messageSource.getMessage("code.1001",null, currentLocale);
 						isError  = false;
-						res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
+						res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,token,request.getRequestURI());
 						return ResponseEntity.status(HttpStatus.OK).body(res);
 						
 					} else {
 						message = messageSource.getMessage("message.1065",null, currentLocale);
 						status = messageSource.getMessage("code.1065",null, currentLocale);
 						isError  = true;
-						res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+						res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 						return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 					}
 				} else {
 					message = messageSource.getMessage("message.1064",null, currentLocale);
 					status = messageSource.getMessage("code.1064",null, currentLocale);
 					isError  = true;
-					res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+					res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 					return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 				}
 			} else {
 				message = messageSource.getMessage("message.1005",null, currentLocale);
 				status = messageSource.getMessage("code.1005",null, currentLocale);
 				isError  = true;
-				res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+				res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 			}
 		} catch (Exception ex) {
@@ -398,7 +411,7 @@ public class OauthController<R> {
 			message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			isError  = true;
-			res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+			res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
 		}
 		 		
@@ -407,41 +420,27 @@ public class OauthController<R> {
 	/**
 	 * Validate Authorization client details
 	 * @param clientKey
-	 * @return Map<String,String>
+	 * @return String
 	 */
-	private Map<String,String> validateClientDetails(String clientKey){
+	private String validateClientDetails(String clientKey,String clientId,String clientSecret){
 		
-		Map<String,String> clientDetails = new HashMap<>();
-		
-		Calendar calendar = Calendar.getInstance();
-		Integer dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-		Integer hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-		System.out.println("dayOfYear*********"+dayOfYear);
-		System.out.println("hourOfDay*********"+hourOfDay);
-		String time = String.valueOf(dayOfYear)+String.valueOf(hourOfDay);
-		String data = Constants.CLIENT_ID_PORTAL+Constants.CLIENT_SECRET_PORTAL+time;
+		String data = clientId+clientSecret;
 		System.out.println("data*********"+data);
-		String hashData= util.generateHexHMacHash(Constants.CLIENT_SECRET_PORTAL, data);
+		String hashData= util.generateHexHMacHash(clientSecret, data);
 		System.out.println("hashData*********"+hashData);
 		if(hashData.equals(clientKey)) {
-			
-			clientDetails.put("clientId", Constants.CLIENT_ID_PORTAL);
-			clientDetails.put("clientSecret", Constants.CLIENT_SECRET_PORTAL);
-			clientDetails.put("status", Constants.DEFAULT_SUCCESS);
-			
+			return Constants.DEFAULT_SUCCESS;
 		} else {
-			clientDetails.put("status", Constants.DEFAULT_FAILURE);
+			return Constants.DEFAULT_FAILURE;
 		}
-		
-		return clientDetails;
 	}
 	
 	@GetMapping({"/error",""})
-	public ResponseEntity<Response<R>>  requireFullAuthentication(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<Response>  requireFullAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		message = messageSource.getMessage("message.1004",null, currentLocale);
 		status = messageSource.getMessage("code.1004",null, currentLocale);
 		isError  = true;
-		Response<R> res = new Response<R>(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
+		Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
 	}
 	

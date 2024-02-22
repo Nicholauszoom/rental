@@ -1,4 +1,4 @@
-package com.dflex.ircs.portal.application.entity;
-
-public class workFlowAction {
-}
+//package com.dflex.ircs.portal.application.entity;
+//
+//public class workFlowAction {
+//}

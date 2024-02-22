@@ -2,7 +2,7 @@ package com.dflex.ircs.portal.payer.api.controller;
 
 import com.dflex.ircs.portal.payer.entity.Contact;
 import com.dflex.ircs.portal.payer.service.PayerServiceImpl;
-import com.dflex.ircs.portal.util.Response;
+import com.dflex.ircs.portal.util.CustomResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ public class ContactController {
 
     protected Logger logger = LoggerFactory.getLogger(ContactController.class);
     @PostMapping("/addContact")
-    public ResponseEntity<Response<Contact>> addContact(
+    public ResponseEntity<CustomResponse<Contact>> addContact(
             @RequestBody Contact contact) {
 
         logger.info("Received request to create revenue source: {}", contact);
-        Response<Contact> response = new Response<>();
+        CustomResponse<Contact> response = new CustomResponse<>();
 
         try {
             Contact contactAdded = service.save(contact);

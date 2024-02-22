@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dflex.ircs.portal.setup.dto.ClientDetailsDto;
+import com.dflex.ircs.portal.auth.dto.ClientDetailsDto;
 import com.dflex.ircs.portal.setup.entity.ServiceInstitution;
 import com.dflex.ircs.portal.setup.repository.ServiceInstitutionRepository;
 import com.dflex.ircs.portal.util.Constants;

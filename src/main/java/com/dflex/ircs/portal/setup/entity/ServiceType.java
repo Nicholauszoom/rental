@@ -1,6 +1,7 @@
 package com.dflex.ircs.portal.setup.entity;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -52,7 +53,8 @@ public class ServiceType extends CommonEntity implements Serializable {
 	@UuidGenerator
 	@Column(name="service_type_uid",nullable = false)
 	private UUID serviceTypeUid;
-	
+
+
 	@PrePersist
     protected void onCreate() {
         setServiceTypeUid(java.util.UUID.randomUUID());
@@ -75,4 +77,20 @@ public class ServiceType extends CommonEntity implements Serializable {
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
+
+
+	public ServiceType(UUID createdBy, String createdByUserName, String serviceTypeCode, Integer serviceTypeLevel,
+					   String serviceTypeUid, String serviceTypeName, Long recordStatusId, ServiceType parentServiceTypeId) {
+		super(createdBy, createdByUserName);
+		this.serviceTypeUid = UUID.fromString(serviceTypeUid);
+		this.serviceTypeCode = serviceTypeCode;
+		this.serviceTypeName = serviceTypeName;
+		this.parentServiceType = parentServiceTypeId;
+		this.serviceTypeLevel = serviceTypeLevel;
+		this.recordStatusId = recordStatusId;
+
+	}
+
+
+
 }

@@ -140,26 +140,47 @@ public class ServiceTypeController {
     
     @PostMapping("/update/servicetype")
     public ResponseEntity<?> updateServiceType(@RequestBody ServiceTypeDto serviceType,JwtAuthenticationToken auth, HttpServletRequest request) {
-    	
-    	List<ServiceTypeDto> serviceTypes = null;
     	try {
-    		
+    		if(serviceType != null){
+				Optional<ServiceType> service = serviceTypeService.findById(serviceType.getId());
+				AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+				if(service.isPresent()){
+					ServiceType existingServiceType = service.get();
+					existingServiceType.setServiceTypeUid(UUID.fromString(serviceType.getServiceTypeUid()));
+					existingServiceType.setServiceTypeCode(serviceType.getServiceTypeCode());
+					existingServiceType.setServiceTypeName(serviceType.getServiceTypeName());
+					existingServiceType.setServiceTypeLevel(serviceType.getServiceTypeLevel());
+					existingServiceType.setRecordStatusId(serviceType.getRecordStatusId());
+					authDetails.getUserName();
+					authDetails.getUserId();
+					ServiceType updatedServiceType = serviceTypeService.saveServiceType(existingServiceType);
 
-    		
-    		message = messageSource.getMessage("message.1001",null, currentLocale);
-			status = messageSource.getMessage("code.1001",null, currentLocale);
-			error  = true;
-			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,serviceTypes,request.getRequestURI());
-			return ResponseEntity.status(HttpStatus.OK).body(response);
+
+					message = messageSource.getMessage("message.1001",null, currentLocale);
+					status = messageSource.getMessage("code.1001",null, currentLocale);
+					error  = true;
+					Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,updatedServiceType,request.getRequestURI());
+					return ResponseEntity.status(HttpStatus.OK).body(response);
+				}else{
+					message = messageSource.getMessage("message.1007",null, currentLocale);
+					status = messageSource.getMessage("code.1007",null, currentLocale);
+					error  = true;
+				}
+			}else {
+				message = messageSource.getMessage("message.1005",null, currentLocale);
+				status = messageSource.getMessage("code.1005",null, currentLocale);
+				error  = true;
+			}
+
     	} catch (Exception ex) {
-    		
     		message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			error  = true;
 			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
     	}
-        
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

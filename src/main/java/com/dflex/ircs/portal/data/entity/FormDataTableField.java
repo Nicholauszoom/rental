@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
  * 
  * @author Augustino Mwageni
  *
- *         Entity class for database table tab_app_form_data_table_field
+ *         Entity class for database table tab_form_data_table_field
  *
  */
 
@@ -36,25 +36,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 @Entity
-@Table(name = "tab_app_form_data_table_field")
-public class AppFormDataTableField extends CommonEntity implements Serializable {
+@Table(name = "tab_form_data_table_field")
+public class FormDataTableField extends CommonEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_form_data_table_field_id_generator")
-	@SequenceGenerator(name = "app_form_data_table_field_id_generator", sequenceName = "seq_app_form_data_table_field", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "form_data_table_field_id_generator")
+	@SequenceGenerator(name = "form_data_table_field_id_generator", sequenceName = "seq_form_data_table_field", initialValue = 1, allocationSize = 1)
 	@Column(name = "id", nullable = false, precision = 11)
 	private Long id;
 	
 	@GeneratedValue
 	@UuidGenerator
-	@Column(name="app_form_data_table_field_uid",nullable = false)
-	private UUID appFormDataTableFieldUid;
+	@Column(name="form_data_table_field_uid",nullable = false)
+	private UUID formDataTableFieldUid;
 	
 	@PrePersist
     protected void onCreate() {
-        setAppFormDataTableFieldUid(java.util.UUID.randomUUID());
+        setFormDataTableFieldUid(java.util.UUID.randomUUID());
     }
 
 	@Column(name = "data_table_field_name", length = 100, nullable = false)
@@ -67,7 +67,7 @@ public class AppFormDataTableField extends CommonEntity implements Serializable 
 	private Long recordStatusId = 1L;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "app_form_data_table_id", nullable = false)
-	private AppFormDataTable appFormDataTable;
+	@JoinColumn(name = "form_data_table_id", nullable = false)
+	private FormDataTable formDataTable;
 	
 }

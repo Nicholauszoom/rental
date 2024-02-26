@@ -57,6 +57,9 @@ public class RevenueSource extends CommonEntity implements Serializable {
 		setRevenueSourceUid(java.util.UUID.randomUUID());
 	}
 
+	@Column(name = "is_default_revenue_source")
+	private Boolean isDefaultRevenueSource;
+	
 	@Column(name = "is_fixed_amount")
 	private Boolean isFixedAmount;
 
@@ -69,8 +72,8 @@ public class RevenueSource extends CommonEntity implements Serializable {
 	@Column(name = "app_module_id", nullable = false)
 	private Long appModuleId;
 	
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_department", nullable = false)
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "service_department_id", nullable = true)
 	private ServiceDepartment serviceDepartment;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)

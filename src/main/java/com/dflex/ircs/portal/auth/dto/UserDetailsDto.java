@@ -3,7 +3,6 @@ package com.dflex.ircs.portal.auth.dto;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,10 +74,16 @@ public class UserDetailsDto implements Serializable{
 
 	private Set<RoleDetailsDto> roleDetails;
 	
-	private String institutionUId;
+	private String institutionUid;
 	
 	private String institutionCode;
 	
 	private String institutionName;
+	
+	private String departmentUid;
+	
+	private String departmentCode;
+	
+	private String departmentName;
 
 }

@@ -63,6 +63,9 @@ public class ServiceType extends CommonEntity implements Serializable {
 
 	@Column(name = "service_type_name", nullable = false, length = 100)
 	private String serviceTypeName;
+	
+	@Column(name = "service_type_display_text", nullable = true, length = 50)
+	private String serviceTypeDisplayText;
 
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "parent_service_type_id", nullable = true)

@@ -119,9 +119,11 @@ public class ServiceTypeController {
 			if(serviceTypeDto != null){
 				
 				AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-				if((serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_2)
+				ServiceType oldServiceType = serviceTypeService.findByServiceTypeCodeAndRecordStatusId(serviceTypeDto.getServiceTypeCode(),
+						Constants.RECORD_STATUS_ACTIVE);
+				if(oldServiceType == null && ((serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_2)
 						&& serviceTypeDto.getParentServiceTypeId() != null)
-						|| serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_1)) {
+						|| serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_1))) {
 					
 					Optional<ServiceType> parentServiceType = serviceTypeService.findById(serviceTypeDto.getParentServiceTypeId());
 					if (parentServiceType.isPresent() || serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_1)) {

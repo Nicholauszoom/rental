@@ -2,6 +2,7 @@ package com.dflex.ircs.portal.module.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,8 @@ public class AppFormFieldServiceImpl implements AppFormFieldService {
 	}
 
 	@Override
-	public List<AppFormField> findByAppFormIdAndRecordStatusId(Long appFormId,Long recordStatusId) {
-		return appFormFieldRepository.findByAppFormIdAndRecordStatusId(appFormId,recordStatusId);
+	public List<AppFormField> findByAppFormUidAndRecordStatusId(UUID appFormUid,Long recordStatusId){
+		return appFormFieldRepository.findByAppFormUidAndRecordStatusId(appFormUid,recordStatusId);
 	}
 
 }

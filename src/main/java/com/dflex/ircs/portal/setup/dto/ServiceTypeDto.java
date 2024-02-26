@@ -23,7 +23,7 @@ public class ServiceTypeDto implements Serializable {
 
 	private String serviceTypeName;
 
-	private Long parent_service_type_id;
+	private Long parentServiceTypeId;
 	
 	private Integer serviceTypeLevel;
 	

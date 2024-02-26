@@ -1,12 +1,10 @@
 package com.dflex.ircs.portal.setup.entity;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import com.dflex.ircs.portal.module.entity.AppForm;
 import com.dflex.ircs.portal.util.CommonEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -83,17 +81,13 @@ public class ServiceType extends CommonEntity implements Serializable {
 
 
 	public ServiceType(UUID createdBy, String createdByUserName, String serviceTypeCode, Integer serviceTypeLevel,
-					   String serviceTypeUid, String serviceTypeName, Long recordStatusId, ServiceType parentServiceTypeId) {
+					   String serviceTypeName, Long recordStatusId, ServiceType parentServiceTypeId) {
 		super(createdBy, createdByUserName);
-		this.serviceTypeUid = UUID.fromString(serviceTypeUid);
 		this.serviceTypeCode = serviceTypeCode;
 		this.serviceTypeName = serviceTypeName;
 		this.parentServiceType = parentServiceTypeId;
 		this.serviceTypeLevel = serviceTypeLevel;
 		this.recordStatusId = recordStatusId;
-
 	}
-
-
 
 }

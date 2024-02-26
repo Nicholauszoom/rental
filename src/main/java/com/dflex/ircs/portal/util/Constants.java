@@ -85,6 +85,10 @@ public class Constants {
 	public final static Long API_CATEG_INVOICE_VALIDATION_REQ = 3L;
 	public final static Long API_CATEG_PAYMENT_VALIDATION_REQ = 5L;
 	
+	
+	//Service Type Level
+	public final static Integer SERVICE_TYPE_LEVEL_1 = 1;
+	public final static Integer SERVICE_TYPE_LEVEL_2 = 2;
 }
 
 

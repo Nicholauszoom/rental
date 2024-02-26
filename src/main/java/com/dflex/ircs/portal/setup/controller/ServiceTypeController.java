@@ -1,12 +1,11 @@
 package com.dflex.ircs.portal.setup.controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
-import com.dflex.ircs.portal.config.AuthDetailsDto;
-import com.dflex.ircs.portal.setup.entity.RevenueSourceEstimate;
-import com.dflex.ircs.portal.setup.entity.ServiceType;
-import com.dflex.ircs.portal.util.Constants;
-import com.dflex.ircs.portal.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +19,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dflex.ircs.portal.config.AuthDetailsDto;
 import com.dflex.ircs.portal.setup.dto.ServiceTypeDto;
+import com.dflex.ircs.portal.setup.entity.ServiceType;
 import com.dflex.ircs.portal.setup.service.ServiceTypeService;
+import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.Response;
+import com.dflex.ircs.portal.util.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import static org.springframework.util.ClassUtils.isPresent;
+/**
+ * 
+ * Api Controller class for ServiceType
+ *
+ */
 
 @RestController
 @RequestMapping("/api/servicetype")
@@ -49,6 +56,11 @@ public class ServiceTypeController {
 
     protected Logger logger = LoggerFactory.getLogger(ServiceTypeController.class);
 
+    /**
+     * List  Service Types
+     * @param request
+     * @return ResponseEntity
+     */
     @PostMapping("/list")
     public ResponseEntity<?> getServiceTypes(HttpServletRequest request) {
 
@@ -62,20 +74,21 @@ public class ServiceTypeController {
 					serviceTypeDto.setServiceTypeUid(service.getServiceTypeUid().toString());
 					serviceTypeDto.setServiceTypeCode(service.getServiceTypeCode());
 					serviceTypeDto.setServiceTypeName(service.getServiceTypeName());
-					serviceTypeDto.setParent_service_type_id(service.getParentServiceType().getId());
+					serviceTypeDto.setParentServiceTypeId(service.getParentServiceType().getId());
 					serviceTypeDto.setServiceTypeLevel(service.getServiceTypeLevel());
 					serviceTypeDto.setRecordStatusId(service.getRecordStatusId());
 
 					serviceTypes.add(serviceTypeDto);
+					
 				}
-			}else {
-				message = messageSource.getMessage("message.1006", null, currentLocale);
-				status = messageSource.getMessage("code.1006", null, currentLocale);
+				message = messageSource.getMessage("message.1001", null, currentLocale);
+				status = messageSource.getMessage("code.1001", null, currentLocale);
+				error = false;
+			} else {
+				message = messageSource.getMessage("message.1007", null, currentLocale);
+				status = messageSource.getMessage("code.1007", null, currentLocale);
 				error = true;
 			}
-			message = messageSource.getMessage("message.1001", null, currentLocale);
-			status = messageSource.getMessage("code.1001", null, currentLocale);
-			error = false;
 			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, serviceTypes, request.getRequestURI());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -89,31 +102,58 @@ public class ServiceTypeController {
         
     }
     
+    /**
+     * Create Service Type
+     * @param serviceTypeDto
+     * @param auth
+     * @param request
+     * @return ResponseEntity
+     */
     @PostMapping("/create/servicetype")
-    public ResponseEntity<?> createServiceType(@RequestBody ServiceTypeDto serviceType,JwtAuthenticationToken auth, HttpServletRequest request) {
+    public ResponseEntity<?> createServiceType(@RequestBody ServiceTypeDto serviceTypeDto,JwtAuthenticationToken auth,
+    		HttpServletRequest request) {
 
-    	List<ServiceTypeDto> serviceTypes = null;
+    	ServiceTypeDto service = null;
+    	
     	try {
-			if(serviceType != null){
+			if(serviceTypeDto != null){
+				
 				AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-				Optional<ServiceType> parentServiceType = serviceTypeService.findById(serviceType.getParent_service_type_id());
-				if (parentServiceType.isPresent()) {
-					ServiceType parentServiceTypeId = parentServiceType.get();
-					ServiceType newServiceType = new ServiceType( authDetails.getUserId(), authDetails.getUserName(), serviceType.getServiceTypeCode(), serviceType.getServiceTypeLevel(), serviceType.getServiceTypeUid(),
-							serviceType.getServiceTypeName(),
-							serviceType.getRecordStatusId(),
-							parentServiceTypeId
-					);
-					serviceTypes = (List<ServiceTypeDto>) serviceTypeService.saveServiceType(newServiceType);
-					if(serviceTypes != null){
-						message = messageSource.getMessage("general.create.success", new Object[] { "Revenue Source Estimate" },currentLocale);
-						status = messageSource.getMessage("code.1001", null, currentLocale);
-						error = false;
-						Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,serviceTypes,request.getRequestURI());
-						return ResponseEntity.status(HttpStatus.OK).body(response);
-					}else {
-						message = messageSource.getMessage("general.create.failure", new Object[] { "Revenue Source Estimate" },currentLocale);
-						status = messageSource.getMessage("code.1002", null, currentLocale);
+				if((serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_2)
+						&& serviceTypeDto.getParentServiceTypeId() != null)
+						|| serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_1)) {
+					
+					Optional<ServiceType> parentServiceType = serviceTypeService.findById(serviceTypeDto.getParentServiceTypeId());
+					if (parentServiceType.isPresent() || serviceTypeDto.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_1)) {
+						
+						ServiceType serviceType = new ServiceType( authDetails.getUserId(), authDetails.getUserName(), serviceTypeDto.getServiceTypeCode(),
+								serviceTypeDto.getServiceTypeLevel(), serviceTypeDto.getServiceTypeName(),serviceTypeDto.getRecordStatusId(),
+								parentServiceType.get());
+						
+						ServiceType newServiceType = serviceTypeService.saveServiceType(serviceType);
+						if(newServiceType != null) {
+							
+							if(newServiceType.getServiceTypeLevel().equals(Constants.SERVICE_TYPE_LEVEL_1)) {
+								newServiceType.setParentServiceType(newServiceType);
+								newServiceType = serviceTypeService.saveServiceType(newServiceType);
+							}
+							
+							service = new ServiceTypeDto(newServiceType.getId(),String.valueOf(newServiceType.getServiceTypeUid()),
+									newServiceType.getServiceTypeCode(),newServiceType.getServiceTypeName(),
+									newServiceType.getParentServiceType().getId(),newServiceType.getServiceTypeLevel(),
+									newServiceType.getRecordStatusId());
+							
+							message = messageSource.getMessage("general.create.success", new Object[] { "Service Type" },currentLocale);
+							status = messageSource.getMessage("code.1001", null, currentLocale);
+							error = false;
+						} else {
+							message = messageSource.getMessage("general.create.failure", new Object[] { "Service Type" },currentLocale);
+							status = messageSource.getMessage("code.1002", null, currentLocale);
+							error = true;
+						}
+					} else {
+						message = messageSource.getMessage("message.1005",null, currentLocale);
+						status = messageSource.getMessage("code.1005", null, currentLocale);
 						error = true;
 					}
 				} else {
@@ -121,65 +161,91 @@ public class ServiceTypeController {
 					status = messageSource.getMessage("code.1005", null, currentLocale);
 					error = true;
 				}
-			}else {
+			} else {
 				message = messageSource.getMessage("message.1005",null, currentLocale);
 				status = messageSource.getMessage("code.1005", null, currentLocale);
 				error = true;
 			}
-			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-			return ResponseEntity.status(HttpStatus.OK).body(response);
     	} catch (Exception ex) {
     		message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			error  = true;
-			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-			return ResponseEntity.status(HttpStatus.OK).body(response);
     	}
-
+    	Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,service,request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     
+    /**
+     * Update Service Type
+     * @param serviceType
+     * @param auth
+     * @param request
+     * @return ResponseEntity
+     */
     @PostMapping("/update/servicetype")
-    public ResponseEntity<?> updateServiceType(@RequestBody ServiceTypeDto serviceType,JwtAuthenticationToken auth, HttpServletRequest request) {
+    public ResponseEntity<?> updateServiceType(@RequestBody ServiceTypeDto serviceTypeDto,JwtAuthenticationToken auth,
+    		HttpServletRequest request) {
+    	
+    	ServiceTypeDto service = null;
     	try {
-    		if(serviceType != null){
-				Optional<ServiceType> service = serviceTypeService.findById(serviceType.getId());
+    		
+    		if(serviceTypeDto != null){
+				
+    			Optional<ServiceType> existingServiceType = serviceTypeService.findById(serviceTypeDto.getId());
 				AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-				if(service.isPresent()){
-					ServiceType existingServiceType = service.get();
-					existingServiceType.setServiceTypeUid(UUID.fromString(serviceType.getServiceTypeUid()));
-					existingServiceType.setServiceTypeCode(serviceType.getServiceTypeCode());
-					existingServiceType.setServiceTypeName(serviceType.getServiceTypeName());
-					existingServiceType.setServiceTypeLevel(serviceType.getServiceTypeLevel());
-					existingServiceType.setRecordStatusId(serviceType.getRecordStatusId());
-					authDetails.getUserName();
-					authDetails.getUserId();
-					ServiceType updatedServiceType = serviceTypeService.saveServiceType(existingServiceType);
-
-
-					message = messageSource.getMessage("message.1001",null, currentLocale);
-					status = messageSource.getMessage("code.1001",null, currentLocale);
-					error  = true;
-					Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,updatedServiceType,request.getRequestURI());
-					return ResponseEntity.status(HttpStatus.OK).body(response);
-				}else{
+				
+				if(existingServiceType.isPresent()){
+					
+					ServiceType otherServiceType = serviceTypeService.findByServiceTypeCodeAndRecordStatusId(serviceTypeDto.getServiceTypeCode()
+							, Constants.RECORD_STATUS_ACTIVE);
+					if(otherServiceType == null || otherServiceType.getId().equals(existingServiceType.get().getId())) {
+						
+						existingServiceType.get().setServiceTypeCode(serviceTypeDto.getServiceTypeCode());
+						existingServiceType.get().setServiceTypeName(serviceTypeDto.getServiceTypeName());
+						existingServiceType.get().setRecordStatusId(serviceTypeDto.getRecordStatusId());
+						existingServiceType.get().setUpdatedBy(authDetails.getUserId());
+						existingServiceType.get().setUpdatedByUserName(authDetails.getUserName());
+						if(!existingServiceType.get().getParentServiceType().getId().equals(serviceTypeDto.getId())) {
+							existingServiceType.get().setParentServiceType(serviceTypeService.findById(serviceTypeDto.getId()).get());
+						}
+						ServiceType updatedServiceType = serviceTypeService.saveServiceType(existingServiceType.get());
+						if(updatedServiceType != null) {
+							
+							service = new ServiceTypeDto(updatedServiceType.getId(),String.valueOf(updatedServiceType.getServiceTypeUid()),
+									updatedServiceType.getServiceTypeCode(),updatedServiceType.getServiceTypeName(),
+									updatedServiceType.getParentServiceType().getId(),updatedServiceType.getServiceTypeLevel(),
+									updatedServiceType.getRecordStatusId());
+							
+							message = messageSource.getMessage("general.update.success", new Object[] { "Service Type" },currentLocale);
+							status = messageSource.getMessage("code.1001", null, currentLocale);
+							error = false;
+							
+						} else {
+							message = messageSource.getMessage("general.update.failure", new Object[] { "Service Type" },currentLocale);
+							status = messageSource.getMessage("code.1001", null, currentLocale);
+							error = true;
+						}
+					} else {
+						message = messageSource.getMessage("message.1005",null, currentLocale);
+						status = messageSource.getMessage("code.1005",null, currentLocale);
+						error  = true;
+					}
+				} else {
 					message = messageSource.getMessage("message.1007",null, currentLocale);
 					status = messageSource.getMessage("code.1007",null, currentLocale);
 					error  = true;
 				}
-			}else {
+			} else {
 				message = messageSource.getMessage("message.1005",null, currentLocale);
 				status = messageSource.getMessage("code.1005",null, currentLocale);
 				error  = true;
 			}
-
     	} catch (Exception ex) {
     		message = messageSource.getMessage("message.1004",null, currentLocale);
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			error  = true;
-			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-			return ResponseEntity.status(HttpStatus.OK).body(response);
     	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, service, request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -69,10 +69,8 @@ public class OauthController {
 
 	/**
 	 * Authorize Resource Owner and Client Details
-	 * @param authentication
 	 * @param request
 	 * @param response
-	 * @param OauthDetails
 	 * @return String
 	 */
 	@PostMapping("/api/authorize")
@@ -96,15 +94,15 @@ public class OauthController {
 			    UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken
 						.unauthenticated(username,password);
 				authentication = authenticationManager.authenticate(authToken);
-				
+
 				if(authentication != null) {
-					
+
 					SecurityContext context = SecurityContextHolder.getContext();
 					context.setAuthentication(authentication);
 					securityContextRepository.saveContext(context, request, response);
 					HttpSession session = request.getSession(true);
 					session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-					
+
 					String clientStatus = "";
 					String clientSecret = "";
 					if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
@@ -120,8 +118,8 @@ public class OauthController {
 						Map<String,String> clientDetails = new HashMap<>();
 						clientDetails.put("clientId", clientId);
 						clientDetails.put("clientSecret", clientSecret);
-						
 						Map<String, String> codeDetails = getAuthorizationCode(session, clientDetails);
+						System.out.println("Inspection: "+clientDetails);
 						if(codeDetails.get("status").equals("302") && !codeDetails.get("code").isBlank()) {
 						
 							String authorizationCode = codeDetails.get("code");
@@ -205,7 +203,6 @@ public class OauthController {
 	/**
 	 * Get Authorization Code
 	 * @param session
-	 * @param oauthDetails
 	 * @return Map<String, String>
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -256,8 +253,6 @@ public class OauthController {
 	
 	/**
 	 * Get Outh2 Token
-	 * @param oauthDetails
-	 * @param clientId
 	 * @param authorizationCode
 	 * @param codeVerifier
 	 * @param sessionId
@@ -316,10 +311,8 @@ public class OauthController {
 	
 	/**
 	 * Authorize Resource Owner and Client Details
-	 * @param authentication
 	 * @param request
 	 * @param response
-	 * @param OauthDetails
 	 * @return String
 	 */
 	@PostMapping("/api/token")

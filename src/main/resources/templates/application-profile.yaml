@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://{origin}}/{db}}?currentSchema={schema}}
+    username:
+    password:

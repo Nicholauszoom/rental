@@ -141,7 +141,7 @@ public class InvoiceValidationApiController {
 					clientCode = requestHeaders.get("clientcode");
 					
 					// Validate Incoming Request Schema
-					InputStream requestXsdSchema = getClass().getResourceAsStream("/xsd-templates/InvoiceValidationV1.xsd");
+					InputStream requestXsdSchema = getClass().getResourceAsStream("/templates/xsd-templates/InvoiceValidationV1.xsd");
 					Map<String,String> schemaValidationResult = utils.validateRequestXMLSchema(requestXsdSchema, requestContent);
 					if (schemaValidationResult.get("code").equals("1001")) {
 						

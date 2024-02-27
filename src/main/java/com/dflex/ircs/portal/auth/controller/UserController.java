@@ -284,6 +284,12 @@ public class UserController {
 			userDetails.setAccountNonExpired(user.get().getIsAccountNonExpired()==null?false:user.get().getIsAccountNonExpired());
 			userDetails.setCredentialsNonExpired(user.get().getIsCredentialsNonExpired()==null?false:user.get().getIsCredentialsNonExpired());
 			userDetails.setAccountNonLocked(user.get().getIsAccountNonLocked()==null?false:user.get().getIsAccountNonLocked());
+			userDetails.setInstitutionCode(user.get().getServiceDepartment().getServiceInstitution().getInstitutionCode());
+			userDetails.setInstitutionName(user.get().getServiceDepartment().getServiceInstitution().getInstitutionName());
+			userDetails.setInstitutionUid(String.valueOf(user.get().getServiceDepartment().getServiceInstitution().getServiceInstitutionUid()));
+			userDetails.setDepartmentCode(user.get().getServiceDepartment().getDepartmentCode());
+			userDetails.setDepartmentName(user.get().getServiceDepartment().getDepartmentName());
+			userDetails.setDepartmentUid(String.valueOf(user.get().getServiceDepartment().getServiceDepartmentUid()));
 			
 			if (user.get().getRole() != null && !user.get().getRole().isEmpty()) {
 
@@ -365,6 +371,12 @@ public class UserController {
 					user.get().getIsCredentialsNonExpired() == null ? false : user.get().getIsCredentialsNonExpired());
 			userDetails.setAccountNonLocked(
 					user.get().getIsAccountNonLocked() == null ? false : user.get().getIsAccountNonLocked());
+			userDetails.setInstitutionCode(user.get().getServiceDepartment().getServiceInstitution().getInstitutionCode());
+			userDetails.setInstitutionName(user.get().getServiceDepartment().getServiceInstitution().getInstitutionName());
+			userDetails.setInstitutionUid(String.valueOf(user.get().getServiceDepartment().getServiceInstitution().getServiceInstitutionUid()));
+			userDetails.setDepartmentCode(user.get().getServiceDepartment().getDepartmentCode());
+			userDetails.setDepartmentName(user.get().getServiceDepartment().getDepartmentName());
+			userDetails.setDepartmentUid(String.valueOf(user.get().getServiceDepartment().getServiceDepartmentUid()));
 
 			if (user.get().getRole() != null && !user.get().getRole().isEmpty()) {
 

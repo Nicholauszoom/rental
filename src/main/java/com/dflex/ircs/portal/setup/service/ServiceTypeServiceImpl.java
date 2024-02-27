@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.setup.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,4 +35,6 @@ public class ServiceTypeServiceImpl implements ServiceTypeService{
 	public ServiceType findByServiceTypeCodeAndRecordStatusId(String serviceTypeCode,Long statusId) {
 		return serviceTypeRepository.findByServiceTypeCodeAndRecordStatusId(serviceTypeCode,statusId);
 	}
+	@Override
+	public List<ServiceType> findAll(){return serviceTypeRepository.findAll();}
 }

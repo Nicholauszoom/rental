@@ -3,6 +3,7 @@ package com.dflex.ircs.portal.setup.controller;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,28 +42,39 @@ public class RevenueSourceController {
 
     protected Logger logger = LoggerFactory.getLogger(RevenueSourceController.class);
 
-    @PostMapping("/department/{departmentid}/module/{moduleid}")
-    public ResponseEntity<?> getInstitutionDepartmentRevenueSourcesByDepartmentIdAndModuleId(
-    		@PathVariable("departmentid") Long departmentId,@PathVariable("moduleid") Long moduleId,
+    @PostMapping("/department/{departmentuid}/module/{moduleuid}")
+    public ResponseEntity<?> getInstitutionDepartmentRevenueSourcesByDepartmentUidAndModuleUid(
+    		@PathVariable("departmentuid") String departmentUid,@PathVariable("moduleuid") String moduleUid,
     		HttpServletRequest request) {
-
-        List<RevenueSourceDetailsDto> revenueSources = revenueSourceService.findDetailsByServiceDepartmentIdAndAppModuleIdAndRecordStatusId(
-        		departmentId, moduleId, Constants.RECORD_STATUS_ACTIVE);
-		if(revenueSources != null && !revenueSources.isEmpty()) {
-			
-			message = messageSource.getMessage("message.1001",null, currentLocale);
-			status = messageSource.getMessage("code.1001",null, currentLocale);
-			error  = false;
-			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,revenueSources,request.getRequestURI());
-			return ResponseEntity.status(HttpStatus.OK).body(response);
-		} else {
-			
-			message = messageSource.getMessage("message.1007",null, currentLocale);
-			status = messageSource.getMessage("code.1007",null, currentLocale);
+    	
+    	try {
+    		
+    		List<RevenueSourceDetailsDto> revenueSources = revenueSourceService.findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
+    				UUID.fromString(departmentUid),UUID.fromString(moduleUid), Constants.RECORD_STATUS_ACTIVE);
+    		if(revenueSources != null && !revenueSources.isEmpty()) {
+    			
+    			message = messageSource.getMessage("message.1001",null, currentLocale);
+    			status = messageSource.getMessage("code.1001",null, currentLocale);
+    			error  = false;
+    			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,revenueSources,request.getRequestURI());
+    			return ResponseEntity.status(HttpStatus.OK).body(response);
+    		} else {
+    			
+    			message = messageSource.getMessage("message.1007",null, currentLocale);
+    			status = messageSource.getMessage("code.1007",null, currentLocale);
+    			error  = true;
+    			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
+    			return ResponseEntity.status(HttpStatus.OK).body(response);
+    		}
+    	} catch (Exception ex) {
+    		ex.printStackTrace();
+    		message = messageSource.getMessage("message.1004",null, currentLocale);
+			status = messageSource.getMessage("code.1004",null, currentLocale);
 			error  = true;
 			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
 			return ResponseEntity.status(HttpStatus.OK).body(response);
-		}
+    	}
+        
     }
 
 }

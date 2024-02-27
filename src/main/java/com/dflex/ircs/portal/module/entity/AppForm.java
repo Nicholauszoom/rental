@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import com.dflex.ircs.portal.data.entity.AppFormDataTable;
+import com.dflex.ircs.portal.data.entity.FormDataTable;
 import com.dflex.ircs.portal.util.CommonEntity;
 
 import jakarta.persistence.Column;
@@ -75,6 +75,6 @@ public class AppForm extends CommonEntity implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "app_form_data_table_id", nullable = false)
-	private AppFormDataTable appFormDataTable;
+	private FormDataTable appFormDataTable;
 	
 }

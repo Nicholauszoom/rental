@@ -2,6 +2,7 @@ package com.dflex.ircs.portal.module.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.dflex.ircs.portal.module.entity.AppFormField;
 
@@ -17,6 +18,6 @@ public interface AppFormFieldService {
 	
 	public AppFormField saveAppFormField(AppFormField appFormField);
 	
-	public List<AppFormField> findByAppFormIdAndRecordStatusId(Long appFormId,Long recordStatusId);
+	public List<AppFormField> findByAppFormUidAndRecordStatusId(UUID appFormUid,Long recordStatusId);
 	
 }

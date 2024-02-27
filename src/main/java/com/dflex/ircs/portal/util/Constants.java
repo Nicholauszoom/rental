@@ -48,8 +48,8 @@ public class Constants {
 	
 	//Other
 	public static final Long DEFAULT_CUSTOMER_USER_ROLE = 1L;
-	public static final UUID DEFAULT_SYS_USERID = UUID.fromString("c826cde7-fbff-424d-9105-814c31a9b551");
-	public static final String DEFAULT_SYS_USERNAME = "Admin";
+	public static final UUID DEFAULT_SYS_USERID = UUID.fromString("c4ba1274-dfc1-40d5-8bd9-734c0c3d1980");
+	public static final String DEFAULT_SYS_USERNAME = "IRCS Portal Admin";
 	public static final String SERVICE_INSTITUTION_PREFIX = "SI";
 	public static final String PAYMENT_FACILITATOR_PREFIX = "PF";
 	public static final String SERVICE_OTHER_INSTITUTION_PREFIX = "OSI";
@@ -85,6 +85,10 @@ public class Constants {
 	public final static Long API_CATEG_INVOICE_VALIDATION_REQ = 3L;
 	public final static Long API_CATEG_PAYMENT_VALIDATION_REQ = 5L;
 	
+	
+	//Service Type Level
+	public final static Integer SERVICE_TYPE_LEVEL_1 = 1;
+	public final static Integer SERVICE_TYPE_LEVEL_2 = 2;
 }
 
 

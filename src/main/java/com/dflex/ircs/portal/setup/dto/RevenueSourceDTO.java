@@ -1,4 +1,4 @@
-package com.dflex.ircs.portal.revenue.api.dto;
+package com.dflex.ircs.portal.setup.dto;
 
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;

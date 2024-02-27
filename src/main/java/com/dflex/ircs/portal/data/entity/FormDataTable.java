@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
  * 
  * @author Augustino Mwageni
  *
- *         Entity class for database table tab_app_form_data_table
+ *         Entity class for database table tab_form_data_table
  *
  */
 
@@ -33,25 +33,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 @Entity
-@Table(name = "tab_app_form_data_table")
-public class AppFormDataTable extends CommonEntity implements Serializable {
+@Table(name = "tab_form_data_table")
+public class FormDataTable extends CommonEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_form_data_table_id_generator")
-	@SequenceGenerator(name = "app_form_data_table_id_generator", sequenceName = "seq_app_form_data_table", initialValue = 1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "form_data_table_id_generator")
+	@SequenceGenerator(name = "form_data_table_id_generator", sequenceName = "seq_form_data_table", initialValue = 1, allocationSize = 1)
 	@Column(name = "id", nullable = false, precision = 11)
 	private Long id;
 	
 	@GeneratedValue
 	@UuidGenerator
-	@Column(name="app_form_data_table_uid",nullable = false)
-	private UUID appFormDataTableUid;
+	@Column(name="form_data_table_uid",nullable = false)
+	private UUID formDataTableUid;
 	
 	@PrePersist
     protected void onCreate() {
-        setAppFormDataTableUid(java.util.UUID.randomUUID());
+        setFormDataTableUid(java.util.UUID.randomUUID());
     }
 
 	@Column(name = "form_data_table_name", length = 100, nullable = false)

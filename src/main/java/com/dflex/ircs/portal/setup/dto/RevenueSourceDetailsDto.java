@@ -37,6 +37,8 @@ public class RevenueSourceDetailsDto implements Serializable {
 	private String serviceTypeName;
 	
 	private String serviceTypeCode;
+	
+	private String serviceTypeDisplayText;
 
 	private String currencyUid;
 	
@@ -51,5 +53,7 @@ public class RevenueSourceDetailsDto implements Serializable {
 	private String workFlowName;
 	
 	private String appFormUid;
+	
+	private Boolean isDefaultRevenueSource;
 	
 }

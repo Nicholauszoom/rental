@@ -32,7 +32,7 @@ public class AppFormFieldServiceImpl implements AppFormFieldService {
 	}
 
 	@Override
-	public List<AppFormField> findByAppFormUidAndRecordStatusId(UUID appFormUid,Long recordStatusId){
+	public List<AppFormField> findByAppFormFieldUidAndRecordStatusId(UUID appFormUid, Long recordStatusId){
 		return appFormFieldRepository.findByAppFormFieldUidAndRecordStatusId(appFormUid,recordStatusId);
 	}
 

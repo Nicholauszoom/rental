@@ -15,6 +15,6 @@ import com.dflex.ircs.portal.module.entity.AppFormField;
 
 public interface AppFormFieldRepository extends JpaRepository<AppFormField,Long> {
 
-	public List<AppFormField> findByAppFormUidAndRecordStatusId(UUID appFormUid,Long recordStatusId);
+	public List<AppFormField> findByAppFormFieldUidAndRecordStatusId(UUID appFormUid, Long recordStatusId);
 
 }

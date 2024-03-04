@@ -1,0 +1,8 @@
+server:
+  host: 192.168.34.214
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dflex?currentSchema=ircs
+    username: postgres
+    password: postgres

@@ -127,7 +127,7 @@ public class PaymentApiController {
                     clientCode = requestHeaders.get("clientcode");
 
                     // Validate Incoming Request Schema
-                    InputStream requestXsdSchema = getClass().getResourceAsStream("/xsd-templates/PaymentValidation.xsd");
+                    InputStream requestXsdSchema = getClass().getResourceAsStream("/templates/xsd-templates/PaymentValidation.xsd");
                     Map<String, String> schemaValidationResult = utils.validateRequestXMLSchema(requestXsdSchema, requestContent);
                     if (schemaValidationResult.get("code").equals("1001")) {
                        // TO BE CONTINUE

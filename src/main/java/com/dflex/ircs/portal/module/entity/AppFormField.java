@@ -45,7 +45,7 @@ public class AppFormField extends CommonEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_form_field_id_generator")
-	@SequenceGenerator(name = "app_form_field_generator", sequenceName = "seq_app_form_field", initialValue = 1, allocationSize = 1)
+	@SequenceGenerator(name = "app_form_field_id_generator", sequenceName = "seq_app_form_field", initialValue = 1, allocationSize = 1)
 	@Column(name = "id", nullable = false, precision = 11)
 	private Long id;
 	
@@ -58,9 +58,15 @@ public class AppFormField extends CommonEntity implements Serializable {
     protected void onCreate() {
         setAppFormFieldUid(java.util.UUID.randomUUID());
     }
+	
+	@Column(name = "validation", length = 250, nullable = true)
+	private String validation;
 
 	@Column(name = "field_type", length = 50, nullable = false)
 	private String fieldType;
+	
+	@Column(name = "field_order", nullable = false)
+	private Integer fieldOrder;
 	
 	@Column(name = "value_minimum_size", nullable = false)
 	private Integer valueMinimumSize;
@@ -74,14 +80,35 @@ public class AppFormField extends CommonEntity implements Serializable {
 	@Column(name = "data_type", length = 50, nullable = false)
 	private String dataType;
 
-	@Column(name = "display_text", length = 100, nullable = false)
-	private String displayText;
+	@Column(name = "form_display_text", length = 100, nullable = false)
+	private String formDisplayText;
 	
-	@Column(name = "data_field_name", nullable = false)
+	@Column(name = "list_display_text", length = 30, nullable = false)
+	private String listDisplayText;
+	
+	@Column(name = "display_size_class", length = 50, nullable = false)
+	private String displaySizeClass;
+	
+	@Column(name = "data_field_name",length=30, nullable = false)
 	private String dataFieldName;
+	
+	@Column(name = "data_field_key",length=30, nullable = false)
+	private String dataFieldKey;
 	
 	@Column(name = "data_source", nullable = false)
 	private String dataSource;
+	
+	@Column(name = "show_on_list", nullable = false)
+	private Boolean showOnList = false;
+	
+	@Column(name = "show_on_detail", nullable = false)
+	private Boolean showOnDetail = false;
+	
+	@Column(name = "is_identity", nullable = false)
+	private Boolean isIdentity = false;
+	
+	@Column(name = "is_part_of_name", nullable = false)
+	private Boolean isPartOfName = false;
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;

@@ -18,6 +18,10 @@ public interface AppFormFieldService {
 	
 	public AppFormField saveAppFormField(AppFormField appFormField);
 	
-	public List<AppFormField> findByAppFormFieldUidAndRecordStatusId(UUID appFormUid, Long recordStatusId);
+	public List<AppFormField> findByAppFormUidAndRecordStatusId(UUID appFormUid, Long recordStatusId);
+	
+	public List<String> findAppFormDataListFieldsByAppFormUid(UUID appFormUid);
+	
+	public List<AppFormField> findByAppFormUidAndShowOnDetailAndRecordStatusId(UUID appFormUid,Boolean showOnDetail,Long recordStatusId);
 	
 }

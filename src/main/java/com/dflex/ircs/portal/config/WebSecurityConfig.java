@@ -91,7 +91,7 @@ public class WebSecurityConfig {
 				.securityMatcher("/**")
 				.authorizeHttpRequests((authorize) -> authorize
 						.requestMatchers("/api/authorize", "/api/employee/verify", "/api/ward/**", "/api/district/**",
-								"/api/region/**","/api/token").permitAll()
+								"/api/region/**","/api/token","/api/**").permitAll()
 						.requestMatchers("/api/user-category/**", "/api/terms-of-service/**", "/api/user/create").permitAll()
 						.requestMatchers("/api/user/verify-email/**", "/api/user/verify-phone-number/**").permitAll()
 						.requestMatchers("/api/user/resend/phone-number/verification/token/**").permitAll()
@@ -108,7 +108,7 @@ public class WebSecurityConfig {
 						.ignoringRequestMatchers("/api/user/verify-email/**", "/api/user/verify-phone-number/**")
 						.ignoringRequestMatchers("/api/user/resend/phone-number/verification/token/**")
 						.ignoringRequestMatchers("/api/user/request/password-reset-link/**", "/api/user/reset-password")
-						.ignoringRequestMatchers("/api/user/verify/password-reset-link/**"))
+						.ignoringRequestMatchers("/api/user/verify/password-reset-link/**","/api/**"))
 				.exceptionHandling((exceptions) -> exceptions.authenticationEntryPoint(authenticationEntryPoint()))
 				.apply(authorizationServerConfigurer)//;
 				.and().oauth2ResourceServer().jwt().jwtAuthenticationConverter(customJwtAuthenticationConverter());

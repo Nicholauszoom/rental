@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.auth.entity;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -26,7 +27,9 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "tab_permission")
-public class Permission extends CommonEntity {
+public class Permission extends CommonEntity implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permission_id_generator")

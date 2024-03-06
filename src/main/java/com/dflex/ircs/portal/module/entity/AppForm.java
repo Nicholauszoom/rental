@@ -70,11 +70,14 @@ public class AppForm extends CommonEntity implements Serializable {
 	@Column(name = "form_title", length = 100, nullable = false)
 	private String formTitle;
 	
+	@Column(name = "form_size",nullable = false)
+	private Integer formSize;
+	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "app_form_data_table_id", nullable = false)
-	private FormDataTable appFormDataTable;
+	@JoinColumn(name = "form_data_table_id", nullable = false)
+	private FormDataTable formDataTable;
 	
 }

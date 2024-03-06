@@ -33,8 +33,8 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 
 		String sqlQuery = "select r.id,r.revenue_source_uid,r.is_fixed_amount,r.fixed_amount,app_module_uid, "
 				+ "s.service_type_uid,s.service_type_name,s.service_type_code,s.service_type_display_text, c.currency_uid,c.currency_name, "
-				+ "c.currency_code, w.revenue_source_work_flow_uid,w.work_flow_number,a.app_form_uid, f.work_flow_name ,"
-				+ "r.is_default_revenue_source "
+				+ "c.currency_code, w.revenue_source_work_flow_uid,w.work_flow_number,f.work_flow_name,a.app_form_uid,"
+				+ "a.form_size,t.form_data_table_path,r.is_default_revenue_source "
 				+ "from tab_revenue_source r "
 				+ "join tab_app_module m on m.id = r.app_module_id "
 				+ "join tab_service_type s on r.service_type_id = s.id "
@@ -44,6 +44,7 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 				+ "left join tab_revenue_source_work_flow w on r.id = w.revenue_source_id "
 				+ "join tab_work_flow f on f.id = w.work_flow_id "
 				+ "join tab_app_form a on a.id = w.app_form_id "
+				+ "join tab_form_data_table t on t.id = a.form_data_table_id "
 				+ "where w.is_default_work_flow = 't' "
 				+ "and d.service_institution_uid =: serviceInstitutionUid "
 				+ "and m.app_module_uid =: appModuleUid "
@@ -80,7 +81,9 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 						res[14].toString(),
 						res[15].toString(),
 						
-						Boolean.valueOf(res[16].toString())
+						Integer.parseInt(res[16]==null?"0":res[16].toString()),
+						res[17].toString(),
+						Boolean.valueOf(res[18]==null?"f":res[18].toString())
 						));
 			}
 		}
@@ -96,7 +99,7 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 		String sqlQuery = "select r.id,r.revenue_source_uid,r.is_fixed_amount,r.fixed_amount,app_module_uid, "
 				+ "s.service_type_uid,s.service_type_name,s.service_type_code,s.service_type_display_text,c.currency_uid,c.currency_name, "
 				+ "c.currency_code, w.revenue_source_work_flow_uid,w.work_flow_number,f.work_flow_name,a.app_form_uid,"
-				+ "r.is_default_revenue_source "
+				+ "a.form_size,t.form_data_table_path,r.is_default_revenue_source "
 				+ "from tab_revenue_source r "
 				+ "join tab_app_module m on m.id = r.app_module_id "
 				+ "join tab_service_type s on r.service_type_id = s.id "
@@ -105,6 +108,7 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 				+ "left join tab_revenue_source_work_flow w on r.id = w.revenue_source_id "
 				+ "join tab_work_flow f on f.id = w.work_flow_id "
 				+ "join tab_app_form a on a.id = w.app_form_id "
+				+ "join tab_form_data_table t on t.id = a.form_data_table_id "
 				+ "where w.is_default_work_flow = 't' "
 				+ "and d.service_department_uid =:departmentUid "
 				+ "and m.app_module_uid =:moduleUid "
@@ -141,7 +145,9 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 					res[14].toString(),
 					res[15].toString(),
 					
-					Boolean.valueOf(res[16]==null?"f":res[16].toString())
+					Integer.parseInt(res[16]==null?"0":res[16].toString()),
+					res[17].toString(),
+					Boolean.valueOf(res[18]==null?"f":res[18].toString())
 					));
 			}
 		}

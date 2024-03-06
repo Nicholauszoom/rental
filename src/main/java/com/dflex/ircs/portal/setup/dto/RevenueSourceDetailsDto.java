@@ -54,6 +54,10 @@ public class RevenueSourceDetailsDto implements Serializable {
 	
 	private String appFormUid;
 	
+	private Integer appFormSize;
+	
+	private String appFormDataTablePath;
+	
 	private Boolean isDefaultRevenueSource;
 	
 }

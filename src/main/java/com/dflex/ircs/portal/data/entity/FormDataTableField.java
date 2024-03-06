@@ -57,8 +57,11 @@ public class FormDataTableField extends CommonEntity implements Serializable {
         setFormDataTableFieldUid(java.util.UUID.randomUUID());
     }
 
-	@Column(name = "data_table_field_name", length = 100, nullable = false)
+	@Column(name = "data_table_field_name", length = 30, nullable = false)
 	private String dataTableFieldName;
+	
+	@Column(name = "data_table_field_key", length = 30, nullable = false)
+	private String dataTableFieldKey;
 	
 	@Column(name = "field_status_id", nullable = false)
 	private Long fieldStatusId = 1L;

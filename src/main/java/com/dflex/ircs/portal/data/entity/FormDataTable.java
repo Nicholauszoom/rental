@@ -59,6 +59,9 @@ public class FormDataTable extends CommonEntity implements Serializable {
 	
 	@Column(name = "form_data_table_description", length = 200, nullable = true)
 	private String formDataTableDescription;
+	
+	@Column(name = "form_data_table_path", length = 20, nullable = false)
+	private String formDataTablePath;
 
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;

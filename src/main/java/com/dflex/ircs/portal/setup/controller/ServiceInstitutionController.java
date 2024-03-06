@@ -63,7 +63,7 @@ public class ServiceInstitutionController {
     }
 
     /**
-     * Create Service Institutions
+     * Create Service Institutions controller
      * @param serviceInstutionDto
      * @param auth
      * @param request

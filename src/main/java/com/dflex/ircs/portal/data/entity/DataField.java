@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,13 +26,6 @@ import lombok.NoArgsConstructor;
 @MappedSuperclass
 public class DataField {
 	
-	public DataField(Long longField1, Long longField2, Long longField3) {
-		super();
-		this.longField1 = longField1;
-		this.longField2 = longField2;
-		this.longField3 = longField3;
-	}
-
 	/**
 	 * Long Fields
 	 */
@@ -68,35 +62,13 @@ public class DataField {
 	/**
 	 * UUID Fields
 	 */
-	@Column(name="uuid_field1",nullable=true)
-	private UUID uuidField1;
-
-	@Column(name="uuid_field2",nullable=true)
-	private UUID uuidField2;
+	@Column(name="uid_field1",nullable=true)
+	private UUID uidField1;
 	
-	@Column(name="uuid_field3",nullable=true)
-	private UUID uuidField3;
-	
-	@Column(name="uuid_field4",nullable=true)
-	private UUID uuidField4;
-	
-	@Column(name="uuid_field5",nullable=true)
-	private UUID uuidField5;
-	
-	@Column(name="uuid_field6",nullable=true)
-	private UUID uuidField6;
-	
-	@Column(name="uuid_field7",nullable=true)
-	private UUID uuidField7;
-	
-	@Column(name="uuid_field8",nullable=true)
-	private UUID uuidField8;
-	
-	@Column(name="uuid_field9",nullable=true)
-	private UUID uuidField9;
-	
-	@Column(name="uuid_field10",nullable=true)
-	private UUID uuidField10;
+	@PrePersist
+    protected void onCreate() {
+        setUidField1(java.util.UUID.randomUUID());
+    }
 	
 	/**
 	 * Integer Fields
@@ -115,21 +87,6 @@ public class DataField {
 	
 	@Column(name="integer_field5",nullable=true)
 	private Integer integerField5;
-	
-	@Column(name="integer_field6",nullable=true)
-	private Integer integerField6;
-	
-	@Column(name="integer_field7",nullable=true)
-	private Integer integerField7;
-	
-	@Column(name="integer_field8",nullable=true)
-	private Integer integerField8;
-	
-	@Column(name="integer_field9",nullable=true)
-	private Integer integerField9;
-	
-	@Column(name="integer_field10",nullable=true)
-	private Integer integerField10;
 	
 	/**
 	 * Decimal Fields
@@ -359,6 +316,12 @@ public class DataField {
 	/**
 	 * Common
 	 */
+	@Column(name="app_form_uid", nullable=true)
+	private UUID appFormUid;
+	
+	@Column(name="app_form_id", nullable=true)
+	private Long appFormId;
+	
 	@Column(name="created_date", nullable=false,updatable = false)
 	@CreationTimestamp
 	private Date createdDate;
@@ -380,4 +343,10 @@ public class DataField {
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
+	
+	@Column(name = "work_flow_id", nullable = true)
+	private Long workFlowId;
+	
+	@Column(name = "work_flow_name", nullable = true)
+	private String workFlowName;
 }

@@ -36,4 +36,16 @@ public class AppFormFieldServiceImpl implements AppFormFieldService {
 		return appFormFieldRepository.findByAppFormUidAndRecordStatusId(appFormUid,recordStatusId);
 	}
 
+	@Override
+	public List<String> findAppFormDataListFieldsByAppFormUid(UUID appFormUid) {
+		return appFormFieldRepository.findAppFormDataListFieldsByAppFormUid(appFormUid);
+	}
+
+	@Override
+	public List<AppFormField> findByAppFormUidAndShowOnDetailAndRecordStatusId(UUID appFormUid, Boolean showOnDetail,
+			Long recordStatusId) {
+		return appFormFieldRepository.findByAppFormUidAndShowOnDetailAndRecordStatusId(appFormUid,showOnDetail,
+				recordStatusId);
+	}
+	
 }

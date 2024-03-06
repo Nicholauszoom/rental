@@ -1,5 +1,7 @@
 package com.dflex.ircs.portal.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -89,6 +91,18 @@ public class Constants {
 	//Service Type Level
 	public final static Integer SERVICE_TYPE_LEVEL_1 = 1;
 	public final static Integer SERVICE_TYPE_LEVEL_2 = 2;
+	
+	//Data Table Path
+	public static final String DATA_PATH_1 = "data1";
+	public static final String DATA_PATH_2 = "data2";
+	
+	public static final List<String> DATA_LIST_DEFAULT_FIELDS = Arrays.asList(
+			"uid_field1","created_date","app_form_uid","work_flow_id","work_flow_name"
+			);
+	
+	public static final List<String> DATA_DETAIL_DEFAULT_FIELDS = Arrays.asList(
+			"uid_field1","app_form_uid","work_flow_id","work_flow_name"
+			);
 }
 
 

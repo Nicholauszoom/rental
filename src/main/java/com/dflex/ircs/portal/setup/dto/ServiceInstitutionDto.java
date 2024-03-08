@@ -18,9 +18,6 @@ public class ServiceInstitutionDto implements Serializable {
     private Long id;
     private String institutionCode;
     private String institutionNumber;
-
-
-
     private String institutionName;
     private String postalAddress;
     private String physicalAddress;

@@ -24,12 +24,12 @@ public class ServiceInstitutionDto implements Serializable {
     private String primaryPhoneNumber;
     private String secondaryPhoneNumber;
     private String email;
-    private ServiceInstitutionCategory serviceInstitutionCategoryId;
+    private Long serviceInstitutionCategoryId;
     private Long recordStatusId;
 
     public ServiceInstitutionDto(Long id, String s, String institutionCode, String physicalAddress, String postalAddress, String email, String institutionNumber, String institutionName,
                                  String primaryPhoneNumber, String secondaryPhoneNumber, Long recordStatusId,
-                                 ServiceInstitutionCategory serviceInstitutionCategory) {
+                                 Long serviceInstitutionCategoryId) {
 
         this.id = id;
         this.institutionCode = institutionCode;
@@ -40,7 +40,7 @@ public class ServiceInstitutionDto implements Serializable {
         this.primaryPhoneNumber = primaryPhoneNumber;
         this.secondaryPhoneNumber = secondaryPhoneNumber;
         this.email = email;
-        this.serviceInstitutionCategoryId = serviceInstitutionCategory;
+        this.serviceInstitutionCategoryId = serviceInstitutionCategoryId;
         this.recordStatusId = recordStatusId;
     }
 }

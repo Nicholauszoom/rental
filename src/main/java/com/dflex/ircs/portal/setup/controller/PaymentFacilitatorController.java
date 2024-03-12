@@ -153,7 +153,7 @@ public class PaymentFacilitatorController {
 
     /**
      * Update  Payment
-     * @param paymentFacilitator
+     * @param paymentFacilitatorDto
      * @param auth
      * @param request
      * @return ResponseEntity
@@ -171,7 +171,7 @@ public class PaymentFacilitatorController {
 
                 if(presentFacilitator.isPresent()){
 
-                    PaymentFacilitator otherFacilitator = facilitatorService.findByPaymentFacilitatorCodeAndRecordStatusId(paymentFacilitatorDto.getPaymentFacilitatorCode(),
+                    PaymentFacilitator otherFacilitator = facilitatorService.findByPaymentFacilitatorCodeAndRecordStatusId(paymentFacilitatorDto.getPaymentFacilitatorCode()
                             , Constants.RECORD_STATUS_ACTIVE);
                     if(otherFacilitator == null || otherFacilitator.getId().equals(presentFacilitator.get().getId())) {
 

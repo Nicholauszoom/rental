@@ -47,7 +47,6 @@ public class Currency extends CommonEntity implements Serializable {
 	@UuidGenerator
 	@Column(name="currency_uid",nullable = false)
 	private UUID currencyUid;
-	
 	@PrePersist
     protected void onCreate() {
         setCurrencyUid(java.util.UUID.randomUUID());
@@ -62,4 +61,12 @@ public class Currency extends CommonEntity implements Serializable {
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 
+
+	public Currency(UUID createdBy, String createdByUserName, String currencyCode, String currencyName, Long recordStatusId, String currencyUid) {
+		super(createdBy, createdByUserName);
+		this.currencyUid = UUID.fromString(currencyUid);
+		this.currencyCode = currencyCode;
+		this.currencyName = currencyName;
+		this.recordStatusId = recordStatusId;
+	}
 }

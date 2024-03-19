@@ -40,6 +40,10 @@ public class RevenueSourceEstimateServiceImpl implements RevenueSourceEstimateSe
 		return revenueSourceEstimateRepository.findByRevenueSourceIdAndFinancialYearIdAndRecordStatusId(revenueSourceId,
 				financialYearId,recordStatusId);
 	}
+	@Override
+	public List<RevenueSourceEstimate> findAll(){
+		return revenueSourceEstimateRepository.findAll();
+	}
 
 	
 }

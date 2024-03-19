@@ -1,9 +1,10 @@
 package com.dflex.ircs.portal.setup.controller;
 
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
+import com.dflex.ircs.portal.setup.dto.ServiceInstitutionDto;
+import com.dflex.ircs.portal.setup.entity.*;
+import com.dflex.ircs.portal.setup.entity.Currency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dflex.ircs.portal.config.AuthDetailsDto;
 import com.dflex.ircs.portal.setup.dto.RevenueSourceEstimateDto;
-import com.dflex.ircs.portal.setup.entity.Currency;
-import com.dflex.ircs.portal.setup.entity.FinancialYear;
-import com.dflex.ircs.portal.setup.entity.RevenueSource;
-import com.dflex.ircs.portal.setup.entity.RevenueSourceEstimate;
 import com.dflex.ircs.portal.setup.service.CurrencyService;
 import com.dflex.ircs.portal.setup.service.FinancialYearService;
 import com.dflex.ircs.portal.setup.service.RevenueSourceEstimateService;
@@ -69,10 +66,55 @@ public class RevenueSourceEstimateController {
 	Boolean error = false;
 	
 	protected Logger logger = LoggerFactory.getLogger(RevenueSourceController.class);
+
+	/**
+	 * List Reveunue Source Estimate
+	 * @param request
+	 * @return ResponseEntity
+	 */
+
+	@PostMapping("/list")
+	public ResponseEntity<?> getListRevenueSources(HttpServletRequest request) {
+
+		List<RevenueSourceEstimateDto> revenueSourceEstimateDtoList = new ArrayList<>();
+		try {
+			List<RevenueSourceEstimate>  revenueSourceEstimates = revenueSourceEstimateService.findAll();
+			if(revenueSourceEstimates != null){
+				for (RevenueSourceEstimate revenueSource : revenueSourceEstimates) {
+					RevenueSourceEstimateDto sourceEstimateDto = new RevenueSourceEstimateDto();
+					sourceEstimateDto.setId(revenueSource.getId());
+					sourceEstimateDto.setRevenueSourceId(revenueSource.getRevenueSource().getId());
+					sourceEstimateDto.setCurrenyId(revenueSource.getCurrency().getId());
+					sourceEstimateDto.setRevenueSourceEstimateUid(revenueSource.getRevenueSourceEstimateUid().toString());
+					sourceEstimateDto.setRevenueTarget(revenueSource.getRevenueTarget());
+					sourceEstimateDto.setRecordStatusId(revenueSource.getRecordStatusId());
+
+					revenueSourceEstimateDtoList.add(sourceEstimateDto);
+
+				}
+				message = messageSource.getMessage("message.1001", null, currentLocale);
+				status = messageSource.getMessage("code.1001", null, currentLocale);
+				error = false;
+			} else {
+				message = messageSource.getMessage("message.1007", null, currentLocale);
+				status = messageSource.getMessage("code.1007", null, currentLocale);
+				error = true;
+			}
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, revenueSourceEstimateDtoList, request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+
+		} catch (Exception e) {
+			message = messageSource.getMessage("message.1004",null, currentLocale);
+			status = messageSource.getMessage("code.1004",null, currentLocale);
+			error  = true;
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
+	}
 	
 	/**
 	 * Create New Reveunue Source Estimate
-	 * @param revenueSourceEstimate
+	 * @param revenueSourceEstimateDto
 	 * @return ResponseEntity
 	 */
 	@PostMapping("/create/revenuesource-estimate")

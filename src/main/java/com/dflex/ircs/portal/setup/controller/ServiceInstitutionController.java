@@ -170,7 +170,7 @@ public class ServiceInstitutionController {
 
     /**
      * Update Service institutions
-     * @param service Institution
+     * @param serviceInstitutionDto
      * @param auth
      * @param request
      * @return ResponseEntity

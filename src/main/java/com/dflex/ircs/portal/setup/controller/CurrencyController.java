@@ -2,11 +2,8 @@ package com.dflex.ircs.portal.setup.controller;
 
 import com.dflex.ircs.portal.config.AuthDetailsDto;
 import com.dflex.ircs.portal.setup.dto.CurrencyDto;
-import com.dflex.ircs.portal.setup.dto.PaymentFacilitatorDto;
 import com.dflex.ircs.portal.setup.entity.Currency;
-import com.dflex.ircs.portal.setup.entity.PaymentFacilitator;
 import com.dflex.ircs.portal.setup.service.CurrencyService;
-import com.dflex.ircs.portal.setup.service.ServiceTypeService;
 import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.Response;
 import com.dflex.ircs.portal.util.Utils;
@@ -51,7 +48,7 @@ public class CurrencyController {
 
     /**
      * Create   Currency
-     * @param request
+     * @body currencyDto
      * @return ResponseEntity
      */
 

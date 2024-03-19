@@ -16,7 +16,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.dflex.ircs.portal.setup.controller.ServiceTypeController;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -67,6 +70,7 @@ public class OauthController {
 	
 	private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
+	protected Logger logger = LoggerFactory.getLogger(OauthController.class);
 	/**
 	 * Authorize Resource Owner and Client Details
 	 * @param request
@@ -282,7 +286,7 @@ public class OauthController {
 
 		String params = "client_id=" + clientId + "&redirect_uri=" + oauthServer+Constants.OAUTH2_AUTHORIZE_REDIRECT_URL
 				+ "&grant_type="+grantType+"&code=" + authorizationCode + "&code_verifier=" + codeVerifier;
-		
+		logger.info("the params {} ",params);
 		// Send request
 		connnection.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(connnection.getOutputStream());

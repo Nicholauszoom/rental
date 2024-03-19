@@ -54,14 +54,10 @@ public class ServiceInstitution extends CommonEntity implements Serializable {
 	@Column(name="service_institution_uid",nullable = false)
 	private UUID serviceInstitutionUid;
 
-
-
 	@PrePersist
     protected void onCreate() {
         setServiceInstitutionUid(java.util.UUID.randomUUID());
 	}
-
-
 
 	@Column(name="institution_code",nullable=false,length = 20)
 	private String institutionCode;

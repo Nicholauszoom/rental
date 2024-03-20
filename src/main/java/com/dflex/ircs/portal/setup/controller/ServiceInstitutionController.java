@@ -102,8 +102,8 @@ public class ServiceInstitutionController {
      * @param request
      * @return ResponseEntity
      */
-    @PostMapping("/create/servicetype")
-    public ResponseEntity<?> createServiceType(@RequestBody ServiceInstitutionDto serviceInstitutionDto, JwtAuthenticationToken auth,
+    @PostMapping("/create")
+    public ResponseEntity<?> createServiceInstitution(@RequestBody ServiceInstitutionDto serviceInstitutionDto, JwtAuthenticationToken auth,
                                                HttpServletRequest request) {
 
         ServiceInstitutionDto serviceInstitution = null;
@@ -112,6 +112,7 @@ public class ServiceInstitutionController {
             if(serviceInstitutionDto != null){
 
                 AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+                logger.info("the aauth details is {}",authDetails);
                 ServiceInstitution getPreviousInstitutions = serviceInstitutionService.findByInstitutionCodeAndRecordStatusId(serviceInstitutionDto.getInstitutionCode(),
                         Constants.RECORD_STATUS_ACTIVE);
                 if(getPreviousInstitutions == null) {
@@ -126,8 +127,8 @@ public class ServiceInstitutionController {
 
                         ServiceInstitution newServiceInstitution = serviceInstitutionService.saveServiceInstitution(institution);
                         if (newServiceInstitution != null) {
-                                   serviceInstitution = new ServiceInstitutionDto(newServiceInstitution.getId(), String.valueOf(newServiceInstitution.getServiceInstitutionUid()), newServiceInstitution.getInstitutionCode(),
-                                    newServiceInstitution.getPhysicalAddress(), newServiceInstitution.getPostalAddress(), newServiceInstitution.getEmail(),
+                                   serviceInstitution = new ServiceInstitutionDto(newServiceInstitution.getId(), newServiceInstitution.getInstitutionCode(),
+                                    newServiceInstitution.getPhysicalAddress(), newServiceInstitution.getPostalAddress(), newServiceInstitution.getEmail(),newServiceInstitution.getServiceInstitutionUid(),
                                     newServiceInstitution.getInstitutionNumber(), newServiceInstitution.getInstitutionName(), newServiceInstitution.getPrimaryPhoneNumber(), newServiceInstitution.getSecondaryPhoneNumber(),
                                     newServiceInstitution.getRecordStatusId(), newServiceInstitution.getServiceInstitutionCategory().getId()
                             );
@@ -209,11 +210,11 @@ public class ServiceInstitutionController {
                             ServiceInstitution updatedServiceInstitutions = serviceInstitutionService.saveServiceInstitution(existingServiceInstitution.get());
                             if(updatedServiceInstitutions != null) {
 
-                                service = new ServiceInstitutionDto(updatedServiceInstitutions.getId(),String.valueOf(updatedServiceInstitutions.getServiceInstitutionUid()),
-                                        updatedServiceInstitutions.getInstitutionName(),updatedServiceInstitutions.getPostalAddress(),updatedServiceInstitutions.getInstitutionCode(),
-                                        updatedServiceInstitutions.getInstitutionNumber(),updatedServiceInstitutions.getPostalAddress(),updatedServiceInstitutions.getPhysicalAddress(),
-                                        updatedServiceInstitutions.getEmail(),updatedServiceInstitutions.getServiceInstitutionCategory().getId(),
-                                        updatedServiceInstitutions.getRecordStatusId());
+//                                service = new ServiceInstitutionDto(updatedServiceInstitutions.getId(),String.valueOf(updatedServiceInstitutions.getServiceInstitutionUid()),
+//                                        updatedServiceInstitutions.getInstitutionName(),updatedServiceInstitutions.getPostalAddress(),updatedServiceInstitutions.getInstitutionCode(),
+//                                        updatedServiceInstitutions.getInstitutionNumber(),updatedServiceInstitutions.getPostalAddress(),updatedServiceInstitutions.getPhysicalAddress(),
+//                                        updatedServiceInstitutions.getEmail(),updatedServiceInstitutions.getServiceInstitutionCategory().getId(),
+//                                        updatedServiceInstitutions.getRecordStatusId());
 
                                 message = messageSource.getMessage("general.update.success", new Object[] { "Service Type" },currentLocale);
                                 status = messageSource.getMessage("code.1001", null, currentLocale);

@@ -63,29 +63,28 @@ public class FinanciayearController {
             if(financialDto != null) {
 
                 AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-
+                 logger.info("the auth detail is {}",authDetails);
                 FinancialYear existingFinancialYear = financialYearService.findByFinancialYearIdAndRecordStatusId(
                         financialDto.getFinancialYearId(), Constants.RECORD_STATUS_ACTIVE);
                 if (existingFinancialYear == null) {
 
-                    FinancialYear newFinancialData = new FinancialYear(authDetails.getUserId(),authDetails.getUserName(),
-                            financialDto.getFinancialYearUid(),financialDto.getShortYear(),financialDto.getYearStart(),
+                    FinancialYear newFinancialData = new FinancialYear(authDetails.getUserId(),authDetails.getUserName(), financialDto.getShortYear(),financialDto.getYearStart(),
                             financialDto.getYearEnd(), Constants.RECORD_STATUS_ACTIVE);
 
                     financialYear = financialYearService.createFinancialYear(newFinancialData);
 
                     if (financialYear != null) {
-                        message = messageSource.getMessage("general.create.success", new Object[] { "Revenue Source Estimate" },currentLocale);
+                        message = messageSource.getMessage("general.create.success", new Object[] { "Financial Year" },currentLocale);
                         status = messageSource.getMessage("code.1001", null, currentLocale);
                         error = false;
                     } else {
-                        message = messageSource.getMessage("general.create.failure", new Object[] { "Revenue Source Estimate" },currentLocale);
+                        message = messageSource.getMessage("general.create.failure", new Object[] { "Financial Year" },currentLocale);
                         status = messageSource.getMessage("code.1002", null, currentLocale);
                         error = true;
                     }
                 } else {
                     financialYear = existingFinancialYear;
-                    message = messageSource.getMessage("general.current.exists", new Object[] { "Revenue Source Estimate" }, currentLocale);
+                    message = messageSource.getMessage("general.current.exists", new Object[] { "Financial Year" }, currentLocale);
                     status = messageSource.getMessage("code.1069", null, currentLocale);
                     error = true;
                 }
@@ -96,7 +95,7 @@ public class FinanciayearController {
             }
         } catch (Exception ex) {
 
-            message = messageSource.getMessage("general.create.failure", new Object[] { "Revenue Source Estimate" }, currentLocale);
+            message = messageSource.getMessage("general.create.failure", new Object[] { "Financial Year" }, currentLocale);
             status = messageSource.getMessage("code.1004", null, currentLocale);
             logger.error(message, ex);
             error = true;

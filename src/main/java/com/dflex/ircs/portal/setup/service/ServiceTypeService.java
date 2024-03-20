@@ -15,6 +15,8 @@ import com.dflex.ircs.portal.setup.entity.ServiceType;
 public interface ServiceTypeService {
 	
 	public Optional<ServiceType> findById(Long id);
+
+//	public ServiceType findByServiceTypeAndId(String serviceTypeUid, Long id);
 	
 	public ServiceType saveServiceType(ServiceType serviceType);
 	

@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +19,8 @@ public class ServiceInstitutionDto implements Serializable {
     private Long id;
     private String institutionCode;
     private String institutionNumber;
+    private String serviceInstitutionUid;
+
     private String institutionName;
     private String postalAddress;
     private String physicalAddress;
@@ -27,13 +30,15 @@ public class ServiceInstitutionDto implements Serializable {
     private Long serviceInstitutionCategoryId;
     private Long recordStatusId;
 
-    public ServiceInstitutionDto(Long id, String s, String institutionCode, String physicalAddress, String postalAddress, String email, String institutionNumber, String institutionName,
-                                 String primaryPhoneNumber, String secondaryPhoneNumber, Long recordStatusId,
-                                 Long serviceInstitutionCategoryId) {
+    public ServiceInstitutionDto(Long id, String institutionCode, String physicalAddress,
+                                 String postalAddress, String email, UUID serviceInstitutionUid,
+                                 String institutionNumber, String institutionName, String primaryPhoneNumber,
+                                 String secondaryPhoneNumber, Long recordStatusId, Long serviceInstitutionCategoryId) {
 
         this.id = id;
         this.institutionCode = institutionCode;
         this.institutionNumber = institutionNumber;
+        this.serviceInstitutionUid = String.valueOf(serviceInstitutionUid);
         this.institutionName = institutionName;
         this.postalAddress = postalAddress;
         this.physicalAddress = physicalAddress;

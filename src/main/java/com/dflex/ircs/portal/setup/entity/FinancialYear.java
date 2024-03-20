@@ -46,7 +46,9 @@ public class FinancialYear extends CommonEntity implements Serializable {
 	@UuidGenerator
 	@Column(name="financial_year_uid",nullable = false)
 	private UUID financialYearUid;
-	
+
+
+
 	@PrePersist
     protected void onCreate() {
         setFinancialYearUid(java.util.UUID.randomUUID());
@@ -64,15 +66,23 @@ public class FinancialYear extends CommonEntity implements Serializable {
 	@Column(name="record_status_id", nullable=false)
 	private Long recordStatusId = 1L;
 
-	public FinancialYear(UUID createdBy, String createdByUserName, String financialYearUid, Integer shortYear,
+//	public FinancialYear(UUID createdBy, String createdByUserName, String financialYearUid, Integer shortYear,
+//						 Date yearStart, Date yearEnd, Long recordStatusId) {
+//		super(createdBy, createdByUserName);
+//
+//		this.shortYear = shortYear;
+//		this.yearStart = yearStart;
+//		this.yearEnd = yearEnd;
+//		this.recordStatusId = recordStatusId;
+//	}
+
+	public FinancialYear(UUID createdBy, String createdByUserName, Integer shortYear,
 						 Date yearStart, Date yearEnd, Long recordStatusId) {
 		super(createdBy, createdByUserName);
-		this.financialYearUid = UUID.fromString(financialYearUid);
 		this.shortYear = shortYear;
 		this.yearStart = yearStart;
 		this.yearEnd = yearEnd;
 		this.recordStatusId = recordStatusId;
 	}
-
 
 }

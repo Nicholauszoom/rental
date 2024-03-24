@@ -26,19 +26,19 @@ import lombok.ToString;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceSubmissionApiReqHeaderDto {
 	
-	@XmlElement(name = "requestid")
+	@XmlElement(name = "reqid")
 	private String requestIdentity;
-	
-	@XmlElement(name = "clientcode")
-	private String clientCode;
 	
 	@XmlElement(name = "callbackurl")
 	private String callBackUrl;
 	
 	@XmlElement(name = "invoicetype")
-	private Integer invoiceType;
+	private Long invoiceType;
 	
 	@XmlElement(name = "dtlcount")
 	private Integer detailCount;
+	
+	@XmlElement(name = "servicegroup")
+	private String serviceGroup;
 	
 }

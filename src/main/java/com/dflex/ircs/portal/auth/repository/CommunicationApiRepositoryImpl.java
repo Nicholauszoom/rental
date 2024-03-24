@@ -33,11 +33,12 @@ public class CommunicationApiRepositoryImpl implements CommunicationApiRepositor
 				+ ",c.inbound_status_id,c.outbound_status_id,c.record_status_id apiStatusId, c.api_category_id,c.api_version_number "
 				+ ",cs.client_key,cs.record_status_id systemStatusId, a.certificate_alias,a.certificate_passphrase,a.certificate_filename "
 				+ ",a.certificate_serial_number,a.record_status_id certificateStatusId,a.certificate_algorithm, sc.client_code system_client_code"
-				+ ",sc.record_status_id systemClientStatusId,b.certificate_alias,b.certificate_passphrase,b.certificate_filename,b.certificate_serial_number "
+				+ ",sc.record_status_id systemClientStatusId,b.certificate_alias,b.certificate_passphrase,b.certificate_filename,b.certificate_serial_number,"
+				+ "cs.pki_certificate_algorithm_id "
 				+ "from tab_communication_api c "
 				+ "join tab_client_system cs on c.client_system_id = cs.id "
 				+ "join tab_pki_certificate a on cs.pki_certificate_id = a.id "
-				+ "join tab_pki_certificate b on a.internal_pki_certificate_id = b.id "
+				+ "join tab_pki_certificate b on cs.internal_pki_certificate_id = b.id "
 				+ "left join tab_system_client sc on sc.client_system_id = cs.id and sc.client_code =:clientCode "
 				+ "where c.api_category_id =:apiCategoryId "
 				+ "and c.api_version_number =:apiVersionNumber "
@@ -58,30 +59,31 @@ public class CommunicationApiRepositoryImpl implements CommunicationApiRepositor
 					res[1].toString(),
 					Boolean.valueOf(res[2].toString()),
 					res[3] != null ? res[3].toString():"",
-					Long.parseLong(res[4].toString()),
+					Long.parseLong(res[4] == null?"0":res[4].toString()),
 					
-					Long.parseLong(res[5].toString()),
-					Long.parseLong(res[6].toString()),
-					Long.parseLong(res[7].toString()),
+					Long.parseLong(res[5]== null?"0":res[5].toString()),
+					Long.parseLong(res[6]== null?"0":res[6].toString()),
+					Long.parseLong(res[7] == null?"0":res[7].toString()),
 					Long.parseLong(res[8].toString()),
 					Long.parseLong(res[9].toString()),
 					
 					res[10].toString(),
-					Long.parseLong(res[11].toString()),
+					Long.parseLong(res[11] == null?"0":res[11].toString()),
 					res[12].toString(),
 					res[13].toString(),
 					res[14].toString(),
 					
 					res[15].toString(),
-					Long.parseLong(res[16].toString()),
+					Long.parseLong(res[16]==null?"0":res[16].toString()),
 					res[17].toString(),
 					res[18] != null ? res[18].toString() : "",
 					
-					res[19] != null ? Long.parseLong(res[19].toString()):null,
+					res[19] != null ? Long.parseLong(res[19].toString()):0L,
 					res[20]==null?"":res[20].toString(),
 					res[21]==null?"":res[21].toString(),
 					res[22]==null?"":res[22].toString(),
-					res[23]==null?"":res[23].toString()
+					res[23]==null?"":res[23].toString(),
+					Long.parseLong(res[24]==null?"2":res[24].toString())
 					);
 		}
 		

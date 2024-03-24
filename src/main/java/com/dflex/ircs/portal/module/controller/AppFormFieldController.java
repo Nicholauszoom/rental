@@ -2,9 +2,11 @@ package com.dflex.ircs.portal.module.controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dflex.ircs.portal.module.dto.AppFormFieldDto;
 import com.dflex.ircs.portal.module.entity.AppFormField;
+import com.dflex.ircs.portal.module.entity.AppLookup;
 import com.dflex.ircs.portal.module.service.AppFormFieldService;
+import com.dflex.ircs.portal.module.service.AppLookupService;
 import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.Response;
 
@@ -40,6 +44,9 @@ public class AppFormFieldController {
 
 	@Autowired
     private AppFormFieldService appFormFieldService;
+	
+	@Autowired
+    private AppLookupService appLookupService;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -66,12 +73,25 @@ public class AppFormFieldController {
     			formFields = new ArrayList<>();
     			for(AppFormField field : appFormFields) {
     				
+    				LinkedHashMap<String,Object> fieldlookupData = new LinkedHashMap<>();
+    				if(field.getDataSourceTypeId().equals(Constants.DATA_SOURCE_TYPE_LOOKUP)) {
+    					
+    					List<AppLookup> appLookups = appLookupService.findByAppLookupTypeIdAndRecordStatusIdOrderByLookupKeyAsc(
+    							field.getAppLookupType().getId(),Constants.RECORD_STATUS_ACTIVE);
+    					if(appLookups != null && !appLookups.isEmpty()) {
+    						
+    						fieldlookupData = appLookups.stream()
+    			            .collect(Collectors.toMap(AppLookup::getLookupKey, AppLookup::getLookupValue,
+    			            		(existing, replacement) -> existing, 
+    			                    LinkedHashMap::new ));
+    					}
+    				}
+    				
     				formFields.add(new AppFormFieldDto(field.getId(),String.valueOf(field.getAppFormFieldUid()),field.getFieldType(),
     						field.getValueMinimumSize(),field.getValueMaximumSize(),field.getValueDefault(),field.getDataType(),
-    						field.getFormDisplayText(),field.getListDisplayText(),field.getDataFieldName(),field.getDataFieldKey(),field.getDataSource(),
+    						field.getFormDisplayText(),field.getListDisplayText(),field.getDataFieldName(),field.getDataFieldKey(),field.getDataSourceTypeId(),
     						field.getRecordStatusId(),field.getAppLookupType()==null?"":String.valueOf(field.getAppLookupType().getAppLookupTypeUid()),
-    						field.getAppForm().getId(),field.getDisplaySizeClass(),field.getValidation(),field.getShowOnList(),field.getIsIdentity(),
-    						field.getIsPartOfName()));
+    						field.getAppForm().getId(),field.getDisplaySizeClass(),field.getValidation(),field.getShowOnList(),fieldlookupData));
     			}
     			message = messageSource.getMessage("message.1001",null, currentLocale);
     			status = messageSource.getMessage("code.1001",null, currentLocale);

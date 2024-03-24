@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.dflex.ircs.portal.invoice.entity.PaidInvoice;
 
+
 /**
  * 
  * @author Augustino Mwageni
@@ -18,5 +19,7 @@ public interface PaidInvoiceService {
 	public PaidInvoice savePaidInvoice(PaidInvoice paidInvoice);
 	
 	public List<PaidInvoice> findByInvoicePaymentNumber(String invoicePaymentNumber);
+
+	public PaidInvoice findByInvoiceNumberAndServiceInstitutionId(String invoiceNumber, Long serviceInstitutionId);
 	
 }

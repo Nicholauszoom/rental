@@ -10,4 +10,6 @@ public interface InvoiceItemRepository extends JpaRepository<InvoiceItem, Long> 
 
 	public List<InvoiceItem> findByInvoiceIdAndRecordStatusId(Long invoiceId, Long recordStatusId);
 
+	public List<InvoiceItem> findByInvoiceId(Long id);
+
 }

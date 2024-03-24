@@ -29,7 +29,7 @@ public class InvoiceSubmissionApiAckBodyDto {
 	@XmlElement(name = "ackid")
 	private String acknowledgementIdentity;
 	
-	@XmlElement(name = "requestid")
+	@XmlElement(name = "reqid")
 	private String requestIdentity;
 	
 	@XmlElement(name = "ackstatus")

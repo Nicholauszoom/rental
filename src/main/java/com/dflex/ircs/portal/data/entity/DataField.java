@@ -44,31 +44,6 @@ public class DataField {
 	@Column(name="long_field5")
 	private Long longField5;
 	
-	@Column(name="long_field6")
-	private Long longField6;
-	
-	@Column(name="long_field7")
-	private Long longField7;
-	
-	@Column(name="long_field8")
-	private Long longField8;
-	
-	@Column(name="long_field9")
-	private Long longField9;
-	
-	@Column(name="long_field10")
-	private Long longField10;
-	
-	/**
-	 * UUID Fields
-	 */
-	@Column(name="uid_field1",nullable=true)
-	private UUID uidField1;
-	
-	@PrePersist
-    protected void onCreate() {
-        setUidField1(java.util.UUID.randomUUID());
-    }
 	
 	/**
 	 * Integer Fields
@@ -106,20 +81,6 @@ public class DataField {
 	@Column(name="decimal_field5",nullable=true)
 	private BigDecimal decimalField5;
 	
-	@Column(name="decimal_field6",nullable=true)
-	private BigDecimal decimalField6;
-	
-	@Column(name="decimal_field7",nullable=true)
-	private BigDecimal decimalField7;
-	
-	@Column(name="decimal_field8",nullable=true)
-	private BigDecimal decimalField8;
-	
-	@Column(name="decimal_field9",nullable=true)
-	private BigDecimal decimalField9;
-	
-	@Column(name="decimal_field10",nullable=true)
-	private BigDecimal decimalField10;
 	
 	/**
 	 * Boolean Fields
@@ -139,20 +100,6 @@ public class DataField {
 	@Column(name="boolean_field5",nullable=true)
 	private Boolean booleanField5;
 	
-	@Column(name="boolean_field6",nullable=true)
-	private Boolean booleanField6;
-	
-	@Column(name="boolean_field7",nullable=true)
-	private Boolean booleanField7;
-	
-	@Column(name="boolean_field8",nullable=true)
-	private Boolean booleanField8;
-	
-	@Column(name="boolean_field9",nullable=true)
-	private Boolean booleanField9;
-	
-	@Column(name="boolean_field10",nullable=true)
-	private Boolean booleanField10;
 	
 	/**
 	 * Short String Fields
@@ -316,12 +263,30 @@ public class DataField {
 	/**
 	 * Common
 	 */
-	@Column(name="app_form_uid", nullable=true)
+	
+	@Column(name="application_uid",nullable=true)
+	private UUID applicationUid;
+	
+	@PrePersist
+    protected void onCreate() {
+        setApplicationUid(java.util.UUID.randomUUID());
+    }
+	
+	@Column(name="applicant_uid", nullable=false)
+	private UUID applicantUid;
+	
+	@Column(name="applicant_id", nullable=false)
+	private Long applicantId;
+	
+	@Column(name="application_number", nullable=false)
+	private String applicationNumber;
+
+	@Column(name="app_form_uid", nullable=false)
 	private UUID appFormUid;
 	
-	@Column(name="app_form_id", nullable=true)
+	@Column(name="app_form_id", nullable=false)
 	private Long appFormId;
-	
+
 	@Column(name="created_date", nullable=false,updatable = false)
 	@CreationTimestamp
 	private Date createdDate;
@@ -344,9 +309,27 @@ public class DataField {
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 	
-	@Column(name = "work_flow_id", nullable = true)
+	@Column(name = "work_flow_id", nullable = false)
 	private Long workFlowId;
 	
-	@Column(name = "work_flow_name", nullable = true)
+	@Column(name = "work_flow_name", nullable = false)
 	private String workFlowName;
+	
+	@Column(name ="work_flow_action_id",nullable =false)
+	private Long workFlowActionId;
+
+	@Column(name = "work_flow_action_name",nullable =false,length=50)
+	private String workFlowActionName;
+	
+	@Column(name = "work_flow_remark",nullable =true,length=500)
+	private String workFlowRemark;
+	
+	@Column(name="assigned_date", nullable=true)
+	private Date assignedDate;
+
+	@Column(name="assigned_user", nullable=true)
+	private UUID assignedUser;
+	
+	@Column(name="has_attachment", nullable=true)
+	private Boolean hasAttachment = false;
 }

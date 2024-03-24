@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.dflex.ircs.portal.setup.entity.RevenueSource;
-import com.dflex.ircs.portal.util.CommonEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,8 +19,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,7 +38,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name = "tab_invoice_item")
-public class InvoiceItem extends CommonEntity implements Serializable {
+public class InvoiceItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -88,12 +85,25 @@ public class InvoiceItem extends CommonEntity implements Serializable {
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
-
-	public InvoiceItem(String serviceDepartmentCode, String serviceTypeCode, RevenueSource revenueSource,
-			String serviceReference, BigDecimal serviceAmount, Long invoiceId, Integer paymentPriority) {
+	
+	
+	/**
+	 * @param serviceDepartmentCode
+	 * @param serviceTypeCode
+	 * @param serviceTypeName
+	 * @param revenueSource
+	 * @param serviceReference
+	 * @param serviceAmount
+	 * @param invoiceId
+	 * @param paymentPriority
+	 */
+	public InvoiceItem(String serviceDepartmentCode, String serviceTypeCode, String serviceTypeName,
+			RevenueSource revenueSource, String serviceReference, BigDecimal serviceAmount, Long invoiceId,
+			Integer paymentPriority) {
 		super();
 		this.serviceDepartmentCode = serviceDepartmentCode;
 		this.serviceTypeCode = serviceTypeCode;
+		this.serviceTypeName = serviceTypeName;
 		this.revenueSource = revenueSource;
 		this.serviceReference = serviceReference;
 		this.serviceAmount = serviceAmount;
@@ -101,4 +111,5 @@ public class InvoiceItem extends CommonEntity implements Serializable {
 		this.paymentPriority = paymentPriority;
 	}
 
+	
 }

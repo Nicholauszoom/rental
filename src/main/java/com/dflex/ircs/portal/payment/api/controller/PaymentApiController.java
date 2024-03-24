@@ -170,12 +170,14 @@ public class PaymentApiController {
                                                     String certificateFile = pkiUtils.appClientKeyFilePath + commApi.getCertificateFilename();
                                                     String certificatePassPhrase = commApi.getCertificatePassphrase();
                                                     String certificateAlias = commApi.getCertificateAlias();
+                                                    Long sigAlg = commApi.getSignatureAlgo();
 
                                                     if (utils.isFileExist(certificateFile)){
 
                                                         if(!utils.isNullOrEmpty(certificatePassPhrase) && !utils.isNullOrEmpty(certificateAlias)) {
 
-                                                            if (pkiUtils.verifySignature(requestSignature, requestMessage,certificatePassPhrase, certificateAlias, certificateFile)) {
+                                                            if (pkiUtils.verifySignature(requestSignature, requestMessage,certificatePassPhrase, certificateAlias,
+                                                            		certificateFile,sigAlg)) {
 
                                                                 List<Invoice> invoiceRequired = invoiceService.findByPaymentNumber(paymentDetails.getPaymenthdr().getPaymentnumber());
                                                                 if(invoiceRequired != null && !invoiceRequired.isEmpty()) {
@@ -186,7 +188,7 @@ public class PaymentApiController {
                                                                         payment.setInvoicePaymentNumber(invoice.getPaymentNumber());
                                                                         payment.setPaymentNumber(paymentDetails.getPaymenthdr().getPaymentnumber());
                                                                         payment.setTransactionNumber(paymentDetails.getPaymentdtls().get(0).getTransactionnumber());
-                                                                        payment.setValidationReference(paymentDetailDTO.getTransactionreference());
+                                                                        payment.setPaymentReference(paymentDetailDTO.getTransactionreference());
                                                                         payment.setPayerName(paymentDetailDTO.getPayername());
                                                                         payment.setPayerPhoneNumber(paymentDetailDTO.getPayerphonenumber());
                                                                         payment.setPayerEmail(paymentDetailDTO.getPayeremail());

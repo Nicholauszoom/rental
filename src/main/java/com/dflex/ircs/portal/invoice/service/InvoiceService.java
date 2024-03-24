@@ -26,5 +26,9 @@ public interface InvoiceService {
 	public List<Invoice> findByPaymentNumber(String paymentNumber);
 
 	public List<Invoice> findAll();
+
+	public Invoice findByInvoiceNumber(String invoiceNumber);
+
+	public Invoice findByReferenceAndReferencePath(String reference, String referencePath);
 	
 }

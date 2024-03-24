@@ -56,11 +56,14 @@ public class AppLookup extends CommonEntity implements Serializable {
         setAppLookupUid(java.util.UUID.randomUUID());
     }
 
-	@Column(name = "lookup_code", nullable = false)
-	private Long lookupCode;
+	@Column(name = "lookup_key", nullable = false,length = 100)
+	private String lookupKey;
 
-	@Column(name = "lookup_description", length = 100, nullable = true)
-	private String lookupDescription;
+	@Column(name = "lookup_value", length = 100, nullable = false)
+	private String lookupValue;
+	
+	@Column(name = "app_lookup_type_id", nullable = false)
+	private Long appLookupTypeId;
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;

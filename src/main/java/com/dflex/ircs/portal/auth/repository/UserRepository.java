@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	@Query("from User u where (upper(u.emailAddress) =:emailAddress or u.mobileNumber =:mobileNumber) and upper(u.userName) !=:userName ")
 	public List<User> getByEmailAddressOrMobileNumberAndNotUserName(String emailAddress,String mobileNumber,String userName);
 
+	@Query("from User u where u.userCategory.userCategoryUid =:userCategoryUid")
+	public List<User> findAllByUserCategoryUid(UUID userCategoryUid);
+
 }

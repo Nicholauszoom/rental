@@ -12,4 +12,7 @@ public interface FormDataRepositoryCustom {
 
 	public LinkedHashMap<String, Object> findAppFormDataDetailByAppFormUidAndApplicationUidAndDataPathAndDataFields(
 			UUID appFormformUid, UUID applicationUid, String dataPath, List<AppFormField> dataDetailFields);
+
+	public List<LinkedHashMap<String, Object>> findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(
+			UUID appFormUid, String dataPath, List<String> dataListFields, Long workFlowId);
 }

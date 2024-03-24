@@ -91,24 +91,26 @@ public class WebSecurityConfig {
 				.securityMatcher("/**")
 				.authorizeHttpRequests((authorize) -> authorize
 						.requestMatchers("/api/authorize", "/api/employee/verify", "/api/ward/**", "/api/district/**",
-								"/api/region/**","/api/token","/api/**").permitAll()
+								"/api/region/**","/api/token").permitAll()
 						.requestMatchers("/api/user-category/**", "/api/terms-of-service/**", "/api/user/create").permitAll()
 						.requestMatchers("/api/user/verify-email/**", "/api/user/verify-phone-number/**").permitAll()
 						.requestMatchers("/api/user/resend/phone-number/verification/token/**").permitAll()
 						.requestMatchers("/api/user/request/password-reset-link/**", "/api/user/reset-password").permitAll()
 						.requestMatchers("/api/user/verify/password-reset-link/**","/api/employee/**").permitAll()
-						.requestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1").permitAll()
+						.requestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1",
+								"/api/invoice/submit/response-v1","/api/payment/submit/request-v1").permitAll()
 						.requestMatchers("/api/invoice/InvoiceAll","/api/invoice/InvoiceById/{id}").permitAll()
 						.anyRequest().authenticated())
 				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher)
-						.ignoringRequestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1")
+						.ignoringRequestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1",
+								"/api/invoice/submit/response-v1","/api/payment/submit/request-v1")
 						.ignoringRequestMatchers("/api/authorize", "/api/employee/**", "/api/ward/**",
 								"/api/district/**", "/api/region/**","/api/token")
 						.ignoringRequestMatchers("/api/user-category/**", "/api/terms-of-service/**","/api/user/create")
 						.ignoringRequestMatchers("/api/user/verify-email/**", "/api/user/verify-phone-number/**")
 						.ignoringRequestMatchers("/api/user/resend/phone-number/verification/token/**")
 						.ignoringRequestMatchers("/api/user/request/password-reset-link/**", "/api/user/reset-password")
-						.ignoringRequestMatchers("/api/user/verify/password-reset-link/**","/api/**"))
+						.ignoringRequestMatchers("/api/user/verify/password-reset-link/**"))
 				.exceptionHandling((exceptions) -> exceptions.authenticationEntryPoint(authenticationEntryPoint()))
 				.apply(authorizationServerConfigurer)//;
 				.and().oauth2ResourceServer().jwt().jwtAuthenticationConverter(customJwtAuthenticationConverter());
@@ -120,7 +122,6 @@ public class WebSecurityConfig {
 	@Order(2)
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 		http.cors().and().authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated());
-
 		return http.build();
 	}
 
@@ -258,6 +259,7 @@ public class WebSecurityConfig {
 					context.getClaims().claim("emal", customUser.getEmail());
 					context.getClaims().claim("phon", customUser.getPhoneNumber());
 					context.getClaims().claim("pers", customUser.getFullName());
+					context.getClaims().claim("wst", customUser.getWorkStation());
 				}
 			}
 		};

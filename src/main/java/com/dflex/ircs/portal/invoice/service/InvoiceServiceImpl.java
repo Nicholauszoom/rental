@@ -51,6 +51,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public List<Invoice> findAll(){
 		return invoiceRepository.findAll();
 	}
+
+	@Override
+	public Invoice findByInvoiceNumber(String invoiceNumber) {
+		return invoiceRepository.findByInvoiceNumber(invoiceNumber);
+	}
+
+	@Override
+	public Invoice findByReferenceAndReferencePath(String reference, String referencePath) {
+		return invoiceRepository.findByReferenceAndReferencePath(reference, referencePath);
+	}
 	
 	
 }

@@ -1,6 +1,7 @@
 package com.dflex.ircs.portal.setup.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,8 @@ public interface RevenueSourceRepository extends JpaRepository<RevenueSource, Lo
 			+ " and r.recordStatusId =:recordStatusId")
 	public List<RevenueSource> findByServiceInstitutionIdAndAppModuleIdAndRecordStatusId(Long serviceInstitutionId,
 			Long appModuleId, Long recordStatusId);
+
+	@Query("from RevenueSource r where r.revenueSourceUid =:revenueSourceUid ")
+	public RevenueSource findByRevenueSourceUid(UUID revenueSourceUid);
 
 }

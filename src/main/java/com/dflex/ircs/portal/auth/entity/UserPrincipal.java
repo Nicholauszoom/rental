@@ -32,12 +32,15 @@ public class UserPrincipal implements UserDetails {
 	
 	private String fullName;
 	
+	private String workStation;
+	
     public UserPrincipal(User user) {
         this.user = user;
         this.id = String.valueOf(user.getId());
         this.email = user.getEmailAddress();
         this.phoneNumber = user.getMobileNumber();
         this.fullName = user.getFirstName()+(user.getMiddleName()==null?" ":" "+user.getMiddleName()+" ")+user.getLastName();
+        this.workStation = user.getWorkStation()==null?"":user.getWorkStation().getWorkStationCode();
         user.getEmailConfirmed();
         user.getPhoneNumberConfirmed();
     }

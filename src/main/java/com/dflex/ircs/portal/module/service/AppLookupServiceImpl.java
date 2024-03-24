@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.module.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,11 @@ public class AppLookupServiceImpl implements AppLookupService {
 	@Override
 	public AppLookup saveAppLookup(AppLookup appLookup) {
 		return appLookupRepository.save(appLookup);
+	}
+
+	@Override
+	public List<AppLookup> findByAppLookupTypeIdAndRecordStatusIdOrderByLookupKeyAsc(Long appLookupTypeId, Long recordStatusId) {
+		return appLookupRepository.findByAppLookupTypeIdAndRecordStatusIdOrderByLookupKeyAsc(appLookupTypeId,recordStatusId);
 	}
 	
 }

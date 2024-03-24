@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.dflex.ircs.portal.invoice.entity.PaidInvoice;
 import com.dflex.ircs.portal.invoice.repository.PaidInvoiceRepository;
 
+
 /**
  * 
  * @author Augustino Mwageni
@@ -32,6 +33,11 @@ public class PaidInvoiceServiceImpl implements PaidInvoiceService {
 	@Override
 	public List<PaidInvoice> findByInvoicePaymentNumber(String invoicePaymentNumber) {
 		return paidinvoiceRepository.findByInvoicePaymentNumber(invoicePaymentNumber);
+	}
+
+	@Override
+	public PaidInvoice findByInvoiceNumberAndServiceInstitutionId(String invoiceNumber, Long serviceInstitutionId) {
+		return paidinvoiceRepository.findByInvoiceNumberAndServiceInstitutionId(invoiceNumber,serviceInstitutionId);
 	}
 
 	

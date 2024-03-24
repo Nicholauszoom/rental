@@ -10,6 +10,8 @@ import com.dflex.ircs.portal.setup.entity.RevenueSource;
 public interface RevenueSourceService {
 
     public Optional<RevenueSource> findById(Long id);
+    
+	public RevenueSource findByRevenueSourceUid(UUID revenueSourceUid);
 
 	public RevenueSource saveRevenueSource(RevenueSource revenueSource);
 
@@ -18,5 +20,6 @@ public interface RevenueSourceService {
 
 	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
 			UUID departmentUid, UUID moduleUid, Long recordStatusId);
+
 
 }

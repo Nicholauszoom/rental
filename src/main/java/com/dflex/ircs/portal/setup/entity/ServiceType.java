@@ -58,10 +58,10 @@ public class ServiceType extends CommonEntity implements Serializable {
         setServiceTypeUid(java.util.UUID.randomUUID());
 	}
 	
-	@Column(name = "service_type_code", nullable = false, length = 10)
+	@Column(name = "service_type_code", nullable = false, length = 20)
 	private String serviceTypeCode;
 
-	@Column(name = "service_type_name", nullable = false, length = 100)
+	@Column(name = "service_type_name", nullable = false, length = 200)
 	private String serviceTypeName;
 	
 	@Column(name = "service_type_display_text", nullable = true, length = 50)

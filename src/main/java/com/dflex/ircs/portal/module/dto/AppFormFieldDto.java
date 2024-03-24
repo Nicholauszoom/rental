@@ -2,7 +2,6 @@ package com.dflex.ircs.portal.module.dto;
 
 import java.io.Serializable;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,7 +43,7 @@ public class AppFormFieldDto implements Serializable {
 	
 	private String dataFieldKey;
 	
-	private String dataSource;
+	private Long dataSourceTypeId;
 	
 	private Long recordStatusId;
 	
@@ -58,7 +57,5 @@ public class AppFormFieldDto implements Serializable {
 	
 	private Boolean showOnList;
 	
-	private Boolean isIdentity;
-	
-	private Boolean isPartOfName;
+	private Object fieldLookupData;
 }

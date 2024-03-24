@@ -89,26 +89,23 @@ public class AppFormField extends CommonEntity implements Serializable {
 	@Column(name = "display_size_class", length = 50, nullable = false)
 	private String displaySizeClass;
 	
-	@Column(name = "data_field_name",length=30, nullable = false)
-	private String dataFieldName;
-	
 	@Column(name = "data_field_key",length=30, nullable = false)
 	private String dataFieldKey;
 	
-	@Column(name = "data_source", nullable = false)
-	private String dataSource;
+	@Column(name = "data_field_name",length=30, nullable = false)
+	private String dataFieldName;
+	
+	@Column(name = "data_field_location",length=30, nullable = false)
+	private String dataFieldLocation;
+	
+	@Column(name = "data_source_type_id", nullable = false)
+	private Long dataSourceTypeId;
 	
 	@Column(name = "show_on_list", nullable = false)
 	private Boolean showOnList = false;
 	
 	@Column(name = "show_on_detail", nullable = false)
 	private Boolean showOnDetail = false;
-	
-	@Column(name = "is_identity", nullable = false)
-	private Boolean isIdentity = false;
-	
-	@Column(name = "is_part_of_name", nullable = false)
-	private Boolean isPartOfName = false;
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;

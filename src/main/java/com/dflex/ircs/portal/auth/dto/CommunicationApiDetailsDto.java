@@ -73,4 +73,6 @@ public class CommunicationApiDetailsDto implements Serializable {
 	
 	private String internalCertificateSerialNumber;
 	
+	private Long signatureAlgo;
+	
 }

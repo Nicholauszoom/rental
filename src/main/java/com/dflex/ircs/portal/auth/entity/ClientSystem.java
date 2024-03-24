@@ -72,5 +72,12 @@ public class ClientSystem extends CommonEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name="pki_certificate_id" , nullable=true)
 	private PKICertificate pkiCertificate;
+	
+	@Column(name="pki_certificate_algorithm_id",nullable=true)
+	private Long pkiCertificateAlgorithmId;
+	 
+	@Column(name="internal_pki_certificate_id")
+	private Long internalPkiCertificateId;
+
 
 }

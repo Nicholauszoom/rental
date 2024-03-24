@@ -33,7 +33,12 @@ public class FormDataServiceImpl implements FormDataService {
 	public Optional<FormData1> findFormData1ById(Long id) {
 		return formData1Repository.findById(id);
 	}
-
+	
+	@Override
+	public Optional<FormData1> findFormData1ByApplicationUid(UUID applicationUid) {
+		return formData1Repository.findFormData1ByApplicationUid(applicationUid);
+	}
+	
 	@Override
 	public Optional<FormData2> findFormData2ById(Long id) {
 		return formData2Repository.findById(id);
@@ -64,6 +69,13 @@ public class FormDataServiceImpl implements FormDataService {
 			UUID appFormformUid, UUID applicationUid, String dataPath, List<AppFormField> dataDetailFields) {
 		return formDataRepositoryCustom.findAppFormDataDetailByAppFormUidAndApplicationUidAndDataPathAndDataFields(
 				appFormformUid,applicationUid,dataPath,dataDetailFields);
+	}
+
+	@Override
+	public List<LinkedHashMap<String, Object>> findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(
+			UUID appFormUid, String dataPath, List<String> dataListFields, Long workFlowId) {
+		return formDataRepositoryCustom.findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(
+				appFormUid,dataPath,dataListFields,workFlowId);
 	}
 
 }

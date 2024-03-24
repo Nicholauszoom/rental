@@ -183,12 +183,13 @@ public class InvoiceValidationApiController {
 													String certificateFile = pkiUtils.appClientKeyFilePath + commApi.getCertificateFilename();
 													String certificatePassPhrase = commApi.getCertificatePassphrase();
 													String certificateAlias = commApi.getCertificateAlias();
+													Long sigAlg = commApi.getSignatureAlgo();
 													
 													if (utils.isFileExist(certificateFile)){
 														
 														if(!utils.isNullOrEmpty(certificatePassPhrase) && !utils.isNullOrEmpty(certificateAlias)) {
 															
-															if (pkiUtils.verifySignature(requestSignature, requestMessage,certificatePassPhrase, certificateAlias, certificateFile)) {
+															if (pkiUtils.verifySignature(requestSignature, requestMessage,certificatePassPhrase, certificateAlias, certificateFile,sigAlg)) {
 																
 																List<Invoice> invoiceList = invoiceService.findByPaymentNumber(invoiceValidationApiReqBody.getInvoiceType());
 																if(invoiceList != null && !invoiceList.isEmpty()) {
@@ -395,10 +396,12 @@ public class InvoiceValidationApiController {
 				String appKeyAlias = commApi.getInternalCertificateAlias();
 				String appKeyPassphrase = commApi.getInternalCertificatePassphrase();
 				String appKeyFile = pkiUtils.appClientKeyFilePath + appKeyFileName;
+				Long sigAlg = commApi.getSignatureAlgo();
 				
-				signature = pkiUtils.createSignature(requestResponse,appKeyPassphrase,appKeyAlias,appKeyFile);
+				signature = pkiUtils.createSignature(requestResponse,appKeyPassphrase,appKeyAlias,appKeyFile,sigAlg);
 			} else {
-				signature = pkiUtils.createSignature(requestResponse,pkiUtils.appPassphrase,pkiUtils.appAlias,pkiUtils.appKeyFile);
+				signature = pkiUtils.createSignature(requestResponse,pkiUtils.appPassphrase,pkiUtils.appAlias,
+						pkiUtils.appKeyFile,Constants.SIG_ALG_SHA2);
 			}
 			
 			InvoiceValidationApiResDto validationApiRes = new InvoiceValidationApiResDto(invoiceValidationApiRes,signature);

@@ -163,6 +163,39 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
+	/**
+	 * Get All users in a category
+	 * @param request
+	 * @return ResponseEntity
+	 */
+	@PostMapping("/min/category/{categoryuid}")
+	public ResponseEntity<?> getAllUsersMinDetailsByCategoryUid(@PathVariable("categoryuid") String categoryUid,HttpServletRequest request){
+
+		Map<String,Object> userList = new HashMap<>();
+		try {
+			
+			List<User> users = userService.findAllByUserCategoryUid(UUID.fromString(categoryUid));
+			if(users != null && !users.isEmpty()) {
+				
+				for(User user:users) {
+					userList.put(String.valueOf(user.getId()),user.getFirstName()+" "+user.getLastName());
+				}
+				message = messageSource.getMessage("message.1001",null, currentLocale);
+				status = messageSource.getMessage("code.1001",null, currentLocale);
+				isError  = false;
+			} else {
+				message = messageSource.getMessage("message.1009",null, currentLocale);
+				status = messageSource.getMessage("code.1009",null, currentLocale);
+				isError  = true;
+			}
+		} catch(Exception ex) {
+			message = messageSource.getMessage("message.1004",null, currentLocale);
+			status = messageSource.getMessage("code.1004",null, currentLocale);
+			isError  = true;
+		}
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,userList,request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
 	
 	/**
 	 * Get All users

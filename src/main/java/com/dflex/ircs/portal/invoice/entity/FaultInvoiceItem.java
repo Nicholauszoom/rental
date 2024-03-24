@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.dflex.ircs.portal.setup.entity.RevenueSource;
-import com.dflex.ircs.portal.util.CommonEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +35,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name = "tab_fault_invoice_item")
-public class FaultInvoiceItem extends CommonEntity  implements Serializable {
+public class FaultInvoiceItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

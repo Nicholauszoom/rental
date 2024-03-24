@@ -72,15 +72,15 @@ public class RevenueSource extends CommonEntity implements Serializable {
 	@Column(name = "app_module_id", nullable = false)
 	private Long appModuleId;
 	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "service_department_id", nullable = true)
 	private ServiceDepartment serviceDepartment;
 
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(name = "service_type_id", nullable = false)
 	private ServiceType serviceType;
 
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "currency_id")
 	private Currency currency;
 

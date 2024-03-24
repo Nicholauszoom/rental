@@ -44,4 +44,9 @@ public class RevenueSourceServiceImpl implements RevenueSourceService {
 				serviceInstitutionUid,appModuleUid,recordStatusId);
 	}
 
+	@Override
+	public RevenueSource findByRevenueSourceUid(UUID revenueSourceUid) {
+		return revenueSourceRepository.findByRevenueSourceUid(revenueSourceUid);
+	}
+
 }

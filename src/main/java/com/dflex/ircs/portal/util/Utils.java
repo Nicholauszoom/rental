@@ -17,12 +17,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,12 +35,29 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.json.JSONObject;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 
 import com.dflex.ircs.portal.config.AuthDetailsDto;
@@ -59,6 +78,9 @@ public class Utils {
 	
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
 	
 	Locale currentLocale = LocaleContextHolder.getLocale();
 	
@@ -245,7 +267,8 @@ public class Utils {
 			authDetails.setPhoneNumber(String.valueOf(tokenAttributes.get("phon")));
 		if(tokenAttributes.containsKey("pers"))
 			authDetails.setFullName(String.valueOf(tokenAttributes.get("pers")));
-		
+		if(tokenAttributes.containsKey("wst"))
+			authDetails.setWorkStation(String.valueOf(tokenAttributes.get("wst")));
 		return authDetails;
 	}
 	
@@ -292,6 +315,22 @@ public class Utils {
 		return token;
 	}
 	
+	/**
+	 * Generate Token Number By Use
+	 * @param tokenTypeInvoiceNumber
+	 * @return String
+	 */
+	public String generateTokenNumberByUse(Long tokenType) {
+		if(tokenType.equals(Constants.TOKEN_TYPE_INVOICE_NUMBER)) {
+			String prefix = "INV";
+			return prefix+getToken();
+		} else if(tokenType.equals(Constants.TOKEN_TYPE_REQUEST_ID)) {
+			String prefix = "REQ";
+			return prefix+getToken();
+		} else {
+			return getToken();
+		}
+	}
 	
 	/**
 	 * Get string within a json string
@@ -410,6 +449,289 @@ public class Utils {
         }
         return request.getRemoteAddr();
     }
+	
+	/**
+	 * Publish message with custom headers to rabbitmq exchange to be routed to according to specified routing key
+	 * @param exchangeName
+	 * @param routingKey
+	 * @param contentPublished
+	 * @param msgHeaders
+	 * @return boolean
+	 */
+	public boolean publishMsgToExchange(String exchangeName, String routingKey, Object contentPublished,
+			final Map<String, String> msgHeaders) {
+		
+		boolean status = false;
+		
+		try {
+			
+			rabbitTemplate.convertAndSend(exchangeName, routingKey, contentPublished, new MessagePostProcessor() {
+				@Override		
+				public Message postProcessMessage(Message m) throws AmqpException {						
+					m.getMessageProperties().getHeaders().put("retryCounter", "0");
+					m.getMessageProperties().getHeaders().put("retryStatusCode", "0");
+					for (String key : msgHeaders.keySet()) {
+						m.getMessageProperties().getHeaders().put(key, msgHeaders.get(key));
+					}
+					return m;
+				}				
+			});
+			status = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	/**
+	 * Publish message with custom headers to rabbitmq retry exchange to be routed to according to specified routing key
+	 * incrementing retry counter
+	 * @param retryExchangeName
+	 * @param routingKey
+	 * @param contentPublished
+	 * @param msgHeaders
+	 * @return boolean
+	 */
+	public boolean publishMsgToRetryExchange(String retryExchangeName, String routingKey, Object contentPublished,
+			final Map<String, String> msgHeaders) {
+		
+		boolean status = false;
+		String retryCounter = msgHeaders.get("retryCounter");
+		try {
+			
+			rabbitTemplate.convertAndSend(retryExchangeName, routingKey, contentPublished, new MessagePostProcessor() {
+				
+				Long processCounter = retryCounter.isEmpty() ? 1L : Long.parseLong(retryCounter) + 1L;
+				@Override		
+				public Message postProcessMessage(Message m) throws AmqpException {						
+					msgHeaders.put("retryCounter", processCounter.toString());
+					for (String key : msgHeaders.keySet()) {
+						m.getMessageProperties().getHeaders().put(key, msgHeaders.get(key));
+					}
+					return m;
+				}				
+			});
+			status = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+	
+	/**
+	 * This method communicate with outside systems using Rest Template
+	 * @param uri
+	 * @param contentToSend
+	 * @param contentType
+	 * @param method
+	 * @param messageHeaders
+	 * @return
+	 */
+	public Response sendMsgToExternalSystem(String uri, String contentToSend, String contentType, String method,Hashtable<String, String> messageHeaders) {
+
+		RestTemplate restTemplate = new RestTemplate(getRequestFactory(Constants.CONNECT_TIMEOUT));
+		ResponseEntity<String> responseEntity = null;
+		HttpHeaders headers = new HttpHeaders();
+		Response response = new Response();
+
+		if(messageHeaders != null && !messageHeaders.isEmpty()) {
+			if(messageHeaders.containsKey("username") && messageHeaders.containsKey("password")){	
+				
+				String plainCreds = messageHeaders.get("username")+":" + messageHeaders.get("password");
+				byte[] plainCredsBytes = plainCreds.getBytes();
+				byte[] base64CredsBytes = java.util.Base64.getEncoder().encode(plainCredsBytes);
+				String base64Creds = new String(base64CredsBytes);
+				headers.add("Authorization", "Basic " + base64Creds);			
+			}
+			
+			for (String key : messageHeaders.keySet()) {
+				headers.add(key, messageHeaders.get(key));
+			}
+		}
+		
+		headers.setContentType(getMediaType(contentType));
+		HttpEntity<String> request = new HttpEntity<String>(contentToSend, headers);
+
+		try {
+			
+			if (method.toUpperCase().equals("POST")) {
+				
+				responseEntity = restTemplate.postForEntity(uri, request, String.class);
+				
+			} else if (method.toUpperCase().equals("GET")) {
+
+				responseEntity = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+				
+			} else if (method.toUpperCase().equals("PUT")) {
+
+				responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class);
+				
+			}else if (method.toUpperCase().equals("DELETE")) {
+
+				responseEntity = restTemplate.exchange(uri, HttpMethod.DELETE, request,String.class);
+			}
+
+			
+			response.setStatus(String.valueOf(responseEntity.getStatusCode().value()));
+			response.setMessage(responseEntity.getStatusCode().toString());
+			response.setData(responseEntity.getBody());
+			
+		} catch (HttpClientErrorException exception) {
+			
+			response.setStatus(String.valueOf(exception.getStatusCode().value()));
+			response.setMessage(exception.getMessage());
+			
+		}catch (HttpStatusCodeException exception) {
+			
+			response.setStatus(String.valueOf(exception.getStatusCode().value()));
+			response.setMessage(exception.getMessage());
+			
+		} catch (Exception e) {
+			
+			response.setStatus("0");
+			response.setMessage(e.getMessage());
+		}
+		return response;
+	}
+	
+	/**
+	 * This method is used to retry to communicate with outside systems using Rest Template
+	 * after primary attempt failure
+	 * This method uses timeouts larger than primary attempt timeouts
+	 */
+	
+	public Response resendMsgToExternalSystem(String uri, String contentToSend, String contentType, String method,
+			Hashtable<String, String> messageHeaders) {
+
+		RestTemplate restTemplate = new RestTemplate(getRequestFactory(Constants.RETRY_CONNECT_TIMEOUT));
+		ResponseEntity<String> responseEntity = null;
+		HttpHeaders headers = new HttpHeaders();
+		Response response = new Response();
+
+		if(messageHeaders != null && !messageHeaders.isEmpty()) {
+			if(messageHeaders.containsKey("username") && messageHeaders.containsKey("password")){	
+				
+				String plainCreds = messageHeaders.get("username")+":" + messageHeaders.get("password");
+				byte[] plainCredsBytes = plainCreds.getBytes();
+				byte[] base64CredsBytes = java.util.Base64.getEncoder().encode(plainCredsBytes);
+				String base64Creds = new String(base64CredsBytes);
+				headers.add("Authorization", "Basic " + base64Creds);			
+			}
+			
+			for (String key : messageHeaders.keySet()) {
+				headers.add(key, messageHeaders.get(key));
+			}
+		}
+		
+		headers.setContentType(getMediaType(contentType));
+		HttpEntity<String> request = new HttpEntity<String>(contentToSend, headers);
+		
+		try {
+			
+			if (method.toUpperCase().equals("POST")) {
+				
+				responseEntity = restTemplate.postForEntity(uri, request, String.class);
+				
+			} else if (method.toUpperCase().equals("GET")) {
+
+				responseEntity = restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
+				
+			} else if (method.toUpperCase().equals("PUT")) {
+
+				responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class);
+				
+			}else if (method.toUpperCase().equals("DELETE")) {
+
+				responseEntity = restTemplate.exchange(uri, HttpMethod.DELETE, request,String.class);
+			}
+
+			response.setStatus(String.valueOf(responseEntity.getStatusCode().value()));
+			response.setMessage(responseEntity.getStatusCode().toString());
+			response.setData(responseEntity.getBody());
+		} catch (HttpClientErrorException exception) {
+			
+			response.setStatus(String.valueOf(exception.getStatusCode().value()));
+			response.setMessage(exception.getMessage());
+			
+		} catch (HttpStatusCodeException exception) {
+			
+			response.setStatus(String.valueOf(exception.getStatusCode().value()));
+			response.setMessage(exception.getMessage()==null?"":exception.getMessage());
+			
+		} catch (Exception e) {
+			
+			response.setStatus("0");
+			response.setMessage(e.getMessage());
+		}
+		
+		return response;
+	}
+	
+	private ClientHttpRequestFactory getRequestFactory(Long connectTimeout) {
+        RequestConfig config = RequestConfig.custom()
+                .setConnectionRequestTimeout(connectTimeout,TimeUnit.MILLISECONDS)
+                .build();
+
+        CloseableHttpClient client = HttpClientBuilder
+                .create()
+                .setDefaultRequestConfig(config)
+                .build();
+
+        return new HttpComponentsClientHttpRequestFactory(client);
+	}
+	
+	/**
+	 * This method gets request media type
+	 * @return MediaType
+	 */
+	public MediaType getMediaType(String requestMediaType) {
+		
+		MediaType contentMediaType;
+		
+		switch (requestMediaType.toUpperCase()) {
+		case "XML":
+			contentMediaType = MediaType.APPLICATION_XML;
+			break;
+		case "JSON":
+			contentMediaType = MediaType.APPLICATION_JSON;
+			break;
+		case "TXML":
+			contentMediaType = MediaType.TEXT_XML;
+			break;
+		default:
+			contentMediaType = MediaType.TEXT_PLAIN;
+		}
+		
+		return contentMediaType;
+	}
+	
+	
+	/**
+	 * Get exception stack details
+	 * @param e
+	 * @return HashMap<>
+	 */
+	public Map<String, String> getExceptionStackDetails(Exception e) {
+
+		Map<String, String> stackDetails = new HashMap<>();
+
+		String cause = e.toString();
+		String location = "";
+
+		if (e != null && e.getStackTrace().length > 0) {
+			for (int i = 0; i < e.getStackTrace().length; i++) {
+				if (i == 0 || e.getStackTrace()[i].toString().contains("tz.go.mof")) {
+					location += (location.isEmpty() ? e.getStackTrace()[i].toString()
+							: ", " + e.getStackTrace()[i].toString());
+				}
+			}
+		}
+		stackDetails.put("cause", cause);
+		stackDetails.put("location", location);
+
+		return stackDetails;
+	}
+	
 	
 	/**
 	 * Validate Xml Schema against Xsd
@@ -584,4 +906,6 @@ public class Utils {
         
 		return result;
 	}
+
+	
 }

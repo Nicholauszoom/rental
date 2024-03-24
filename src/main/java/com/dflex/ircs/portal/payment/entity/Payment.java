@@ -66,17 +66,17 @@ public class Payment extends CommonEntity implements Serializable {
 	@Column(name = "invoice_number", length = 100, nullable = false)
 	private String invoiceNumber;
 
-	@Column(name = "invoice_payment_number", nullable = false, length = 50, unique = true)
+	@Column(name = "invoice_payment_number", nullable = false, length = 50)
 	private String invoicePaymentNumber;
 
 	@Column(name = "payment_number", length = 100, nullable = false)
 	private String paymentNumber;
 	
-	@Column(name = "transaction_number", length = 100, nullable = false)
+	@Column(name = "transaction_number", length = 100, nullable = false, unique = true)
 	private String transactionNumber;
 	
-	@Column(name = "validation_reference", length = 100, nullable = false)
-	private String validationReference;
+	@Column(name = "payment_reference", length = 100, nullable = false, unique = true)
+	private String paymentReference;
 
 	@Column(name = "payer_name", length = 100, nullable = false)
 	private String payerName;
@@ -146,20 +146,20 @@ public class Payment extends CommonEntity implements Serializable {
 	private Long recordStatusId = 1L;
 
 	public Payment(Long invoiceId, String invoiceNumber,
-			String invoicePaymentNumber, String paymentNumber, String transactionNumber, String validationReference,
+			String invoicePaymentNumber, String paymentNumber, String transactionNumber, String paymentReference,
 			String payerName, String payerPhoneNumber, String payerEmail, String transactionTypeCode,
 			Date transactionDate, BigDecimal paidPmount, String currencyCode, String paymentMethod,
 			String paymentMethodReference, Boolean isReconciled, String paymentFacilitatorCode,
 			PaymentFacilitator paymentFacilitator, String collectionAccountNumber, Long collectionAccountId,
 			String remark, Integer detailCount, String requestIdentity, Date receivedDate, Date processStartdate,
-			Date processEndDate, Long recordStatusId,UUID createdBy, String createdByUsername) {
+			Date processEndDate,UUID createdBy, String createdByUsername) {
 		super(createdBy, createdByUsername);
 		this.invoiceId = invoiceId;
 		this.invoiceNumber = invoiceNumber;
 		this.invoicePaymentNumber = invoicePaymentNumber;
 		this.paymentNumber = paymentNumber;
 		this.transactionNumber = transactionNumber;
-		this.validationReference = validationReference;
+		this.paymentReference = paymentReference;
 		this.payerName = payerName;
 		this.payerPhoneNumber = payerPhoneNumber;
 		this.payerEmail = payerEmail;
@@ -180,7 +180,6 @@ public class Payment extends CommonEntity implements Serializable {
 		this.receivedDate = receivedDate;
 		this.processStartdate = processStartdate;
 		this.processEndDate = processEndDate;
-		this.recordStatusId = recordStatusId;
 	}
 	
 }

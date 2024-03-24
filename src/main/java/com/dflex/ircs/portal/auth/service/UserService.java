@@ -35,4 +35,6 @@ public interface UserService {
 	
 	public List<User> getByEmailAddressOrMobileNumberAndNotUserName(String emailAddress,String mobileNumber,String userName);
 
+	public List<User> findAllByUserCategoryUid(UUID userCategoryUid);
+
 }

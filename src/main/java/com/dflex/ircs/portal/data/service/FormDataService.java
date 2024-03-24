@@ -13,6 +13,8 @@ public interface FormDataService {
 
     public Optional<FormData1> findFormData1ById(Long id);
     
+    public Optional<FormData1> findFormData1ByApplicationUid(UUID applicationUid);
+    
     public Optional<FormData2> findFormData2ById(Long id);
 
 	public FormData1 saveFormData1(FormData1 formData);
@@ -25,6 +27,9 @@ public interface FormDataService {
 			List<String> dataListFields);
 
 	public LinkedHashMap<String, Object> findAppFormDataDetailByAppFormUidAndApplicationUidAndDataPathAndDataFields(
-			UUID fromString, UUID fromString2, String dataPath, List<AppFormField> dataDetailFields);
+			UUID appFormUid, UUID applicatioUid, String dataPath, List<AppFormField> dataDetailFields);
+
+	public List<LinkedHashMap<String, Object>> findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(
+			UUID appFormUid, String dataPath, List<String> dataListFields, Long workFlowId);
 
 }

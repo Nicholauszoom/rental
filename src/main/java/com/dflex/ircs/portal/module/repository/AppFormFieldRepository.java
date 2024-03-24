@@ -20,7 +20,7 @@ public interface AppFormFieldRepository extends JpaRepository<AppFormField,Long>
 			+ " order by f.fieldOrder asc")
 	public List<AppFormField> findByAppFormUidAndRecordStatusId(UUID appFormUid,Long recordStatusId);
 
-	@Query(value="select f.data_field_name from tab_app_form_field f,tab_app_form a where f.app_form_id = a.id and a.app_form_uid =:appFormUid "
+	@Query(value="select f.data_field_location||'.'||f.data_field_name from tab_app_form_field f,tab_app_form a where f.app_form_id = a.id and a.app_form_uid =:appFormUid "
 			+ " and f.show_on_list = 't' order by f.field_order asc",nativeQuery=true)
 	public List<String> findAppFormDataListFieldsByAppFormUid(UUID appFormUid);
 

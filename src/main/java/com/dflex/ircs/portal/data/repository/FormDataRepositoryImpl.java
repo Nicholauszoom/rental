@@ -81,15 +81,18 @@ public class FormDataRepositoryImpl implements FormDataRepositoryCustom  {
 			tableName = "tab_form_data2";
 		} 
 		
-		List<String> dataFields = dataDetailFields.stream().map(field -> field.getDataFieldName()).collect(Collectors.toList());
-		dataFields.addAll(Constants.DATA_DETAIL_DEFAULT_FIELDS);
+		final String primaryTable = tableName;
+		List<String> dataFields = dataDetailFields.stream().map(field -> field.getDataFieldLocation()+"."+field.getDataFieldName()).collect(Collectors.toList());
+		List<String> defaultFields = Constants.DATA_DETAIL_DEFAULT_FIELDS.stream().map(f -> primaryTable+"."+f).collect(Collectors.toList());
+		dataFields.addAll(defaultFields);
 		
 		String sqlQuery = "select " +StringUtils.join(dataFields,',')
-				+ " from  "+tableName
-				+ " where app_form_uid =:appFormUid "
-				+ " and uid_field1 =:applicationUid "
-				+ " and record_status_id =:recordStatusId "
-				+ " order by id ";
+				+ " from  "+tableName+" "+tableName+" "
+				+ " left join tab_applicant tab_applicant on tab_applicant.id ="+tableName+".applicant_id "
+				+ " where "+tableName+".app_form_uid =:appFormUid "
+				+ " and "+tableName+".application_uid =:applicationUid "
+				+ " and "+tableName+".record_status_id =:recordStatusId "
+				+ " order by "+tableName+".id ";
 
 		Query q = entityManager.createNativeQuery(sqlQuery);
 		q.setParameter("appFormUid", appFormformUid);
@@ -108,8 +111,10 @@ public class FormDataRepositoryImpl implements FormDataRepositoryCustom  {
 						data.put(dataDetailFields.get(i).getFormDisplayText(), res[i]==null?"":res[i].toString());
 						count ++;
 					}
+					int labelCount = 0;
 					for(int i = count;i < dataFields.size();i++) {
-						data.put(dataFields.get(i), res[i]==null?"":res[i].toString());
+						data.put(Constants.DATA_DETAIL_DEFAULT_FIELDS_LABELS.get(labelCount), res[i]==null?"":res[i].toString());
+						labelCount ++;
 					}
 				}
 				System.out.println("data***************"+data);
@@ -118,6 +123,57 @@ public class FormDataRepositoryImpl implements FormDataRepositoryCustom  {
 			ex.printStackTrace();
 		}
 		return data;
+	}
+
+	@Override
+	public List<LinkedHashMap<String, Object>> findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(
+			UUID appFormUid, String dataPath, List<String> dataListFields, Long workFlowId) {
+		
+		List<LinkedHashMap<String,Object>> listData= new ArrayList<>();
+		String tableName = "tab_form_data1";
+		if(dataPath.equals(Constants.DATA_PATH_2)) {
+			tableName = "tab_form_data2";
+		} 
+		
+		final String primaryTable = tableName;
+		List<String> defaultFields = Constants.DATA_LIST_DEFAULT_FIELDS.stream().map(f -> primaryTable+"."+f).collect(Collectors.toList());
+		dataListFields.addAll(defaultFields);
+		
+		List<String> fieldLabels = dataListFields.stream().map(f -> f.substring(f.indexOf('.')+1)).collect(Collectors.toList());
+		
+		String sqlQuery = "select " +StringUtils.join(dataListFields,',')
+				+ " from  "+tableName+" "+tableName+" "
+				+ " left join tab_applicant tab_applicant on tab_applicant.id ="+tableName+".applicant_id "
+				+ " where "+tableName+".app_form_uid =:appFormUid "
+				+ " and "+tableName+".record_status_id =:recordStatusId "
+				+ " and "+tableName+".work_flow_id =:workFlowId "
+				+ " order by "+tableName+".id ";
+
+		Query q = entityManager.createNativeQuery(sqlQuery);
+		q.setParameter("appFormUid", appFormUid);
+		q.setParameter("workFlowId", workFlowId);
+		q.setParameter("recordStatusId",Constants.RECORD_STATUS_ACTIVE);
+		
+		try {
+			
+			List<Object[]> results = q.getResultList();
+			if(results != null && !results.isEmpty()) {
+				
+				for(Object[] res : results) {
+					
+					LinkedHashMap<String,Object> entry = new LinkedHashMap<>();
+					
+					for(int i=0;i < dataListFields.size();i++) {
+						entry.put(fieldLabels.get(i), res[i]==null?"":res[i].toString());
+					}
+					
+					listData.add(entry);
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return listData;
 	}
 	
 }

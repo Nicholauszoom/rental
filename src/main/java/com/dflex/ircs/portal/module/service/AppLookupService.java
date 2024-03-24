@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.module.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.dflex.ircs.portal.module.entity.AppLookup;
@@ -16,4 +17,6 @@ public interface AppLookupService {
 	
 	public AppLookup saveAppLookup(AppLookup appLookup);
 	
+	public List<AppLookup> findByAppLookupTypeIdAndRecordStatusIdOrderByLookupKeyAsc(Long appLookupTypeId,Long recordStatusId);
+
 }

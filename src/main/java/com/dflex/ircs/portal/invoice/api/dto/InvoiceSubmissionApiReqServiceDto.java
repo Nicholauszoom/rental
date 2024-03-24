@@ -9,6 +9,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,5 +44,9 @@ public class InvoiceSubmissionApiReqServiceDto {
 	@XmlElement(name = "serviceamount")
 	private BigDecimal serviceAmount;
 	
+	@XmlElement(name = "paymentpriority")
+	private Integer paymentPriority;
+	
+	@XmlTransient
 	private RevenueSource revenueSource;
 }

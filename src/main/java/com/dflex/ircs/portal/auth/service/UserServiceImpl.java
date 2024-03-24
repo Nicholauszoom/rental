@@ -114,4 +114,9 @@ public class UserServiceImpl implements UserService {
 		return userRepository.getByEmailAddressOrMobileNumberAndNotUserName(emailAddress,mobileNumber,userName);
 	}
 
+	@Override
+	public List<User> findAllByUserCategoryUid(UUID userCategoryUid) {
+		return userRepository.findAllByUserCategoryUid(userCategoryUid);
+	}
+
 }

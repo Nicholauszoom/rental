@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.dflex.ircs.portal.setup.entity.ServiceType;
 import com.dflex.ircs.portal.setup.repository.ServiceTypeRepository;
 
+import javax.swing.text.html.Option;
+
 /**
  * 
  * @author Augustino Mwageni
@@ -25,7 +27,10 @@ public class ServiceTypeServiceImpl implements ServiceTypeService{
 	public Optional<ServiceType> findById(Long id) {
 		return serviceTypeRepository.findById(id);
 	}
-
+//	@Override
+//	public ServiceType findByServiceTypeAndId(String serviceTypeUid, Long id){
+//		return serviceTypeRepository.findByServiceTypeAndId(serviceTypeUid,id);
+//	}
 	@Override
 	public ServiceType saveServiceType(ServiceType serviceType) {
 		return serviceTypeRepository.save(serviceType);

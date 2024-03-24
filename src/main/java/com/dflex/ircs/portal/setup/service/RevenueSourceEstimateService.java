@@ -17,4 +17,6 @@ public interface RevenueSourceEstimateService {
 
 	public RevenueSourceEstimate findByRevenueSourceIdAndFinancialYearIdAndRecordStatusId(Long revenueSourceId,
 			Long financialYearId, Long recordStatusId);
+
+	public List<RevenueSourceEstimate> findAll();
 }

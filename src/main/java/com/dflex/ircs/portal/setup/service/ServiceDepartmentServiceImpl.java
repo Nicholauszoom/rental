@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.setup.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,10 @@ public class ServiceDepartmentServiceImpl implements ServiceDepartmentService{
 			Long serviceInstitutionId, Long recordStatusId) {
 		return serviceDepartmentRepository.findByDepartmentCodeAndServiceInstitutionIdAndRecordStatusId(serviceDepartmentCode,
 				serviceInstitutionId,recordStatusId);
+	}
+
+	@Override
+	public List<ServiceDepartment> findAll(){
+		return serviceDepartmentRepository.findAll();
 	}
 }

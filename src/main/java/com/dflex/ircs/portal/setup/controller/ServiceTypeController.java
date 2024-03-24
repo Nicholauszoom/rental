@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import jakarta.websocket.server.PathParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dflex.ircs.portal.config.AuthDetailsDto;
 import com.dflex.ircs.portal.setup.dto.ServiceTypeDto;
@@ -101,6 +99,51 @@ public class ServiceTypeController {
     	}
         
     }
+
+	/**
+	 *  get Individual Service Types
+	 * @param request
+	 * @param id
+	 * @return ResponseEntity
+	 */
+	@PostMapping ("/singleServiceType/{id}")
+	public ResponseEntity<?> getServiceType(HttpServletRequest request,@PathVariable Long id) {
+
+		ServiceTypeDto serviceType = null ;
+		try {
+
+			Optional<ServiceType> serviceTypeData = serviceTypeService.findById(id);
+			if(serviceTypeData != null){
+				serviceType = new ServiceTypeDto();
+			    serviceType.setId(serviceTypeData.get().getId());
+				serviceType.setServiceTypeLevel(serviceTypeData.get().getServiceTypeLevel());
+				serviceType.setParentServiceTypeId(serviceTypeData.get().getParentServiceType().getId());
+				serviceType.setServiceTypeUid(String.valueOf(serviceTypeData.get().getServiceTypeUid()));
+				serviceType.setServiceTypeName(serviceTypeData.get().getServiceTypeName());
+				serviceType.setServiceTypeCode(serviceTypeData.get().getServiceTypeCode());
+				serviceType.setRecordStatusId(serviceTypeData.get().getRecordStatusId());
+
+				message = messageSource.getMessage("message.1001", null, currentLocale);
+				status = messageSource.getMessage("code.1001", null, currentLocale);
+				error = false;
+
+			} else {
+				message = messageSource.getMessage("message.1007", null, currentLocale);
+				status = messageSource.getMessage("code.1007", null, currentLocale);
+				error = true;
+			}
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, serviceType, request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+
+		} catch (Exception e) {
+			message = messageSource.getMessage("message.1004",null, currentLocale);
+			status = messageSource.getMessage("code.1004",null, currentLocale);
+			error  = true;
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
+
+	}
     
     /**
      * Create Service Type
@@ -109,11 +152,11 @@ public class ServiceTypeController {
      * @param request
      * @return ResponseEntity
      */
-    @PostMapping("/create/servicetype")
+    @PostMapping("/create/")
     public ResponseEntity<?> createServiceType(@RequestBody ServiceTypeDto serviceTypeDto,JwtAuthenticationToken auth,
     		HttpServletRequest request) {
 
-    	ServiceTypeDto service = null;
+	    	ServiceTypeDto service = null;
     	
     	try {
 			if(serviceTypeDto != null){
@@ -184,7 +227,7 @@ public class ServiceTypeController {
      * @param request
      * @return ResponseEntity
      */
-    @PostMapping("/update/servicetype")
+    @PostMapping("/update")
     public ResponseEntity<?> updateServiceType(@RequestBody ServiceTypeDto serviceTypeDto,JwtAuthenticationToken auth,
     		HttpServletRequest request) {
     	

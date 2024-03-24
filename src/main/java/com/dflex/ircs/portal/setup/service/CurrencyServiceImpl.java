@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.dflex.ircs.portal.setup.entity.ServiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,11 @@ public class CurrencyServiceImpl implements CurrencyService{
 	@Override
 	public Currency findByCurrencyCode(String currencyCode) {
 		return currencyRepository.findByCurrencyCode(currencyCode);
+	}
+
+	@Override
+	public Currency findBycurrencyCodeAndRecordStatusId(String currencyCode , Long statusId){
+		return currencyRepository.findBycurrencyCodeAndRecordStatusId(currencyCode,statusId);
 	}
 
 	@Override

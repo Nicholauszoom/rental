@@ -100,6 +100,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1",
 								"/api/invoice/submit/response-v1","/api/payment/submit/request-v1").permitAll()
 						.requestMatchers("/api/invoice/InvoiceAll","/api/invoice/InvoiceById/{id}").permitAll()
+						.requestMatchers("/api/servicetype/list","/api/servicetype/create/servicetype","/api/servicetype/update/servicetype").permitAll()
 						.anyRequest().authenticated())
 				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher)
 						.ignoringRequestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1",

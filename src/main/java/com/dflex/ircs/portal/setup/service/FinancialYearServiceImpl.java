@@ -37,6 +37,10 @@ public class FinancialYearServiceImpl implements FinancialYearService {
 	public FinancialYear createFinancialYear(FinancialYear financialYear) {
 		return financialYearRepository.save(financialYear);
 	}
+	@Override
+	public  FinancialYear findByFinancialYearIdAndRecordStatusId(Long financialYearId ,Long recordStatusId){
+		return financialYearRepository.findByFinancialYearIdAndRecordStatusId(financialYearId,recordStatusId);
+	}
 
 
 }

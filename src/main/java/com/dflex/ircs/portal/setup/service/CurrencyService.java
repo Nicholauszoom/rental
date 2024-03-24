@@ -20,5 +20,7 @@ public interface CurrencyService {
 	public Currency findByCurrencyCode(String currencyCode);
 	
 	public Map<Long,String> findByRecordStatusId(Long recordStatusId);
+
+	public Currency findBycurrencyCodeAndRecordStatusId(String currencyCode , Long statusId);
 	
 }

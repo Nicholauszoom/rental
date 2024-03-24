@@ -61,8 +61,6 @@ public class ServiceInstitution extends CommonEntity implements Serializable {
         setServiceInstitutionUid(java.util.UUID.randomUUID());
 	}
 
-
-
 	@Column(name="institution_code",nullable=false,length = 20)
 	private String institutionCode;
 	
@@ -94,13 +92,33 @@ public class ServiceInstitution extends CommonEntity implements Serializable {
 	@JoinColumn(name="service_institution_category_id" , nullable=false)
 	private ServiceInstitutionCategory serviceInstitutionCategory;
 
+//	public ServiceInstitution(UUID createdBy, String createdByUserName, String serviceInstitutionUid, String institutionCode,
+//							  String institutionNumber, String postalAddress, String institutionName,
+//							  String physicalAddress, String secondaryPhoneNumber,
+//							  String primaryPhoneNumber, String email, Long id, Long recordStatusId) {
+//		super(createdBy, createdByUserName);
+//		this.id = id;
+//		this.serviceInstitutionUid = UUID.fromString(serviceInstitutionUid);
+//		this.institutionCode = institutionCode;
+//		this.institutionNumber = institutionNumber;
+//		this.institutionName = institutionName;
+//		this.postalAddress = postalAddress;
+//		this.physicalAddress = physicalAddress;
+//		this.primaryPhoneNumber = primaryPhoneNumber;
+//		this.secondaryPhoneNumber = secondaryPhoneNumber;
+//		this.email = email;
+//		this.recordStatusId = recordStatusId;
+//		this.serviceInstitutionCategory = serviceInstitutionCategory;
+//	}
+
 	public ServiceInstitution(UUID createdBy, String createdByUserName, String institutionCode,
-							  String institutionNumber, String postalAddress, String institutionName,
-							  String physicalAddress, String secondaryPhoneNumber,
-							  String primaryPhoneNumber, String email, Long id, Long recordStatusId) {
+							  String institutionNumber, String postalAddress, String physicalAddress,
+							  String institutionName, String secondaryPhoneNumber, String primaryPhoneNumber, String email,
+							  Long id, Long recordStatusId) {
+
+
 		super(createdBy, createdByUserName);
 		this.id = id;
-		this.serviceInstitutionUid = serviceInstitutionUid;
 		this.institutionCode = institutionCode;
 		this.institutionNumber = institutionNumber;
 		this.institutionName = institutionName;
@@ -110,9 +128,7 @@ public class ServiceInstitution extends CommonEntity implements Serializable {
 		this.secondaryPhoneNumber = secondaryPhoneNumber;
 		this.email = email;
 		this.recordStatusId = recordStatusId;
-		this.serviceInstitutionCategory = serviceInstitutionCategory;
 	}
-
 
 
 	

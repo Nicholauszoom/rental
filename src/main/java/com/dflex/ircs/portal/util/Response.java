@@ -18,5 +18,16 @@ public class Response  {
 	private String message;
 	private Object data;
 	private String path;
+
+	public Response(String message,  Object t, boolean error){
+		this.message = message;
+		this.error = error;
+		this.data =  t;
+	}
+
+	public Response(String message,  boolean error){
+		this.message = message;
+		this.error = error;
+	}
 	
 }

@@ -13,15 +13,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.crypto.Mac;
@@ -34,6 +26,9 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -583,5 +578,32 @@ public class Utils {
         result.put("message", message);
         
 		return result;
+	}
+
+	public String getTimeStamp() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date currentDate = new Date();
+		return dateFormat.format(currentDate);
+	}
+
+
+	public void copyNonNullProperties(Object source, Object destination){
+		BeanUtils.copyProperties(source, destination,
+				getNullPropertyNames(source));
+	}
+
+
+	private static String[] getNullPropertyNames (Object source) {
+		final BeanWrapper src = new BeanWrapperImpl(source);
+		java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+		Set emptyNames = new HashSet();
+		for(java.beans.PropertyDescriptor pd : pds) {
+			//check if value of this property is null then add it to the collection
+			Object srcValue = src.getPropertyValue(pd.getName());
+			if (srcValue == null) emptyNames.add(pd.getName());
+		}
+		String[] result = new String[emptyNames.size()];
+		return (String[]) emptyNames.toArray(result);
 	}
 }

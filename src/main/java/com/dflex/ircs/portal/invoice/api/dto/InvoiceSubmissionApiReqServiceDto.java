@@ -2,14 +2,14 @@ package com.dflex.ircs.portal.invoice.api.dto;
 
 import java.math.BigDecimal;
 
-import com.dflex.ircs.portal.setup.entity.ServiceTypeSource;
+import com.dflex.ircs.portal.setup.entity.RevenueSource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
+import jakarta.xml.bind.annotation.XmlTransient;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,5 +44,9 @@ public class InvoiceSubmissionApiReqServiceDto {
 	@XmlElement(name = "serviceamount")
 	private BigDecimal serviceAmount;
 	
-	private ServiceTypeSource serviceTypeSource;
+	@XmlElement(name = "paymentpriority")
+	private Integer paymentPriority;
+	
+	@XmlTransient
+	private RevenueSource revenueSource;
 }

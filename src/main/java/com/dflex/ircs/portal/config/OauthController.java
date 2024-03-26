@@ -16,7 +16,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.dflex.ircs.portal.setup.controller.ServiceTypeController;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -34,7 +37,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dflex.ircs.portal.util.Constants;
@@ -68,12 +70,11 @@ public class OauthController {
 	
 	private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
+	protected Logger logger = LoggerFactory.getLogger(OauthController.class);
 	/**
 	 * Authorize Resource Owner and Client Details
-	 * @param authentication
 	 * @param request
 	 * @param response
-	 * @param OauthDetails
 	 * @return String
 	 */
 	@PostMapping("/api/authorize")
@@ -84,7 +85,9 @@ public class OauthController {
 			
 			final String authorization = request.getHeader("Authorization")!=null?request.getHeader("Authorization"):request.getHeader("authorization");
 			final String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("clientKey"):request.getHeader("clientkey");
-			if (authorization != null && authorization.toLowerCase().startsWith("basic") && !util.isNullOrEmpty(clientKey)) {
+			final String clientId = request.getHeader("ClientId")!=null?request.getHeader("clientId"):request.getHeader("clientid");
+			if (authorization != null && authorization.toLowerCase().startsWith("basic") && !util.isNullOrEmpty(clientKey)
+					&& !util.isNullOrEmpty(clientId)) {
 			    
 			    String base64Credentials = authorization.substring("Basic".length()).trim();
 			    byte[] credDecoded = Base64.decodeBase64(base64Credentials);
@@ -95,19 +98,32 @@ public class OauthController {
 			    UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken
 						.unauthenticated(username,password);
 				authentication = authenticationManager.authenticate(authToken);
-				
+
 				if(authentication != null) {
-					
+
 					SecurityContext context = SecurityContextHolder.getContext();
 					context.setAuthentication(authentication);
 					securityContextRepository.saveContext(context, request, response);
 					HttpSession session = request.getSession(true);
 					session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+
+					String clientStatus = "";
+					String clientSecret = "";
+					if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
+						clientSecret = Constants.CLIENT_SECRET_PORTAL;
+						clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+					} else {
+						clientSecret = Constants.CLIENT_SECRET_MOBILE;
+						clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+					}
 					
-					Map<String,String> clientDetails = validateClientDetails(clientKey);
-					if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
+					if(clientStatus.equals(Constants.DEFAULT_SUCCESS)) {
 						
+						Map<String,String> clientDetails = new HashMap<>();
+						clientDetails.put("clientId", clientId);
+						clientDetails.put("clientSecret", clientSecret);
 						Map<String, String> codeDetails = getAuthorizationCode(session, clientDetails);
+						System.out.println("Inspection: "+clientDetails);
 						if(codeDetails.get("status").equals("302") && !codeDetails.get("code").isBlank()) {
 						
 							String authorizationCode = codeDetails.get("code");
@@ -173,8 +189,6 @@ public class OauthController {
 			ex.printStackTrace();
 			message = messageSource.getMessage("message.1064",null, currentLocale);
 			status = messageSource.getMessage("code.1064",null, currentLocale);
-			//message = messageSource.getMessage("message.1022",null, currentLocale);
-			//status = messageSource.getMessage("code.1022",null, currentLocale);
 			isError  = true;
 			Response res = new Response(String.valueOf(Calendar.getInstance().getTime()),status,isError,message,null,request.getRequestURI());
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
@@ -193,7 +207,6 @@ public class OauthController {
 	/**
 	 * Get Authorization Code
 	 * @param session
-	 * @param oauthDetails
 	 * @return Map<String, String>
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -244,8 +257,6 @@ public class OauthController {
 	
 	/**
 	 * Get Outh2 Token
-	 * @param oauthDetails
-	 * @param clientId
 	 * @param authorizationCode
 	 * @param codeVerifier
 	 * @param sessionId
@@ -275,7 +286,7 @@ public class OauthController {
 
 		String params = "client_id=" + clientId + "&redirect_uri=" + oauthServer+Constants.OAUTH2_AUTHORIZE_REDIRECT_URL
 				+ "&grant_type="+grantType+"&code=" + authorizationCode + "&code_verifier=" + codeVerifier;
-		
+		logger.info("the params {} ",params);
 		// Send request
 		connnection.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(connnection.getOutputStream());
@@ -304,10 +315,8 @@ public class OauthController {
 	
 	/**
 	 * Authorize Resource Owner and Client Details
-	 * @param authentication
 	 * @param request
 	 * @param response
-	 * @param OauthDetails
 	 * @return String
 	 */
 	@PostMapping("/api/token")
@@ -317,13 +326,21 @@ public class OauthController {
 		try {
 			
 			String clientKey = request.getHeader("ClientKey")!=null?request.getHeader("ClientKey"):request.getHeader("clientkey");
-			if (!util.isNullOrEmpty(clientKey)) {
+			String clientId = request.getHeader("ClientId")!=null?request.getHeader("ClientId"):request.getHeader("clientid");
+			if (!util.isNullOrEmpty(clientKey) && !util.isNullOrEmpty(clientId)) {
 				
-				Map<String,String> clientDetails = validateClientDetails(clientKey);
-				if(clientDetails.get("status").equals(Constants.DEFAULT_SUCCESS)) {
+				String clientStatus = "";
+				String clientSecret = "";
+				if(clientId.equals(Constants.CLIENT_ID_PORTAL)) {
+					clientSecret = Constants.CLIENT_SECRET_PORTAL;
+					clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+				} else {
+					clientSecret = Constants.CLIENT_SECRET_MOBILE;
+					clientStatus = validateClientDetails(clientKey,clientId,clientSecret);
+				}
+				
+				if(clientStatus.equals(Constants.DEFAULT_SUCCESS)) {
 					
-					String clientId = clientDetails.get("clientId");
-					String clientSecret = clientDetails.get("clientSecret");
 					String grantType = "client_credentials";
 					
 					URL obj = new URL(oauthServer+Constants.OAUTH2_ACCESS_TOKEN_URL);
@@ -407,33 +424,19 @@ public class OauthController {
 	/**
 	 * Validate Authorization client details
 	 * @param clientKey
-	 * @return Map<String,String>
+	 * @return String
 	 */
-	private Map<String,String> validateClientDetails(String clientKey){
+	private String validateClientDetails(String clientKey,String clientId,String clientSecret){
 		
-		Map<String,String> clientDetails = new HashMap<>();
-		
-		Calendar calendar = Calendar.getInstance();
-		Integer dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-		Integer hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-		System.out.println("dayOfYear*********"+dayOfYear);
-		System.out.println("hourOfDay*********"+hourOfDay);
-		String time = String.valueOf(dayOfYear)+String.valueOf(hourOfDay);
-		String data = Constants.CLIENT_ID_PORTAL+Constants.CLIENT_SECRET_PORTAL+time;
+		String data = clientId+clientSecret;
 		System.out.println("data*********"+data);
-		String hashData= util.generateHexHMacHash(Constants.CLIENT_SECRET_PORTAL, data);
+		String hashData= util.generateHexHMacHash(clientSecret, data);
 		System.out.println("hashData*********"+hashData);
 		if(hashData.equals(clientKey)) {
-			
-			clientDetails.put("clientId", Constants.CLIENT_ID_PORTAL);
-			clientDetails.put("clientSecret", Constants.CLIENT_SECRET_PORTAL);
-			clientDetails.put("status", Constants.DEFAULT_SUCCESS);
-			
+			return Constants.DEFAULT_SUCCESS;
 		} else {
-			clientDetails.put("status", Constants.DEFAULT_FAILURE);
+			return Constants.DEFAULT_FAILURE;
 		}
-		
-		return clientDetails;
 	}
 	
 	@GetMapping({"/error",""})

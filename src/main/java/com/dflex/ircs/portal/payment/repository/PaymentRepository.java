@@ -12,4 +12,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 			String paymentFacilitatorCode);
 
 	public List<Payment> findByInvoicePaymentNumberAndRecordStatusId(String invoicePaymentNumber, Long recordStatusId);
+
+	public Payment findByInvoicePaymentNumber(String invoicePaymentNumber);
 }

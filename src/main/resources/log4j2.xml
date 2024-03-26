@@ -19,8 +19,32 @@
             </Policies>
         </RollingFile>       
 		
+		<RollingFile name="InvoiceSubmissionLog"
+            fileName="${APP_LOG_ROOT}/InvoiceSubmissionApi.log"
+            filePattern="${APP_LOG_ROOT}/InvoiceSubmissionApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}%n" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
 		
-		
+		<RollingFile name="InvoiceNotificationLog"
+            fileName="${APP_LOG_ROOT}/InvoiceNotificationApi.log"
+            filePattern="${APP_LOG_ROOT}/InvoiceNotificationApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}%n" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        
+        <RollingFile name="PaymentNotificationLog"
+            fileName="${APP_LOG_ROOT}/PaymentNotificationApi.log"
+            filePattern="${APP_LOG_ROOT}/PaymentNotificationApi.log-%d{yyyy-MM-dd}">
+            <PatternLayout pattern="${LOG_PATTERN}%n" />
+            <Policies>
+            	<TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
 	</Appenders>
 
 	<Loggers>
@@ -28,7 +52,22 @@
 			<AppenderRef ref="ApplicationLog" />
 			<AppenderRef ref="ConsoleLog" />
 		</Root>
+		
+		<Logger name="InvoiceSubmission" additivity="false"
+			level="info">
+			<Appender-ref ref="InvoiceSubmissionLog" />
+		</Logger>
 
+		<Logger name="InvoiceNotification" additivity="false"
+			level="info">
+			<Appender-ref ref="InvoiceNotificationLog" />
+		</Logger>
+		
+		<Logger name="PaymentNotification" additivity="false"
+			level="info">
+			<Appender-ref ref="PaymentNotificationLog" />
+		</Logger>
+		
 	</Loggers>
 
 </Configuration>

@@ -1,12 +1,13 @@
 package com.dflex.ircs.portal.invoice.api.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.UUID;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
+import jakarta.xml.bind.annotation.XmlTransient;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -73,11 +74,11 @@ public class InvoiceSubmissionApiReqDetailDto {
 	@XmlElement(name = "invoiceamount")
 	private BigDecimal invoiceAmount;
 	
-	@XmlElement(name = "invoicemaxamount")
-	private BigDecimal invoiceMaxAmount;
+	@XmlElement(name = "minpaymentamount")
+	private BigDecimal minPaymentAmount;
 	
-	@XmlElement(name = "invoiceminamount")
-	private BigDecimal invoiceMinAmount;
+	@XmlElement(name = "paymentoption")
+	private Long paymentOption;
 	
 	@XmlElement(name = "currency")
 	private String currency;
@@ -86,9 +87,20 @@ public class InvoiceSubmissionApiReqDetailDto {
 	private Double exchangeRate;
 	
 	@XmlElement(name = "invoiceplan")
-	private Long invoicePlan;
+	private Long invoicePayPlan;
 	
 	@XmlElement(name = "servicedtls")
 	private InvoiceSubmissionApiReqServicesDto invoiceServices;
 	
+	@XmlTransient
+	private UUID issuedbyUserId;
+	
+	@XmlTransient
+	private Long invoiceReference;
+	
+	@XmlTransient
+	private String invoiceReferencePath;
+	
+	@XmlTransient
+	private String applicationNumber;
 }

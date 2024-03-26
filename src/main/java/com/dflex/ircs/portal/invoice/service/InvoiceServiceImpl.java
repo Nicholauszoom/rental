@@ -41,12 +41,25 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	@Override
 	public void deleteById(Long id) {
-		invoiceRepository.deleteById(id);
-	}
+        invoiceRepository.deleteById(id);
+    }
 
 	@Override
 	public List<Invoice> findByPaymentNumber(String paymentNumber) {
 		return invoiceRepository.findByPaymentNumber(paymentNumber);
+	}
+	public List<Invoice> findAll(){
+		return invoiceRepository.findAll();
+	}
+
+	@Override
+	public Invoice findByInvoiceNumber(String invoiceNumber) {
+		return invoiceRepository.findByInvoiceNumber(invoiceNumber);
+	}
+
+	@Override
+	public Invoice findByReferenceAndReferencePath(String reference, String referencePath) {
+		return invoiceRepository.findByReferenceAndReferencePath(reference, referencePath);
 	}
 	
 	

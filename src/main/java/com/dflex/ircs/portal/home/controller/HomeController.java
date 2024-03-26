@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.dflex.ircs.portal.setup.dto.UserDetail;
+import com.dflex.ircs.portal.auth.dto.UserDetail;
 
 @Controller
 public class HomeController {

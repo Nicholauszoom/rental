@@ -65,21 +65,27 @@ public class Invoice extends CommonEntity implements Serializable {
 	
 	@Column(name = "invoice_number", length = 100, nullable = false)
 	private String invoiceNumber;
+	
+	@Column(name = "invoice_type_id", nullable = false)
+	private Long invoiceTypeId;
 
 	@Column(name = "invoice_description", length = 500, nullable = false)
 	private String invoiceDescription;
 	
-	@Column(name = "invoice_type_id", nullable = false)
-	private Integer invoiceTypeId;
-	
-	@Column(name = "payment_number", nullable = false, length = 50, unique = true)
+	@Column(name = "payment_number", nullable = true)
 	private String paymentNumber;
 
-	@Column(name = "invoice_payment_number", nullable = false, length = 50, unique = true)
+	@Column(name = "invoice_payment_number", nullable = true)
 	private String invoicePaymentNumber;
+	
+	@Column(name = "appication_number", nullable = true)
+	private String applicationNumber;
 
 	@Column(name = "reference", length = 100)
 	private String reference;
+	
+	@Column(name = "reference_path", length = 100)
+	private String referencePath;
 
 	@Column(name = "customer_name", length = 100, nullable = false)
 	private String customerName;
@@ -112,7 +118,7 @@ public class Invoice extends CommonEntity implements Serializable {
 	private String approvedBy;
 	
 	@Column(name = "payment_option_id", nullable = false)
-	private Integer paymentOptionId;
+	private Long paymentOptionId;
 	
 	@Column(name = "payment_option_name", nullable = false)
 	private String paymentOptionName;
@@ -120,11 +126,11 @@ public class Invoice extends CommonEntity implements Serializable {
 	@Column(name = "invoice_amount", nullable = false)
 	private BigDecimal invoiceAmount;
 	
-	@Column(name = "minimum_payment_amount", nullable = false)
-	private BigDecimal minimumPaymentAmount;
-
 	@Column(name = "paid_amount", nullable = false)
 	private BigDecimal paidAmount = new BigDecimal("0.00");
+	
+	@Column(name = "minimum_payment_amount", nullable = false)
+	private BigDecimal minimumPaymentAmount;
 
 	@Column(name = "currency_code", length = 3)
 	private String currencyCode;
@@ -146,6 +152,9 @@ public class Invoice extends CommonEntity implements Serializable {
 
 	@Column(name = "reminder_status_id", nullable = false)
 	private Long reminderStatusId;
+	
+	@Column(name = "detail_count", nullable = false)
+	private Integer detailCount;
 
 	@Column(name = "service_institution_code", nullable = false, length = 10)
 	private String serviceInstitutionCode;
@@ -173,27 +182,31 @@ public class Invoice extends CommonEntity implements Serializable {
 	@Column(name = "process_start_date", nullable = false)
 	private Date processStartdate;
 
-	@Column(name = "process_end_date", nullable = false)
+	@Column(name = "process_end_date", nullable = true)
 	private Date processEndDate;
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 
-	public Invoice(String invoiceNumber, String invoiceDescription, String invoicePaymentNumber,String paymentNumber, String reference,
-			String customerName, String customerIdentity, Long identityTypeId, String customerPhoneNumber,
-			String customerEmail, String customerAccount, Date invoiceIssueDate, Date invoiceExpiryDate,
-			String issuedBy, String approvedBy,Integer paymentOptionId,String paymentOptionName, BigDecimal invoiceAmount
+	public Invoice(String invoiceNumber,Long invoiceTypeId, String invoiceDescription, String invoicePaymentNumber,String paymentNumber,
+			String reference,String applicationNumber,String referencePath,String customerName, String customerIdentity,
+			Long identityTypeId, String customerPhoneNumber,String customerEmail, String customerAccount, Date invoiceIssueDate,
+			Date invoiceExpiryDate,String issuedBy, String approvedBy,Long paymentOptionId,String paymentOptionName, BigDecimal invoiceAmount
 			, BigDecimal minimumPaymentAmount, BigDecimal paidAmount,String currencyCode, Double exchangeRateValue,
-			Boolean isInvoicePaid, Long invoicePayPlanId, Date nextReminder, Long reminderStatusId,
-			String serviceInstitutionCode, ServiceInstitution serviceInstitution, String workStationCode,
+			Boolean isInvoicePaid, Long invoicePayPlanId,String invoicePayPlanName, Date nextReminder, Long reminderStatusId,
+			Integer detailCount,String serviceInstitutionCode, ServiceInstitution serviceInstitution, String workStationCode,
 			WorkStation workStation, String clientCode, String requestIdentity, Date receivedDate,
-			Date processStartdate, Date processEndDate,UUID createdBy,String createdByUsername) {
+			Date processStartdate, Date processEndDate,UUID createdBy,String createdByUsername
+			) {
 		super(createdBy,createdByUsername);
 		this.invoiceNumber = invoiceNumber;
+		this.invoiceTypeId = invoiceTypeId;
 		this.invoiceDescription = invoiceDescription;
 		this.invoicePaymentNumber = invoicePaymentNumber;
 		this.paymentNumber = paymentNumber;
 		this.reference = reference;
+		this.applicationNumber = applicationNumber;
+		this.referencePath = referencePath;
 		this.customerName = customerName;
 		this.customerIdentity = customerIdentity;
 		this.identityTypeId = identityTypeId;
@@ -213,8 +226,10 @@ public class Invoice extends CommonEntity implements Serializable {
 		this.exchangeRateValue = exchangeRateValue;
 		this.isInvoicePaid = isInvoicePaid;
 		this.invoicePayPlanId = invoicePayPlanId;
+		this.invoicePayPlanName = invoicePayPlanName;
 		this.nextReminder = nextReminder;
 		this.reminderStatusId = reminderStatusId;
+		this.detailCount = detailCount;
 		this.serviceInstitutionCode = serviceInstitutionCode;
 		this.serviceInstitution = serviceInstitution;
 		this.workStationCode = workStationCode;

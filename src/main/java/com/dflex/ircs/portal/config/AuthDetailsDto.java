@@ -29,4 +29,6 @@ public class AuthDetailsDto {
 	private String phoneNumber;
 	
 	private String fullName;
+	
+	private String workStation;
 }

@@ -24,5 +24,11 @@ public interface InvoiceService {
 	public void deleteById(Long id);
 
 	public List<Invoice> findByPaymentNumber(String paymentNumber);
+
+	public List<Invoice> findAll();
+
+	public Invoice findByInvoiceNumber(String invoiceNumber);
+
+	public Invoice findByReferenceAndReferencePath(String reference, String referencePath);
 	
 }

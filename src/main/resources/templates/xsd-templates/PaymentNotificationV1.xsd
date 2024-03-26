@@ -1,0 +1,46 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="ircs" type="ircsType"/>
+  <xs:complexType name="paymenthdrType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="reqid"/>
+      <xs:element type="xs:anyURI" name="callbackurl"/>
+      <xs:element type="xs:string" name="paymentfacilitator"/>
+      <xs:element type="xs:int" name="dtlcount"/>
+      <xs:element type="xs:string" name="paymentnumber"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="paymentdtlType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="transactionnumber"/>
+      <xs:element type="xs:string" name="transactionreference"/>
+      <xs:element type="xs:string" name="serviceinstitution"/>
+      <xs:element type="xs:string" name="invoicepaymentnumber"/>
+      <xs:element type="xs:double" name="paymentamount"/>
+      <xs:element type="xs:string" name="currency"/>
+      <xs:element type="xs:string" name="collectionaccount"/>
+      <xs:element type="xs:dateTime" name="paymentdate"/>
+      <xs:element type="xs:string" name="paymentmethod"/>
+      <xs:element type="xs:string" name="paymentmethodreference"/>
+      <xs:element type="xs:string" name="payername"/>
+      <xs:element type="xs:string" name="payerphonenumber"/>
+      <xs:element type="xs:string" name="payeremail"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="paymentdtlsType">
+    <xs:sequence>
+      <xs:element type="paymentdtlType" name="paymentdtl"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="paymentType">
+    <xs:sequence>
+      <xs:element type="paymenthdrType" name="paymenthdr"/>
+      <xs:element type="paymentdtlsType" name="paymentdtls"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ircsType">
+    <xs:sequence>
+      <xs:element type="paymentType" name="payment"/>
+      <xs:element type="xs:string" name="hash"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -59,6 +59,7 @@ public class PaymentFacilitator  extends CommonEntity implements Serializable {
 	@Column(name = "payment_facilitator_code", length = 10, nullable = false)
 	private String paymentFacilitatorCode;
 
+
 	@Column(name = "payment_facilitator_name", length = 150, nullable = false)
 	private String paymentFacilitatorName;
 
@@ -67,5 +68,16 @@ public class PaymentFacilitator  extends CommonEntity implements Serializable {
 	
 	@Column(name="record_status_id", nullable=false)
 	private Long recordStatusId = 1L;
+
+	public PaymentFacilitator(UUID userId, String userName, String paymentFacilitatorName,
+							  String paymentFacilitatorShortName, String paymentFacilitatorCode, Long recordStatusId) {
+		super(userId, userName);
+		this.paymentFacilitatorCode = paymentFacilitatorCode;
+		this.paymentFacilitatorName = paymentFacilitatorName;
+		this.paymentFacilitatorShortName = paymentFacilitatorShortName;
+		this.recordStatusId = recordStatusId;
+	}
+
+
 
 }

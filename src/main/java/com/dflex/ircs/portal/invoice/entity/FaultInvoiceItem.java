@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import com.dflex.ircs.portal.setup.entity.ServiceTypeSource;
-import com.dflex.ircs.portal.util.CommonEntity;
+import com.dflex.ircs.portal.setup.entity.RevenueSource;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +35,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name = "tab_fault_invoice_item")
-public class FaultInvoiceItem extends CommonEntity  implements Serializable {
+public class FaultInvoiceItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -62,8 +61,8 @@ public class FaultInvoiceItem extends CommonEntity  implements Serializable {
 	private String serviceTypeCode;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "service_type_source_id", nullable = false)
-	private ServiceTypeSource serviceTypeSource;
+	@JoinColumn(name = "revenue_source_id", nullable = false)
+	private RevenueSource revenueSource;
 
 	@Column(name = "service_reference", length = 200, nullable = true)
 	private String serviceReference;

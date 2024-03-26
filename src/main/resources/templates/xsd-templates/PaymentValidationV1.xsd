@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="ircs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="payment" type="PaymentType"/>
+                <xs:element name="hash" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="PaymentType">
+        <xs:sequence>
+            <xs:element name="paymenthdr" type="PaymentHeaderType"/>
+            <xs:element name="paymentdtls" type="PaymentDetailsType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaymentHeaderType">
+        <xs:sequence>
+            <xs:element name="ackid" type="xs:string"/>
+            <xs:element name="requestid" type="xs:string"/>
+            <xs:element name="dtlcount" type="xs:integer"/>
+            <xs:element name="paymentnumber" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaymentDetailsType">
+        <xs:sequence>
+            <xs:element name="paymentdtl" type="PaymentDetailType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PaymentDetailType">
+        <xs:sequence>
+            <xs:element name="transactionnumber" type="xs:string"/>
+            <xs:element name="transactionreference" type="xs:string"/>
+            <xs:element name="serviceinstitution" type="xs:string"/>
+            <xs:element name="serviceinstitutionname" type="xs:string"/>
+            <xs:element name="invoicepaymentnumber" type="xs:string"/>
+            <xs:element name="paymentamount" type="xs:decimal"/>
+            <xs:element name="currency" type="xs:string"/>
+            <xs:element name="paymentdate" type="xs:dateTime"/>
+            <xs:element name="paymentmethod" type="xs:string"/>
+            <xs:element name="payername" type="xs:string"/>
+            <xs:element name="payerphonenumber" type="xs:string"/>
+            <xs:element name="payeremail" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

@@ -44,4 +44,9 @@ public class InvoiceItemServiceImpl implements InvoiceItemService {
 		return invoiceItemRepository.findByInvoiceIdAndRecordStatusId(invoiceId,recordStatusId);
 	}
 
+	@Override
+	public List<InvoiceItem> findByInvoiceId(Long id) {
+		return invoiceItemRepository.findByInvoiceId(id);
+	}
+
 }

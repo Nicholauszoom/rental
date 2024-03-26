@@ -22,5 +22,7 @@ public interface InvoiceItemService {
 	public void deleteById(Long id);
 
 	public List<InvoiceItem> findByInvoiceIdAndRecordStatusId(Long invoiceId, Long recordStatusId);
+
+	public List<InvoiceItem> findByInvoiceId(Long id);
 	
 }

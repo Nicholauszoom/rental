@@ -51,24 +51,43 @@ public class ServiceType extends CommonEntity implements Serializable {
 	@UuidGenerator
 	@Column(name="service_type_uid",nullable = false)
 	private UUID serviceTypeUid;
-	
+
+
 	@PrePersist
     protected void onCreate() {
         setServiceTypeUid(java.util.UUID.randomUUID());
 	}
 	
-	@Column(name = "service_type_code", nullable = false, length = 10)
+	@Column(name = "service_type_code", nullable = false, length = 20)
 	private String serviceTypeCode;
 
-	@Column(name = "service_type_description", nullable = false, length = 100)
-	private String serviceTypeDescription;
+	@Column(name = "service_type_name", nullable = false, length = 200)
+	private String serviceTypeName;
+	
+	@Column(name = "service_type_display_text", nullable = true, length = 50)
+	private String serviceTypeDisplayText;
 
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "parent_service_type_id", nullable = true)
 	//@JsonManagedReference
 	@JsonBackReference
 	private ServiceType parentServiceType;
-
+	
+	@Column(name = "service_type_level", nullable = false)
+	private Integer serviceTypeLevel;
+	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
+
+
+	public ServiceType(UUID createdBy, String createdByUserName, String serviceTypeCode, Integer serviceTypeLevel,
+					   String serviceTypeName, Long recordStatusId, ServiceType parentServiceTypeId) {
+		super(createdBy, createdByUserName);
+		this.serviceTypeCode = serviceTypeCode;
+		this.serviceTypeName = serviceTypeName;
+		this.parentServiceType = parentServiceTypeId;
+		this.serviceTypeLevel = serviceTypeLevel;
+		this.recordStatusId = recordStatusId;
+	}
+
 }

@@ -48,7 +48,9 @@ public class OtherServiceInstitution extends CommonEntity implements Serializabl
 	@UuidGenerator
 	@Column(name="other_service_institution_uid",nullable = false)
 	private UUID otherServiceInstitutionUid;
-	
+
+
+
 	@PrePersist
     protected void onCreate() {
         setOtherServiceInstitutionUid(java.util.UUID.randomUUID());
@@ -59,6 +61,8 @@ public class OtherServiceInstitution extends CommonEntity implements Serializabl
 	
 	@Column(name="institution_name",nullable=false,length = 100)
 	private String institutionName;
+
+
 
 	@Column(name="postal_address",length = 200)
 	private String postalAddress;
@@ -77,5 +81,21 @@ public class OtherServiceInstitution extends CommonEntity implements Serializabl
 	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
+
+
+	public OtherServiceInstitution(UUID createdBy, String createdByUserName, String institutionCode,
+								   String postalAddress, String physicalAddress, String institutionName,
+								   String secondaryPhoneNumber, String primaryPhoneNumber, String email,
+								   Long recordStatusId) {
+		super(createdBy, createdByUserName);
+		this.institutionCode = institutionCode;
+		this.institutionName = institutionName;
+		this.postalAddress = postalAddress;
+		this.physicalAddress = physicalAddress;
+		this.primaryPhoneNumber = primaryPhoneNumber;
+		this.secondaryPhoneNumber = secondaryPhoneNumber;
+		this.email = email;
+		this.recordStatusId = recordStatusId;
+	}
 	
 }

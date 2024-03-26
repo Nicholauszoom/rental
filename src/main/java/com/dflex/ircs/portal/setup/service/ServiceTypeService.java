@@ -16,8 +16,6 @@ public interface ServiceTypeService {
 	
 	public Optional<ServiceType> findById(Long id);
 
-//	public ServiceType findByServiceTypeAndId(String serviceTypeUid, Long id);
-	
 	public ServiceType saveServiceType(ServiceType serviceType);
 	
 	public ServiceType findByServiceTypeCodeAndRecordStatusId(String serviceTypeCode,Long statusId);

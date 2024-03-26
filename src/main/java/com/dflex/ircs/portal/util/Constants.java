@@ -214,6 +214,11 @@ public class Constants {
 	public static final Long REMINDER_STATUS_OFF = 0L;
 	public static final Long REMINDER_STATUS_ON = 1L;
 	public static final Long REMINDER_STATUS_NOT_APPLICABLE = 2L;
+	
+	//Payment Status
+	public static final String PAYMENT_NOT_PAID = "NOT PAID";
+	public static final String PAYMENT_PAID_PARTLY = "PARTIALLY PAID";
+	public static final String PAYMENT_PAID = "PAID";
 }
 
 

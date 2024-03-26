@@ -14,4 +14,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 	public List<Payment> findByInvoicePaymentNumberAndRecordStatusId(String invoicePaymentNumber, Long recordStatusId);
 
 	public Payment findByInvoicePaymentNumber(String invoicePaymentNumber);
+
+	public List<Payment> findByApplicationNumberAndRecordStatusId(String applicationNumber, Long recordStatusId);
 }

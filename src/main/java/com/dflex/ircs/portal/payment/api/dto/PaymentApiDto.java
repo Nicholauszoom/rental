@@ -14,17 +14,13 @@ import java.util.List;
 @Setter @Getter
 @XmlRootElement(name = "payment")
 @XmlAccessorType(jakarta.xml.bind.annotation.XmlAccessType.FIELD)
-public class PaymentDto {
+public class PaymentApiDto {
 
     @XmlElement(name = "paymenthdr")
-    private PaymentHeaderDto paymenthdr;
+    private PaymentHeaderApiDto paymenthdr;
 
     @XmlElementWrapper(name = "paymentdtls")
     @XmlElement(name = "paymentdtl")
-    private List<PaymentDetailDto> paymentdtls;
-
-
-
-
+    private List<PaymentValidationDetailDto> paymentdtls;
 
 }

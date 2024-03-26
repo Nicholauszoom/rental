@@ -1,56 +1,62 @@
 package com.dflex.ircs.portal.payment.api.dto;
 
-
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.*;
-
 import java.math.BigDecimal;
+import java.util.Date;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * 
+ * @author Augustino Mwageni
+ *
+ */
 @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
-@XmlRootElement(name = "paymentDtls")
-@XmlAccessorType(jakarta.xml.bind.annotation.XmlAccessType.FIELD)
+@EqualsAndHashCode
 public class PaymentDetailDto {
-
-    @XmlElement(name = "transactionnumber")
-    private String transactionnumber;
-
-    @XmlElement(name = "transactionreference")
-    private String transactionreference;
-
-    @XmlElement(name = "serviceinstitution")
-    private String serviceinstitution;
-
-    @XmlElement(name = "serviceinstitutionname")
-    private String serviceinstitutionname;
-
-    @XmlElement(name = "invoicepaymentnumber")
-    private String invoicepaymentnumber;
-
-    @XmlElement(name = "paymentamount")
-    private BigDecimal paymentamount;
-
-    @XmlElement(name = "currency")
-    private String currency;
-
-    @XmlElement(name = "paymentdate")
-    private String paymentdate;
-
-    @XmlElement(name = "paymentmethod")
-    private String paymentmethod;
-
-    @XmlElement(name = "payername")
-    private String payername;
-
-    @XmlElement(name = "payerphonenumber")
-    private String payerphonenumber;
-
-    @XmlElement(name = "payeremail")
-    private String payeremail;
-
+	
+	private Long id;
+	
+	private String paymentUid;
+	
+	private String transactionNumber;
+	
+	private String transactionReference;
+	
+	private String invoiceNumber;
+	
+	private String paymentNumber;
+	
+	private String invoicePaymentNumber;
+	
+	private BigDecimal paymentAmount;
+	
+	private String currency;
+	
+	private String collectionAccount;
+	
+	private Date paymentDate;
+	
+	private Date receivedDate;
+	
+	private String paymentMethod;
+	
+	private String paymentMethodReference;
+	
+	private String payerName;
+	
+	private String payerPhoneNumber;
+	
+	private String payerEmail;
+	
+	private String paymentFacilitatorCode;
+	
+	private String paymentFacilitatorName;
 }

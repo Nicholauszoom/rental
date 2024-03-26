@@ -65,6 +65,9 @@ public class Payment extends CommonEntity implements Serializable {
 
 	@Column(name = "invoice_number", length = 100, nullable = false)
 	private String invoiceNumber;
+	
+	@Column(name = "application_number", length = 100, nullable = true)
+	private String applicationNumber;
 
 	@Column(name = "invoice_payment_number", nullable = false, length = 50)
 	private String invoicePaymentNumber;
@@ -97,7 +100,7 @@ public class Payment extends CommonEntity implements Serializable {
 	private Date reconciledDate;
 
 	@Column(name = "paid_amount", nullable = false)
-	private BigDecimal paidPmount;
+	private BigDecimal paidAmount;
 	
 	@Column(name = "currency_code", length = 3)
 	private String currencyCode;
@@ -110,6 +113,12 @@ public class Payment extends CommonEntity implements Serializable {
 
 	@Column(name = "is_reconciled", nullable = false)
 	private Boolean isReconciled = false;
+	
+	@Column(name = "service_institution_code", nullable = false, length = 10)
+	private String serviceInstitutionCode;
+	
+	@Column(name = "service_institution_id", nullable = true)
+	private Long serviceInstitutionId;
 	
 	@Column(name = "payment_facilitator_code", nullable = false, length = 10)
 	private String paymentFacilitatorCode;
@@ -145,17 +154,18 @@ public class Payment extends CommonEntity implements Serializable {
 	@Column(name="record_status_id", nullable=false)
 	private Long recordStatusId = 1L;
 
-	public Payment(Long invoiceId, String invoiceNumber,
+	public Payment(Long invoiceId, String invoiceNumber,String applicationNumber,
 			String invoicePaymentNumber, String paymentNumber, String transactionNumber, String paymentReference,
 			String payerName, String payerPhoneNumber, String payerEmail, String transactionTypeCode,
-			Date transactionDate, BigDecimal paidPmount, String currencyCode, String paymentMethod,
-			String paymentMethodReference, Boolean isReconciled, String paymentFacilitatorCode,
-			PaymentFacilitator paymentFacilitator, String collectionAccountNumber, Long collectionAccountId,
+			Date transactionDate, BigDecimal paidAmount, String currencyCode, String paymentMethod,
+			String paymentMethodReference, Boolean isReconciled,String serviceInstitutionCode,Long serviceInstitutionId,
+			String paymentFacilitatorCode,PaymentFacilitator paymentFacilitator, String collectionAccountNumber, Long collectionAccountId,
 			String remark, Integer detailCount, String requestIdentity, Date receivedDate, Date processStartdate,
 			Date processEndDate,UUID createdBy, String createdByUsername) {
 		super(createdBy, createdByUsername);
 		this.invoiceId = invoiceId;
 		this.invoiceNumber = invoiceNumber;
+		this.applicationNumber = applicationNumber;
 		this.invoicePaymentNumber = invoicePaymentNumber;
 		this.paymentNumber = paymentNumber;
 		this.transactionNumber = transactionNumber;
@@ -165,11 +175,13 @@ public class Payment extends CommonEntity implements Serializable {
 		this.payerEmail = payerEmail;
 		this.transactionTypeCode = transactionTypeCode;
 		this.transactionDate = transactionDate;
-		this.paidPmount = paidPmount;
+		this.paidAmount = paidAmount;
 		this.currencyCode = currencyCode;
 		this.paymentMethod = paymentMethod;
 		this.paymentMethodReference = paymentMethodReference;
 		this.isReconciled = isReconciled;
+		this.serviceInstitutionCode = serviceInstitutionCode;
+		this.serviceInstitutionId = serviceInstitutionId;
 		this.paymentFacilitatorCode = paymentFacilitatorCode;
 		this.paymentFacilitator = paymentFacilitator;
 		this.collectionAccountNumber = collectionAccountNumber;

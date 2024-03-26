@@ -3,7 +3,6 @@ package com.dflex.ircs.portal.setup.repository;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.dflex.ircs.portal.setup.entity.RevenueSourceEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;

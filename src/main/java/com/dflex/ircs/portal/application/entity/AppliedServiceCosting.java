@@ -95,6 +95,12 @@ public class AppliedServiceCosting extends CommonEntity implements Serializable 
 	@Column(name = "exchange_rate",nullable = false)
 	private Double exchangeRate = 1.0D;
 	
+	@Column(name = "amount_paid",nullable = true)
+	private BigDecimal amountPaid = new BigDecimal("0.00");
+	
+	@Column(name = "payment_status", nullable = true)
+	private String paymentStatus = "NOT PAID";
+	
 	@Column(name = "record_status_id", nullable = false)
 	private Long recordStatusId = 1L;
 

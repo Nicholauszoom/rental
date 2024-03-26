@@ -52,5 +52,10 @@ public class PaymentServiceImpl implements PaymentService{
 		return paymentRepository.findAll();
 	}
 
+	@Override
+	public List<Payment> findByApplicationNumberAndRecordStatusId(String applicationNumber, Long recordStatusId) {
+		return paymentRepository.findByApplicationNumberAndRecordStatusId(applicationNumber,recordStatusId);
+	}
+
 	
 }

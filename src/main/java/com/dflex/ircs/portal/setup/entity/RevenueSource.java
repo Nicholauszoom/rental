@@ -83,5 +83,13 @@ public class RevenueSource extends CommonEntity implements Serializable {
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "currency_id")
 	private Currency currency;
+	
+	@JoinColumn(name = "revenue_source_category", nullable = true)
+	private String revenueSourceCategory;
+	
+	@JoinColumn(name = "revenue_source_category_id", nullable = true)
+	private Long revenueSourceCategoryId;
 
+	@JoinColumn(name = "has_sub_revenue_source", nullable = true)
+	private Boolean hasSubRevenueSource = false;
 }

@@ -118,6 +118,7 @@ public class PaymentNotificationConsumer {
 				Payment payment = new Payment(
 						paymentDetail.getInvoice().getId(),
 						paymentDetail.getInvoice().getInvoiceNumber(),
+						paymentDetail.getInvoice().getApplicationNumber(),
 						paymentDetail.getInvoicePaymentNumber(),
 						paymentNotificationApiReqHeader.getPaymentNumber(),
 						paymentDetail.getTransactionNumber(),
@@ -133,6 +134,8 @@ public class PaymentNotificationConsumer {
 						paymentDetail.getPaymentMethod(),
 						paymentDetail.getPaymentMethodReference(),
 						isReconciled,
+						paymentDetail.getServiceInstitution(),
+						paymentDetail.getInvoice().getServiceInstitution().getId(),
 						pf.get().getPaymentFacilitatorCode(),
 						pf.get(),
 						paymentDetail.getCollectionAccount(),

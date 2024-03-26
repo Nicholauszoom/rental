@@ -13,7 +13,7 @@ import lombok.*;
 public class PaymentValidationDto {
 
     @XmlElement(name = "payment")
-    private PaymentDto payment;
+    private PaymentApiDto payment;
 
     @XmlElement(name = "hash")
     private String hash;

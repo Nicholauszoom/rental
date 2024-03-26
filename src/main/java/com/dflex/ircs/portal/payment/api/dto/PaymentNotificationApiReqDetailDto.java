@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.dflex.ircs.portal.invoice.entity.Invoice;
-import com.dflex.ircs.portal.setup.entity.PaymentFacilitator;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;

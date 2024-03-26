@@ -205,11 +205,6 @@ public class InvoiceRequestConsumerService {
 										        	 
 										        	 if (invoiceSubmissionApiAckBody.getAcknowledgementStatus().equals("1010")) {
 										        		 
-										        		 /*
-										        		  * Save Invoice Details
-										        		  */
-										        		  //saveInvoiceRequestDetails(invoiceRequestBody,amqHeaders,requestTime);
-										        		 
 										        		 remark = "Message delivered successfully";
 										        		 loggerInvoiceSubmission.info("\nEvent : Invoice Submission , EventId :"+eventId+",RequestId :"+requestId+",RequestTime :"+requestTime+","
 										        		 		+ " AcknowledgementTime "+acknowledgementTime+" ,\nServiceInstitution: "+clientCode+",ClientKey :"+clientKey+",At Url :"+apiUrl+""

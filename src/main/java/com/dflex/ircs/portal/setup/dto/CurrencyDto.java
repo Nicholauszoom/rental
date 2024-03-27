@@ -14,11 +14,9 @@ import java.util.UUID;
 public class CurrencyDto implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
-   private String currencyUid;
+    private String currencyUid;
     private String currencyCode;
-
     private String currencyName;
-
     private Long recordStatusId ;
 
 

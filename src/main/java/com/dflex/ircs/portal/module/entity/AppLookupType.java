@@ -30,8 +30,7 @@ import lombok.NoArgsConstructor;
 /**
  * 
  * @author Augustino Mwageni
- *
- *         Entity class for database table tab_app_lookup_type
+ *Entity class for database table tab_app_lookup_type
  *
  */
 

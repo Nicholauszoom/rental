@@ -59,7 +59,9 @@ public class AppLookupController {
     @PostMapping("/list/lookuptype/{lookuptype}")
     public ResponseEntity<?> getApplicationLookupDataByLookupTypeId (@PathVariable("lookuptype") Long lookupTypeId,
     		HttpServletRequest request) {
-    	
+		System.out.println("#######");
+		System.out.println(lookupTypeId);
+
     	LinkedHashMap<String,Object> lookupData = new LinkedHashMap<>();
     	try {
     		

@@ -37,6 +37,12 @@ public class RevenueSourceServiceImpl implements RevenueSourceService {
 	}
 
 	@Override
+	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndRecordStatusId(UUID departmentUid, Long recordStatusId) {
+		return revenueSourceRepository.findDetailsByServiceDepartmentUidAndRecordStatusId(departmentUid, recordStatusId);
+	}
+
+
+	@Override
 	public List<RevenueSourceDetailsDto> findDetailsByServiceInstitutionUidAndAppModuleUidAndRecordStatusId(
 			UUID serviceInstitutionUid, UUID appModuleUid, Long recordStatusId) {
 		return revenueSourceRepository.findDetailsByServiceInstitutionUidAndAppModuleUidAndRecordStatusId(

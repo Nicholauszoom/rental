@@ -80,7 +80,7 @@ public class PaymentNotificationConsumer {
 	Locale currentLocale = LocaleContextHolder.getLocale();
 	
 	
-	@RabbitListener(id = "process_si_payment_notification", queues = { "#{'${rabbitmq.ircs.si.payment.incoming.queues}'.split(',')}" })
+	//@RabbitListener(id = "process_si_payment_notification", queues = { "#{'${rabbitmq.ircs.si.payment.incoming.queues}'.split(',')}" })
 	public void processPayment(byte[] data, @Header("amqp_consumerQueue") String queue,
 			@Header("amqp_receivedRoutingKey") String routingKey, @Header("retryCounter") final String retryCounter,
 			@Header("retryStatusCode") final String retryStatusCode, @Header("receivedTime") final String receivedTime,

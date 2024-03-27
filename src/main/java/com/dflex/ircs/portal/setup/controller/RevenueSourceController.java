@@ -35,47 +35,55 @@ public class RevenueSourceController {
 	private MessageSource messageSource;
 	
 	Locale currentLocale = LocaleContextHolder.getLocale();
-	
-	String status = "";
-	String message = "";
-	Boolean error = false;
+
 
     protected Logger logger = LoggerFactory.getLogger(RevenueSourceController.class);
 
-    @PostMapping("/department/{departmentuid}/module/{moduleuid}")
-    public ResponseEntity<?> getInstitutionDepartmentRevenueSourcesByDepartmentUidAndModuleUid(
-    		@PathVariable("departmentuid") String departmentUid,@PathVariable("moduleuid") String moduleUid,
-    		HttpServletRequest request) {
-    	
-    	try {
-    		
-    		List<RevenueSourceDetailsDto> revenueSources = revenueSourceService.findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
-    				UUID.fromString(departmentUid),UUID.fromString(moduleUid), Constants.RECORD_STATUS_ACTIVE);
-    		if(revenueSources != null && !revenueSources.isEmpty()) {
-    			
-    			message = messageSource.getMessage("message.1001",null, currentLocale);
-    			status = messageSource.getMessage("code.1001",null, currentLocale);
-    			error  = false;
-    			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,revenueSources,request.getRequestURI());
-    			return ResponseEntity.status(HttpStatus.OK).body(response);
-    		} else {
-    			
-    			message = messageSource.getMessage("message.1007",null, currentLocale);
-    			status = messageSource.getMessage("code.1007",null, currentLocale);
-    			error  = true;
-    			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-    			return ResponseEntity.status(HttpStatus.OK).body(response);
-    		}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-			return ResponseEntity.status(HttpStatus.OK).body(response);
-    	}
-        
-    }
+
+
+	@PostMapping("/department/{departmentuid}/module/{moduleuid}")
+	public ResponseEntity<Response> getInstitutionDepartmentRevenueSourcesByDepartmentUidAndModuleUid(
+			@PathVariable("departmentuid") String departmentUid,
+			@PathVariable("moduleuid") String moduleUid,
+			HttpServletRequest request) {
+
+		try {
+			List<RevenueSourceDetailsDto> revenueSources = revenueSourceService.findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
+					UUID.fromString(departmentUid), UUID.fromString(moduleUid), Constants.RECORD_STATUS_ACTIVE);
+			return generateResponse(revenueSources, "message.1001", "code.1001", request);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return generateResponse(null, "message.1004", "code.1004", request);
+		}
+	}
+
+
+	@PostMapping("/department/{departmentuid}")
+	public ResponseEntity<Response> getInstitutionDepartmentRevenueSources(
+			@PathVariable("departmentuid") String departmentUid,
+			HttpServletRequest request) {
+
+		try {
+			List<RevenueSourceDetailsDto> revenueSources = revenueSourceService.findDetailsByServiceDepartmentUidAndRecordStatusId(
+					UUID.fromString(departmentUid), Constants.RECORD_STATUS_ACTIVE);
+			return generateResponse(revenueSources, "message.1001", "code.1001", request);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return generateResponse(null, "message.1004", "code.1004", request);
+		}
+	}
+
+
+
+	private ResponseEntity<Response> generateResponse(List<RevenueSourceDetailsDto> revenueSources, String messageCode,
+													  String errorCode, HttpServletRequest request) {
+		String message = messageSource.getMessage(messageCode, null, currentLocale);
+		String status = messageSource.getMessage(errorCode, null, currentLocale);
+		boolean error = revenueSources == null || revenueSources.isEmpty();
+		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, revenueSources, request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
 
 }
 

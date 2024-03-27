@@ -21,5 +21,7 @@ public interface RevenueSourceService {
 	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
 			UUID departmentUid, UUID moduleUid, Long recordStatusId);
 
+	List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndRecordStatusId(UUID departmentUid, Long recordStatusId);
+
 
 }

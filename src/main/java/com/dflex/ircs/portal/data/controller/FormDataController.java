@@ -55,8 +55,10 @@ import com.dflex.ircs.portal.module.service.AppFormService;
 import com.dflex.ircs.portal.setup.entity.Currency;
 import com.dflex.ircs.portal.setup.entity.RevenueSource;
 import com.dflex.ircs.portal.setup.entity.ServiceType;
+import com.dflex.ircs.portal.setup.entity.WorkFlowCost;
 import com.dflex.ircs.portal.setup.entity.WorkStation;
 import com.dflex.ircs.portal.setup.service.RevenueSourceService;
+import com.dflex.ircs.portal.setup.service.WorkFlowCostService;
 import com.dflex.ircs.portal.setup.service.WorkStationService;
 import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.Response;
@@ -94,10 +96,11 @@ public class FormDataController {
     @Autowired
     private RevenueSourceService revenueSourceService;
 
-    @Autowired
-    private WorkStationService workStationService;
-
-    @Autowired
+	
+	@Autowired
+    private WorkFlowCostService workFlowCostService;
+	
+	@Autowired
     private ApplicationWorkFlowService applicationWorkFlowService;
 
     @Autowired

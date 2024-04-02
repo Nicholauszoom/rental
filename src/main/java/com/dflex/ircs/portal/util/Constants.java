@@ -121,10 +121,10 @@ public class Constants {
 			);
 	
 	public static final List<String> DATA_DETAIL_DEFAULT_FIELDS = Arrays.asList(
-			"application_uid","app_form_uid","work_flow_id","work_flow_name","work_flow_action_id","work_flow_action_name,has_attachment"
+			"application_uid","app_form_uid","work_flow_id","work_flow_name","work_flow_action_id","work_flow_action_name","has_attachment"
 			);
 	public static final List<String> DATA_DETAIL_DEFAULT_FIELDS_LABELS = Arrays.asList(
-			"applicationUid","formUid","workFlowId","Work Flow","workFlowActionId","Work Flow Action,hasAttachment"
+			"applicationUid","formUid","workFlowId","Work Flow","workFlowActionId","Work Flow Action","hasAttachment"
 			);
 	
 	public static final Long DATA_SOURCE_TYPE_INPUT = 1L;

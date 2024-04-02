@@ -1,4 +1,4 @@
-package com.dflex.ircs.portal.application.api.controller;
+package com.dflex.ircs.portal.license.controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +25,8 @@ import com.dflex.ircs.portal.application.dto.ApplicantDto;
 import com.dflex.ircs.portal.application.entity.Applicant;
 import com.dflex.ircs.portal.application.service.ApplicantService;
 import com.dflex.ircs.portal.config.AuthDetailsDto;
+import com.dflex.ircs.portal.license.dto.LicenseDto;
+import com.dflex.ircs.portal.license.service.LicenseService;
 import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.Response;
 import com.dflex.ircs.portal.util.Utils;
@@ -35,15 +37,18 @@ import jakarta.servlet.http.HttpServletRequest;
  * 
  * @author Augustino Mwageni
  * 
- * Applicant Api Controller
+ * License Api Controller
  *
  */
 @RestController
-@RequestMapping("/api/applicant")
-public class ApplicantController {
+@RequestMapping("/api/license")
+public class LicenseController {
 
     @Autowired
     private ApplicantService applicantService;
+    
+    @Autowired
+    private LicenseService licenseService;
     
     @Autowired
     private Utils utils;
@@ -57,74 +62,31 @@ public class ApplicantController {
 	String message = "";
 	Boolean error = false;
 
-    protected Logger logger = LoggerFactory.getLogger(ApplicantController.class);
+    protected Logger logger = LoggerFactory.getLogger(LicenseController.class);
     
     /**
-     * Get Applicant List
-     * @param request
-     * @return ResponseEntity
-     */
-    @PostMapping("/list")
-    public ResponseEntity<?> getApplicantList(HttpServletRequest request) {
-
-    	List<ApplicantDto> applicants = new ArrayList<>();
-        try {
-        	
-    		List<Applicant> applicantList = applicantService.findByRecordStatusId(Constants.RECORD_STATUS_ACTIVE);
-    		if(applicantList != null && !applicantList.isEmpty()) {
-        			
-    			for(Applicant apl : applicantList) {
-    				
-    				applicants.add(new ApplicantDto(apl.getId(),
-    						String.valueOf(apl.getApplicantUid()),apl.getApplicantAccount(),
-    						apl.getApplicantName(),apl.getIdentityNumber(),apl.getIdentityTypeId(),apl.getIdentityTypeName(),
-    						apl.getNationality(),apl.getTelephoneNumber(),apl.getMobileNumber(),apl.getWhatsappNumber(),apl.getEmailAddress(),
-    						apl.getPostalAddress(),apl.getPlotNumber(),apl.getStreet(),apl.getWard(),apl.getLocation(),
-    						apl.getGenderId(),apl.getGenderName(),apl.getLocationLatitude(),apl.getLocationLongitude(),
-    						apl.getBlockCode(),apl.getBlockNumber(),apl.getRecordStatusId()));
-    			}
-        		message = messageSource.getMessage("message.1001", null, currentLocale);
-				status = messageSource.getMessage("code.1001", null, currentLocale);
-				error = false;
-			} else {
-				message = messageSource.getMessage("message.1007", null, currentLocale);
-				status = messageSource.getMessage("code.1007", null, currentLocale);
-				error = true;
-			}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,applicants,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    
-    /**
-     * Get Applicant List by Search Criteria
+     * Get License List by Search Criteria
      * @param request
      * @return ResponseEntity
      */
     @PostMapping("/search/limit/{limit}")
-    public ResponseEntity<?> searchApplicantBySearchCriteria(@RequestBody ApplicantDto searchCriteria,
-    		@PathVariable("limit") Long limit,HttpServletRequest request) {
+    public ResponseEntity<?> searchLicenseBySearchCriteria(@RequestBody LicenseDto searchCriteria,
+    		@PathVariable("limit") Long recordLimit,HttpServletRequest request) {
     	
     	System.out.println("searchCriteria***************"+searchCriteria);
 
-    	List<ApplicantDto> applicantList = new ArrayList<>();
+    	List<LicenseDto> licenseList = new ArrayList<>();
     	
         try {
-        	String applicantAccount = searchCriteria.getApplicantAccount()==null?"":searchCriteria.getApplicantAccount().toUpperCase();
-        	String applicantName = searchCriteria.getApplicantName()==null?"":searchCriteria.getApplicantName().toUpperCase();
-        	String telephoneNumber = searchCriteria.getTelephoneNumber()==null?"":searchCriteria.getTelephoneNumber();
-        	String identityNumber = searchCriteria.getIdentityNumber()==null?"":searchCriteria.getIdentityNumber().toUpperCase();
-        	String emailAddress = searchCriteria.getEmailAddress()==null?"":searchCriteria.getEmailAddress().toUpperCase();
+        	String licenseNumber = searchCriteria.getLicenseNumber()==null?"":searchCriteria.getLicenseNumber().toUpperCase();
+        	String licenseName = searchCriteria.getLicenseName()==null?"":searchCriteria.getLicenseName().toUpperCase();
+        	String applicantAccount = searchCriteria.getOwnerAccount()==null?"":searchCriteria.getOwnerAccount().toUpperCase();
+        	String applicantName = searchCriteria.getOwnerName()==null?"":searchCriteria.getOwnerName().toUpperCase();
+        	String identityNumber = searchCriteria.getOwnerIdentityNumber()==null?"":searchCriteria.getOwnerIdentityNumber().toUpperCase();
         	
-        	applicantList = applicantService.findBySeachCriteriaAndRecordStatusId(applicantAccount,
-    				applicantName,telephoneNumber,identityNumber,emailAddress,Constants.RECORD_STATUS_ACTIVE,limit);
-    		if(applicantList != null && !applicantList.isEmpty()) {
+        	licenseList = licenseService. findBySeachCriteriaAndRecordStatusId(licenseNumber,licenseName,
+        			Constants.RECORD_STATUS_ACTIVE,applicantAccount,applicantName,identityNumber,recordLimit);
+    		if(licenseList != null && !licenseList.isEmpty()) {
         			
         		message = messageSource.getMessage("message.1001", null, currentLocale);
 				status = messageSource.getMessage("code.1001", null, currentLocale);
@@ -140,7 +102,7 @@ public class ApplicantController {
 			status = messageSource.getMessage("code.1004",null, currentLocale);
 			error  = true;
     	}
-        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,applicantList,request.getRequestURI());
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,licenseList,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -13,4 +13,6 @@ public interface RevenueSourceRepositoryCustom {
 	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndAppModuleUidAndRecordStatusId(
 			UUID departmentUid, UUID moduleUid, Long recordStatusId);
 
+
+
 }

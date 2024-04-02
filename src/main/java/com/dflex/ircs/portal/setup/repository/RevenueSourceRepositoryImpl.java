@@ -159,10 +159,10 @@ public class RevenueSourceRepositoryImpl implements RevenueSourceRepositoryCusto
 	}
 
 
+
 	public List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndRecordStatusId(
 			UUID departmentUid, Long recordStatusId) {
 		List<RevenueSourceDetailsDto> revenueSources = null;
-
 
 		String sqlQuery = "select r.id,r.revenue_source_uid,r.is_fixed_amount,r.fixed_amount, "
 				+ "s.service_type_uid,s.service_type_name,s.service_type_code,s.service_type_display_text,c.currency_uid,c.currency_name, "

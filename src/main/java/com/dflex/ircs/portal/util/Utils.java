@@ -907,5 +907,23 @@ public class Utils {
 		return result;
 	}
 
-	
+
+
+
+		public synchronized static long generateUniqueLong() {
+			 long lastTimestamp = 0L;
+			 long sequence = 0L;
+
+			long timestamp = System.currentTimeMillis();
+
+			if (timestamp != lastTimestamp) {
+				lastTimestamp = timestamp;
+				sequence = 0L;
+			} else {
+				sequence++;
+			}
+
+			return (timestamp << 16) | sequence;
+		}
+
 }

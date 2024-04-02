@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.dflex.ircs.portal.data.dto.OtherBillProcessingDto;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,170 +67,170 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * 
  * @author Augustino Mwageni
- * 
+ * <p>
  * Api Controller class for All Form Data
- *
  */
 @RestController
 @RequestMapping("/api/formdata")
 public class FormDataController {
 
-	@Autowired
+
+    @Autowired
+    private ApplicantService applicantService;
+
+    @Autowired
     private FormDataService formDataService;
-	
-	@Autowired
+
+    @Autowired
     private AppFormService appFormService;
-	
-	@Autowired
+
+    @Autowired
     private AppFormFieldService appFormFieldService;
-	
-	@Autowired
-    private ApplicantService  applicantService;
-	
-	@Autowired
-    private AppliedServiceCostingService  appliedServiceCostingService;
-	
-	@Autowired
+
+    @Autowired
+    private AppliedServiceCostingService appliedServiceCostingService;
+
+    @Autowired
     private RevenueSourceService revenueSourceService;
-	
-	@Autowired
+
+    @Autowired
     private WorkStationService workStationService;
-	
-	@Autowired
+
+    @Autowired
     private ApplicationWorkFlowService applicationWorkFlowService;
-	
-	@Autowired
+
+    @Autowired
     private InvoiceRequestConsumerService invoiceRequestConsumerService;
-	
-	@Autowired
+
+    @Autowired
     private Utils utils;
-	
-	@Autowired
-	private MessageSource messageSource;
-	
-	@Value("${rabbitmq.ircs.outgoing.exchange}")
-	private String messageOutExchange;
-	
-	@Value("${rabbitmq.routingkey.prefix}")
-	private String routingKeyPrefix;
-	
-	@Value("${rabbitmq.ircs.si.invoice.outgoing.routingkey}")
-	private String invoiceOutRoutingKey;
-	
-	Locale currentLocale = LocaleContextHolder.getLocale();
-	
-	String status = "";
-	String message = "";
-	Boolean error = false;
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @Value("${rabbitmq.ircs.outgoing.exchange}")
+    private String messageOutExchange;
+
+    @Value("${rabbitmq.routingkey.prefix}")
+    private String routingKeyPrefix;
+
+    @Value("${rabbitmq.ircs.si.invoice.outgoing.routingkey}")
+    private String invoiceOutRoutingKey;
+
+    Locale currentLocale = LocaleContextHolder.getLocale();
+
+    String status = "";
+    String message = "";
+    Boolean error = false;
 
     protected Logger logger = LoggerFactory.getLogger(FormDataController.class);
 
     @PostMapping("/create/data/{path}")
     public ResponseEntity<?> processFormData1SavingProcess(@RequestBody String data,
-    		@PathVariable("path") String dataPath,JwtAuthenticationToken auth,HttpServletRequest request) {
-    	
-    	try {
-    		System.out.println("data***************************"+data);
-    		JSONObject dataJson = new JSONObject(data);
-    		AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-    		
-    		ObjectMapper objectMapper = new ObjectMapper();
-    		if(dataPath.equals(Constants.DATA_PATH_1)) {
-    			
-    			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    			
-    			/**
-    			 * Create Applicant
-    			 */
-    			Applicant applicant = new Applicant();
-    			applicant = objectMapper.readValue(data,Applicant.class);
-    			String applicantAccount = utils.generateRandomNumber(8);
-    			applicant.setApplicantAccount(applicantAccount);
-    			applicant.setCreatedBy(authDetails.getUserId());
-    			applicant.setCreatedByUserName(authDetails.getUserName());
-    			
-    			System.out.println("applicant***************************"+applicant);
-    			
-    			Applicant newApplicant = applicantService.saveApplicant(applicant);
-    			if(newApplicant != null) {
-    				
-    				/**
-        			 * Create Application Details
-        			 */
-    				String applicationNumber = utils.getToken();
-    				
-    				FormData1 formData = objectMapper.readValue(data,FormData1.class);
-    				
-        			formData.setCreatedBy(authDetails.getUserId());
-            		formData.setCreatedByUserName(authDetails.getUserName());
-            		formData.setApplicationNumber(applicationNumber);
-            		formData.setApplicantId(newApplicant.getId());
-            		formData.setApplicantUid(newApplicant.getApplicantUid());
-            		formData.setWorkFlowId(Constants.WORK_FLOW_APPLICATION_ID);
-            		formData.setWorkFlowName(Constants.WORK_FLOW_APPLICATION);
-            		formData.setWorkFlowActionId(Constants.ACTION_APPLICATION_SUBMITTED_ID);
-            		formData.setWorkFlowActionName(Constants.ACTION_APPLICATION_SUBMITTED);
-            		formData.setWorkFlowRemark(Constants.ACTION_APPLICATION_SUBMITTED);
-            		
-            		FormData1 newFormData = formDataService.saveFormData1(formData);
-            		if(newFormData != null) {
-            			
-            			/**
-            			 * Create Applied Costs
-            			 */
-            			String revenueSourceUid = dataJson.getString("revenueSourceUid");
-            			RevenueSource revenueSource = revenueSourceService.findByRevenueSourceUid(UUID.fromString(revenueSourceUid));
-            			ServiceType serviceType = revenueSource.getServiceType();
-            			Currency currency = revenueSource.getCurrency();
-            			Integer unitCount = 1;
-            			Double exchangeRate = 1.0D;
-            			 
-            			AppliedServiceCosting costing = new AppliedServiceCosting(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-            					Constants.FORM_DATA_1,serviceType.getServiceTypeCode(),serviceType.getServiceTypeName(),
-            					revenueSource, revenueSource.getFixedAmount(),unitCount, revenueSource.getFixedAmount(),currency.getId(),
-            					currency.getCurrencyCode(), exchangeRate);
-            			appliedServiceCostingService.saveAppliedServiceCosting(costing);
-            			
-            			
-            			/**
-            			 * Create Workflow
-            			 */
-            			ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-            					newFormData.getApplicationUid(),newFormData.getWorkFlowId(),newFormData.getWorkFlowName(),newFormData.getWorkFlowActionId(),
-            					newFormData.getWorkFlowActionName(),newFormData.getWorkFlowRemark());
-            			
-            			applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
-        				
-        				message = messageSource.getMessage("general.create.success", new Object[] { "Application Data" },currentLocale);
-    					status = messageSource.getMessage("code.1001", null, currentLocale);
-    					error = false;
-    					
-        			} else {
-        				message = messageSource.getMessage("general.create.failure", new Object[] { "Application Data" },currentLocale);
-    					status = messageSource.getMessage("code.1002", null, currentLocale);
-    					error = true;
-    					
-        			}
-            	} else {
-    				message = messageSource.getMessage("general.create.failure", new Object[] { "Application Data" },currentLocale);
-					status = messageSource.getMessage("code.1002", null, currentLocale);
-					error = true;
-    			}
-    		}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                           @PathVariable("path") String dataPath, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        try {
+            System.out.println("data***************************" + data);
+            JSONObject dataJson = new JSONObject(data);
+            AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            if (dataPath.equals(Constants.DATA_PATH_1)) {
+
+                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                /**
+                 * Create Applicant
+                 */
+                Applicant applicant = new Applicant();
+                applicant = objectMapper.readValue(data, Applicant.class);
+                String applicantAccount = utils.generateRandomNumber(8);
+                applicant.setApplicantAccount(applicantAccount);
+                applicant.setCreatedBy(authDetails.getUserId());
+                applicant.setCreatedByUserName(authDetails.getUserName());
+
+                System.out.println("applicant***************************" + applicant);
+
+                Applicant newApplicant = applicantService.saveApplicant(applicant);
+                if (newApplicant != null) {
+
+                    /**
+                     * Create Application Details
+                     */
+                    String applicationNumber = utils.getToken();
+
+                    FormData1 formData = objectMapper.readValue(data, FormData1.class);
+
+                    formData.setCreatedBy(authDetails.getUserId());
+                    formData.setCreatedByUserName(authDetails.getUserName());
+                    formData.setApplicationNumber(applicationNumber);
+                    formData.setApplicantId(newApplicant.getId());
+                    formData.setApplicantUid(newApplicant.getApplicantUid());
+                    formData.setWorkFlowId(Constants.WORK_FLOW_APPLICATION_ID);
+                    formData.setWorkFlowName(Constants.WORK_FLOW_APPLICATION);
+                    formData.setWorkFlowActionId(Constants.ACTION_APPLICATION_SUBMITTED_ID);
+                    formData.setWorkFlowActionName(Constants.ACTION_APPLICATION_SUBMITTED);
+                    formData.setWorkFlowRemark(Constants.ACTION_APPLICATION_SUBMITTED);
+
+                    FormData1 newFormData = formDataService.saveFormData1(formData);
+                    if (newFormData != null) {
+
+                        /**
+                         * Create Applied Costs
+                         */
+                        String revenueSourceUid = dataJson.getString("revenueSourceUid");
+                        RevenueSource revenueSource = revenueSourceService.findByRevenueSourceUid(UUID.fromString(revenueSourceUid));
+                        ServiceType serviceType = revenueSource.getServiceType();
+                        Currency currency = revenueSource.getCurrency();
+                        Integer unitCount = 1;
+                        Double exchangeRate = 1.0D;
+
+                        AppliedServiceCosting costing = new AppliedServiceCosting(authDetails.getUserId(), authDetails.getUserName(), newFormData.getId(),
+                                Constants.FORM_DATA_1, serviceType.getServiceTypeCode(), serviceType.getServiceTypeName(),
+                                revenueSource, revenueSource.getFixedAmount(), unitCount, revenueSource.getFixedAmount(), currency.getId(),
+                                currency.getCurrencyCode(), exchangeRate);
+                        appliedServiceCostingService.saveAppliedServiceCosting(costing);
+
+
+                        /**
+                         * Create Workflow
+                         */
+                        ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(), authDetails.getUserName(), newFormData.getId(),
+                                newFormData.getApplicationUid(), newFormData.getWorkFlowId(), newFormData.getWorkFlowName(), newFormData.getWorkFlowActionId(),
+                                newFormData.getWorkFlowActionName(), newFormData.getWorkFlowRemark());
+
+                        applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
+
+                        message = messageSource.getMessage("general.create.success", new Object[]{"Application Data"}, currentLocale);
+                        status = messageSource.getMessage("code.1001", null, currentLocale);
+                        error = false;
+
+                    } else {
+                        message = messageSource.getMessage("general.create.failure", new Object[]{"Application Data"}, currentLocale);
+                        status = messageSource.getMessage("code.1002", null, currentLocale);
+                        error = true;
+
+                    }
+                } else {
+                    message = messageSource.getMessage("general.create.failure", new Object[]{"Application Data"}, currentLocale);
+                    status = messageSource.getMessage("code.1002", null, currentLocale);
+                    error = true;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-    
+
     /**
      * Get Form List Data
+     *
      * @param appFormUid
      * @param auth
      * @param request
@@ -237,43 +238,44 @@ public class FormDataController {
      */
     @PostMapping("/list/appform/{appformuid}/workflow/{workflowid}")
     public ResponseEntity<?> getFormListDataByAppFormUid(@PathVariable("appformuid") String appFormUid,
-    		@PathVariable("workflowid") Long workFlowId,JwtAuthenticationToken auth ,HttpServletRequest request) {
-    	
-    	List<LinkedHashMap<String,Object>> listData = null;
-    	
-    	try {
-    		
-    		AppForm appForm = appFormService.findByAppFormUidAndRecordStatusId(UUID.fromString(appFormUid), Constants.RECORD_STATUS_ACTIVE);
-    		List<String> dataListFields = appFormFieldService.findAppFormDataListFieldsByAppFormUid(UUID.fromString(appFormUid));
-    		
-    		if(appForm != null && dataListFields != null && !dataListFields.isEmpty()) {
-    			
-    			String dataPath = appForm.getFormDataTable().getFormDataTablePath();
-    			listData  = formDataService.findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(UUID.fromString(appFormUid),
-    					dataPath,dataListFields,workFlowId);
-    			
-    			System.out.println("listData***************"+listData);
-    			message = messageSource.getMessage("message.1001", null, currentLocale);
-				status = messageSource.getMessage("code.1001", null, currentLocale);
-				error = false;
-			} else {
-				message = messageSource.getMessage("message.1007", null, currentLocale);
-				status = messageSource.getMessage("code.1007", null, currentLocale);
-				error = true;
-			}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,listData,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                         @PathVariable("workflowid") Long workFlowId, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        List<LinkedHashMap<String, Object>> listData = null;
+
+        try {
+
+            AppForm appForm = appFormService.findByAppFormUidAndRecordStatusId(UUID.fromString(appFormUid), Constants.RECORD_STATUS_ACTIVE);
+            List<String> dataListFields = appFormFieldService.findAppFormDataListFieldsByAppFormUid(UUID.fromString(appFormUid));
+
+            if (appForm != null && dataListFields != null && !dataListFields.isEmpty()) {
+
+                String dataPath = appForm.getFormDataTable().getFormDataTablePath();
+                listData = formDataService.findAppFormDataListByAppFormUidAndDataPathAndDataFieldsAndWorkFlowId(UUID.fromString(appFormUid),
+                        dataPath, dataListFields, workFlowId);
+
+                System.out.println("listData***************" + listData);
+                message = messageSource.getMessage("message.1001", null, currentLocale);
+                status = messageSource.getMessage("code.1001", null, currentLocale);
+                error = false;
+            } else {
+                message = messageSource.getMessage("message.1007", null, currentLocale);
+                status = messageSource.getMessage("code.1007", null, currentLocale);
+                error = true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, listData, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-    
-  
+
+
     /**
      * Get Form Details Data
+     *
      * @param appFormUid
      * @param applicationUid
      * @param auth
@@ -282,43 +284,44 @@ public class FormDataController {
      */
     @PostMapping("/details/appform/{appformuid}/application/{applicationuid}")
     public ResponseEntity<?> getFormDetailsDataByAppFormUidAndApplicationUid(@PathVariable("appformuid") String appFormUid,
-    		@PathVariable("applicationuid") String applicationUid,JwtAuthenticationToken auth,HttpServletRequest request) {
-    	
-    	LinkedHashMap<String,Object> data = null;
-    	
-    	try {
-    		
-    		AppForm appForm = appFormService.findByAppFormUidAndRecordStatusId(UUID.fromString(appFormUid), Constants.RECORD_STATUS_ACTIVE);
-    		List<AppFormField> dataDetailFields = appFormFieldService.findByAppFormUidAndShowOnDetailAndRecordStatusId(UUID.fromString(appFormUid),
-    				true,Constants.RECORD_STATUS_ACTIVE);
-    		
-    		if(appForm != null && dataDetailFields != null && !dataDetailFields.isEmpty()) {
-    			
-    			String dataPath = appForm.getFormDataTable().getFormDataTablePath();
-    			data  = formDataService.findAppFormDataDetailByAppFormUidAndApplicationUidAndDataPathAndDataFields(
-    					UUID.fromString(appFormUid),UUID.fromString(applicationUid),dataPath,dataDetailFields);
-    			
-    			message = messageSource.getMessage("message.1001", null, currentLocale);
-				status = messageSource.getMessage("code.1001", null, currentLocale);
-				error = false;
-			} else {
-				message = messageSource.getMessage("message.1007", null, currentLocale);
-				status = messageSource.getMessage("code.1007", null, currentLocale);
-				error = true;
-			}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,data,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                                             @PathVariable("applicationuid") String applicationUid, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        LinkedHashMap<String, Object> data = null;
+
+        try {
+
+            AppForm appForm = appFormService.findByAppFormUidAndRecordStatusId(UUID.fromString(appFormUid), Constants.RECORD_STATUS_ACTIVE);
+            List<AppFormField> dataDetailFields = appFormFieldService.findByAppFormUidAndShowOnDetailAndRecordStatusId(UUID.fromString(appFormUid),
+                    true, Constants.RECORD_STATUS_ACTIVE);
+
+            if (appForm != null && dataDetailFields != null && !dataDetailFields.isEmpty()) {
+
+                String dataPath = appForm.getFormDataTable().getFormDataTablePath();
+                data = formDataService.findAppFormDataDetailByAppFormUidAndApplicationUidAndDataPathAndDataFields(
+                        UUID.fromString(appFormUid), UUID.fromString(applicationUid), dataPath, dataDetailFields);
+
+                message = messageSource.getMessage("message.1001", null, currentLocale);
+                status = messageSource.getMessage("code.1001", null, currentLocale);
+                error = false;
+            } else {
+                message = messageSource.getMessage("message.1007", null, currentLocale);
+                status = messageSource.getMessage("code.1007", null, currentLocale);
+                error = true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, data, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-    
+
     /**
      * Assign Form Data
-     * @param data
+     *
+     * @param appProcessingDto
      * @param dataPath
      * @param auth
      * @param request
@@ -326,73 +329,74 @@ public class FormDataController {
      */
     @PostMapping("/assign/data/{path}")
     public ResponseEntity<?> processFormDataAssignmentProcess(@RequestBody AppProcessingDto appProcessingDto,
-    		@PathVariable("path") String dataPath,JwtAuthenticationToken auth,HttpServletRequest request) {
-    	
-    	try {
-    		
-    		AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-    		
-    		if(dataPath.equals(Constants.DATA_PATH_1)) {
-    			
-    			Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
-    					UUID.fromString(appProcessingDto.getApplicationUid()));
-    			Date today = new Date();
-    			if(application.isPresent()) {
-    				/**
-        			 * Assign Application
-        			 */
-    				application.get().setWorkFlowName(Constants.WORK_FLOW_REVIEW);
-    				application.get().setWorkFlowId(Constants.WORK_FLOW_REVIEW_ID);
-    				application.get().setWorkFlowActionName(Constants.ACTION_APPLICATION_ASSIGNED);
-    				application.get().setWorkFlowActionId(Constants.ACTION_APPLICATION_ASSIGNED_ID);
-    				application.get().setUpdatedBy(authDetails.getUserId());
-    				application.get().setUpdatedByUserName(authDetails.getUserName());
-    				application.get().setUpdatedDate(today);
-    				application.get().setAssignedDate(today);
-    				application.get().setAssignedUser(UUID.fromString(appProcessingDto.getUser()));
-    				application.get().setWorkFlowRemark(appProcessingDto.getRemark());
-    				
-    				FormData1 newFormData = formDataService.saveFormData1(application.get());
-    				if(newFormData != null) {
-    					
-    					/**
-            			 * Create Workflow
-            			 */
-            			ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-            					newFormData.getApplicationUid(),newFormData.getWorkFlowId(),newFormData.getWorkFlowName(),newFormData.getWorkFlowActionId(),
-            					newFormData.getWorkFlowActionName(),newFormData.getWorkFlowRemark());
-            			
-            			applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
-        				
-        				message = messageSource.getMessage("general.create.success", new Object[] { "Application Assignment" },currentLocale);
-    					status = messageSource.getMessage("code.1001", null, currentLocale);
-    					error = false;
-    					
-    				} else {
-    					message = messageSource.getMessage("general.create.failure", new Object[] { "Application Assignment" },currentLocale);
-    					status = messageSource.getMessage("code.1002", null, currentLocale);
-    					error = true;
-    				}
-            	} else {
-					message = messageSource.getMessage("message.1007", null, currentLocale);
-					status = messageSource.getMessage("code.1007", null, currentLocale);
-					error = true;
-    			}
-    		}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                              @PathVariable("path") String dataPath, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        try {
+
+            AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+
+            if (dataPath.equals(Constants.DATA_PATH_1)) {
+
+                Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
+                        UUID.fromString(appProcessingDto.getApplicationUid()));
+                Date today = new Date();
+                if (application.isPresent()) {
+                    /**
+                     * Assign Application
+                     */
+                    application.get().setWorkFlowName(Constants.WORK_FLOW_REVIEW);
+                    application.get().setWorkFlowId(Constants.WORK_FLOW_REVIEW_ID);
+                    application.get().setWorkFlowActionName(Constants.ACTION_APPLICATION_ASSIGNED);
+                    application.get().setWorkFlowActionId(Constants.ACTION_APPLICATION_ASSIGNED_ID);
+                    application.get().setUpdatedBy(authDetails.getUserId());
+                    application.get().setUpdatedByUserName(authDetails.getUserName());
+                    application.get().setUpdatedDate(today);
+                    application.get().setAssignedDate(today);
+                    application.get().setAssignedUser(UUID.fromString(appProcessingDto.getUser()));
+                    application.get().setWorkFlowRemark(appProcessingDto.getRemark());
+
+                    FormData1 newFormData = formDataService.saveFormData1(application.get());
+                    if (newFormData != null) {
+
+                        /**
+                         * Create Workflow
+                         */
+                        ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(), authDetails.getUserName(), newFormData.getId(),
+                                newFormData.getApplicationUid(), newFormData.getWorkFlowId(), newFormData.getWorkFlowName(), newFormData.getWorkFlowActionId(),
+                                newFormData.getWorkFlowActionName(), newFormData.getWorkFlowRemark());
+
+                        applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
+
+                        message = messageSource.getMessage("general.create.success", new Object[]{"Application Assignment"}, currentLocale);
+                        status = messageSource.getMessage("code.1001", null, currentLocale);
+                        error = false;
+
+                    } else {
+                        message = messageSource.getMessage("general.create.failure", new Object[]{"Application Assignment"}, currentLocale);
+                        status = messageSource.getMessage("code.1002", null, currentLocale);
+                        error = true;
+                    }
+                } else {
+                    message = messageSource.getMessage("message.1007", null, currentLocale);
+                    status = messageSource.getMessage("code.1007", null, currentLocale);
+                    error = true;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    
+
     /**
      * Review Form Data
-     * @param data
+     *
+     * @param appProcessingDto
      * @param dataPath
      * @param auth
      * @param request
@@ -400,77 +404,78 @@ public class FormDataController {
      */
     @PostMapping("/review/data/{path}")
     public ResponseEntity<?> processFormDataReviewProcess(@RequestBody AppProcessingDto appProcessingDto,
-    		@PathVariable("path") String dataPath,JwtAuthenticationToken auth,HttpServletRequest request) {
-    	
-    	try {
-    		
-    		AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-    		
-    		if(dataPath.equals(Constants.DATA_PATH_1)) {
-    			
-    			Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
-    					UUID.fromString(appProcessingDto.getApplicationUid()));
-    			Date today = new Date();
-    			if(application.isPresent()) {
-    				/**
-        			 * Assign Application
-        			 */
-    				if(appProcessingDto.getDecision().equals(Constants.DECISION_ACCEPT)) {
-    					application.get().setWorkFlowName(Constants.WORK_FLOW_APPROVAL);
-        				application.get().setWorkFlowId(Constants.WORK_FLOW_APPROVAL_ID);
-        				application.get().setWorkFlowActionName(Constants.ACTION_REVIEW_ACCEPTED);
-        				application.get().setWorkFlowActionId(Constants.ACTION_REVIEW_ACCEPTED_ID);
-    				} else {
-    					application.get().setWorkFlowActionName(Constants.ACTION_REVIEW_REJECTED);
-        				application.get().setWorkFlowActionId(Constants.ACTION_REVIEW_REJECTED_ID);
-    				}
-    				
-    				application.get().setUpdatedBy(authDetails.getUserId());
-    				application.get().setUpdatedByUserName(authDetails.getUserName());
-    				application.get().setUpdatedDate(today);
-    				application.get().setWorkFlowRemark(appProcessingDto.getRemark());
-    				
-    				FormData1 newFormData = formDataService.saveFormData1(application.get());
-    				if(newFormData != null) {
-    					
-    					/**
-            			 * Create Workflow
-            			 */
-            			ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-            					newFormData.getApplicationUid(),newFormData.getWorkFlowId(),newFormData.getWorkFlowName(),newFormData.getWorkFlowActionId(),
-            					newFormData.getWorkFlowActionName(),newFormData.getWorkFlowRemark());
-            			
-            			applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
-        				
-        				message = messageSource.getMessage("general.processing.success", new Object[] { "Application Review" },currentLocale);
-    					status = messageSource.getMessage("code.1001", null, currentLocale);
-    					error = false;
-    					
-    				} else {
-    					message = messageSource.getMessage("general.processing.failure", new Object[] { "Application Review" },currentLocale);
-    					status = messageSource.getMessage("code.1002", null, currentLocale);
-    					error = true;
-    				}
-            	} else {
-					message = messageSource.getMessage("message.1007", null, currentLocale);
-					status = messageSource.getMessage("code.1007", null, currentLocale);
-					error = true;
-    			}
-    		}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                          @PathVariable("path") String dataPath, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        try {
+
+            AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+
+            if (dataPath.equals(Constants.DATA_PATH_1)) {
+
+                Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
+                        UUID.fromString(appProcessingDto.getApplicationUid()));
+                Date today = new Date();
+                if (application.isPresent()) {
+                    /**
+                     * Assign Application
+                     */
+                    if (appProcessingDto.getDecision().equals(Constants.DECISION_ACCEPT)) {
+                        application.get().setWorkFlowName(Constants.WORK_FLOW_APPROVAL);
+                        application.get().setWorkFlowId(Constants.WORK_FLOW_APPROVAL_ID);
+                        application.get().setWorkFlowActionName(Constants.ACTION_REVIEW_ACCEPTED);
+                        application.get().setWorkFlowActionId(Constants.ACTION_REVIEW_ACCEPTED_ID);
+                    } else {
+                        application.get().setWorkFlowActionName(Constants.ACTION_REVIEW_REJECTED);
+                        application.get().setWorkFlowActionId(Constants.ACTION_REVIEW_REJECTED_ID);
+                    }
+
+                    application.get().setUpdatedBy(authDetails.getUserId());
+                    application.get().setUpdatedByUserName(authDetails.getUserName());
+                    application.get().setUpdatedDate(today);
+                    application.get().setWorkFlowRemark(appProcessingDto.getRemark());
+
+                    FormData1 newFormData = formDataService.saveFormData1(application.get());
+                    if (newFormData != null) {
+
+                        /**
+                         * Create Workflow
+                         */
+                        ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(), authDetails.getUserName(), newFormData.getId(),
+                                newFormData.getApplicationUid(), newFormData.getWorkFlowId(), newFormData.getWorkFlowName(), newFormData.getWorkFlowActionId(),
+                                newFormData.getWorkFlowActionName(), newFormData.getWorkFlowRemark());
+
+                        applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
+
+                        message = messageSource.getMessage("general.processing.success", new Object[]{"Application Review"}, currentLocale);
+                        status = messageSource.getMessage("code.1001", null, currentLocale);
+                        error = false;
+
+                    } else {
+                        message = messageSource.getMessage("general.processing.failure", new Object[]{"Application Review"}, currentLocale);
+                        status = messageSource.getMessage("code.1002", null, currentLocale);
+                        error = true;
+                    }
+                } else {
+                    message = messageSource.getMessage("message.1007", null, currentLocale);
+                    status = messageSource.getMessage("code.1007", null, currentLocale);
+                    error = true;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    
+
     /**
      * Approve Form Data
-     * @param data
+     *
+     * @param appProcessingDto
      * @param dataPath
      * @param auth
      * @param request
@@ -478,77 +483,78 @@ public class FormDataController {
      */
     @PostMapping("/approve/data/{path}")
     public ResponseEntity<?> processFormDataAppoveProcess(@RequestBody AppProcessingDto appProcessingDto,
-    		@PathVariable("path") String dataPath,JwtAuthenticationToken auth,HttpServletRequest request) {
-    	
-    	try {
-    		
-    		AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-    		
-    		if(dataPath.equals(Constants.DATA_PATH_1)) {
-    			
-    			Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
-    					UUID.fromString(appProcessingDto.getApplicationUid()));
-    			Date today = new Date();
-    			if(application.isPresent()) {
-    				/**
-        			 * Approve Application
-        			 */
-    				if(appProcessingDto.getDecision().equals(Constants.DECISION_APPROVE)) {
-    					application.get().setWorkFlowName(Constants.WORK_FLOW_BILLING);
-        				application.get().setWorkFlowId(Constants.WORK_FLOW_BILLING_ID);
-        				application.get().setWorkFlowActionName(Constants.ACTION_APPROVAL_ACCEPTED);
-        				application.get().setWorkFlowActionId(Constants.ACTION_APPROVAL_ACCEPTED_ID);
-    				} else {
-    					application.get().setWorkFlowActionName(Constants.ACTION_APPROVAL_REJECTED);
-        				application.get().setWorkFlowActionId(Constants.ACTION_APPROVAL_REJECTED_ID);
-    				}
-    				
-    				application.get().setUpdatedBy(authDetails.getUserId());
-    				application.get().setUpdatedByUserName(authDetails.getUserName());
-    				application.get().setUpdatedDate(today);
-    				application.get().setWorkFlowRemark(appProcessingDto.getRemark());
-    				
-    				FormData1 newFormData = formDataService.saveFormData1(application.get());
-    				if(newFormData != null) {
-    					
-    					/**
-            			 * Create Workflow
-            			 */
-            			ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-            					newFormData.getApplicationUid(),newFormData.getWorkFlowId(),newFormData.getWorkFlowName(),newFormData.getWorkFlowActionId(),
-            					newFormData.getWorkFlowActionName(),newFormData.getWorkFlowRemark());
-            			
-            			applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
-        				
-        				message = messageSource.getMessage("general.processing.success", new Object[] { "Application Approval" },currentLocale);
-    					status = messageSource.getMessage("code.1001", null, currentLocale);
-    					error = false;
-    					
-    				} else {
-    					message = messageSource.getMessage("general.processing.failure", new Object[] { "Application Approval" },currentLocale);
-    					status = messageSource.getMessage("code.1002", null, currentLocale);
-    					error = true;
-    				}
-            	} else {
-					message = messageSource.getMessage("message.1007", null, currentLocale);
-					status = messageSource.getMessage("code.1007", null, currentLocale);
-					error = true;
-    			}
-    		}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                          @PathVariable("path") String dataPath, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        try {
+
+            AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+
+            if (dataPath.equals(Constants.DATA_PATH_1)) {
+
+                Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
+                        UUID.fromString(appProcessingDto.getApplicationUid()));
+                Date today = new Date();
+                if (application.isPresent()) {
+                    /**
+                     * Approve Application
+                     */
+                    if (appProcessingDto.getDecision().equals(Constants.DECISION_APPROVE)) {
+                        application.get().setWorkFlowName(Constants.WORK_FLOW_BILLING);
+                        application.get().setWorkFlowId(Constants.WORK_FLOW_BILLING_ID);
+                        application.get().setWorkFlowActionName(Constants.ACTION_APPROVAL_ACCEPTED);
+                        application.get().setWorkFlowActionId(Constants.ACTION_APPROVAL_ACCEPTED_ID);
+                    } else {
+                        application.get().setWorkFlowActionName(Constants.ACTION_APPROVAL_REJECTED);
+                        application.get().setWorkFlowActionId(Constants.ACTION_APPROVAL_REJECTED_ID);
+                    }
+
+                    application.get().setUpdatedBy(authDetails.getUserId());
+                    application.get().setUpdatedByUserName(authDetails.getUserName());
+                    application.get().setUpdatedDate(today);
+                    application.get().setWorkFlowRemark(appProcessingDto.getRemark());
+
+                    FormData1 newFormData = formDataService.saveFormData1(application.get());
+                    if (newFormData != null) {
+
+                        /**
+                         * Create Workflow
+                         */
+                        ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(), authDetails.getUserName(), newFormData.getId(),
+                                newFormData.getApplicationUid(), newFormData.getWorkFlowId(), newFormData.getWorkFlowName(), newFormData.getWorkFlowActionId(),
+                                newFormData.getWorkFlowActionName(), newFormData.getWorkFlowRemark());
+
+                        applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
+
+                        message = messageSource.getMessage("general.processing.success", new Object[]{"Application Approval"}, currentLocale);
+                        status = messageSource.getMessage("code.1001", null, currentLocale);
+                        error = false;
+
+                    } else {
+                        message = messageSource.getMessage("general.processing.failure", new Object[]{"Application Approval"}, currentLocale);
+                        status = messageSource.getMessage("code.1002", null, currentLocale);
+                        error = true;
+                    }
+                } else {
+                    message = messageSource.getMessage("message.1007", null, currentLocale);
+                    status = messageSource.getMessage("code.1007", null, currentLocale);
+                    error = true;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    
+
     /**
      * Generate Application Bill Request
-     * @param data
+     *
+     * @param appProcessingDto
      * @param dataPath
      * @param auth
      * @param request
@@ -556,166 +562,337 @@ public class FormDataController {
      */
     @PostMapping("/generatebill/data/{path}")
     public ResponseEntity<?> processFormDataGenerateBillProcess(@RequestBody AppProcessingDto appProcessingDto,
-    		@PathVariable("path") String dataPath,JwtAuthenticationToken auth,HttpServletRequest request) {
-    	
-    	try {
-    		
-    		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-    		AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
-    		
-    		if(dataPath.equals(Constants.DATA_PATH_1)) {
-    			
-    			Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
-    					UUID.fromString(appProcessingDto.getApplicationUid()));
-    			Date today = new Date();
-    			if(application.isPresent()) {
-    				/**
-        			 * GenerateBill 
-        			 */
-    				//Get applicant detals
-    				Optional<Applicant> applicant = applicantService.findById(application.get().getApplicantId());
-    				//Get costing details
-    				List<AppliedServiceCosting> appliedServiceCostings = appliedServiceCostingService.
-    						findByReferenceApplicationIdAndReferenceApplicationTableAndRecordStatusId(
-    						application.get().getId(),Constants.FORM_DATA_1,Constants.RECORD_STATUS_ACTIVE);
-    				
-    				//Prepare invoice message
-    				List<InvoiceSubmissionApiReqServiceDto> invoiceServiceDetailList = new ArrayList<>();
-    				RevenueSource revenueSource = null;
-    				String invoicedescription = null;
-    				BigDecimal invoiceAmount = new BigDecimal("0.00");
-    				String currencyCode = null;
-    				Double exchangeRate = 1.0D;
-    				Integer paymentPriority = 1;
-    				for(AppliedServiceCosting appliedService : appliedServiceCostings) {
-    					
-    					invoiceServiceDetailList.add(new InvoiceSubmissionApiReqServiceDto(
-    					appliedService.getRevenueSource().getServiceDepartment().getDepartmentCode(),
-    					appliedService.getServiceTypeCode(),
-    					String.valueOf(appliedService.getReferenceApplicationId()),
-    					appliedService.getTotalCost(),paymentPriority,appliedService.getRevenueSource()));
-    					
-    					paymentPriority ++;
-    					invoiceAmount = invoiceAmount.add(appliedService.getTotalCost());
-    					currencyCode = appliedService.getCurrencyCode();
-    					exchangeRate = appliedService.getExchangeRate();
-    					revenueSource = appliedService.getRevenueSource();
-    					invoicedescription = appliedService.getServiceTypeName();
-    				}
-    				InvoiceSubmissionApiReqServicesDto invoiceServices = new InvoiceSubmissionApiReqServicesDto(invoiceServiceDetailList);
-    				
-    				List<InvoiceSubmissionApiReqDetailDto> invoiceDetailList = new ArrayList<>();
-    				String invoiceRequestId = utils.generateTokenNumberByUse(Constants.TOKEN_TYPE_REQUEST_ID);
-    				String invoiceNumber = utils.generateTokenNumberByUse(Constants.TOKEN_TYPE_INVOICE_NUMBER);
-    				String issueDate = LocalDateTime.now().format(dateTimeFormatter);
-    				String expiryDate = LocalDateTime.now().plusDays(Constants.DEFAULT_INVOICE_DURATION).format(dateTimeFormatter);
-    				Integer detailCount = 1;
-    				String institutionCode = revenueSource.getServiceDepartment().getServiceInstitution().getInstitutionCode();
-    				
-    				InvoiceSubmissionApiReqDetailDto invoiceDetail = new InvoiceSubmissionApiReqDetailDto(
-    						invoiceNumber,
-    						institutionCode,
-    						authDetails.getWorkStation(),
-    						invoicedescription,
-    						applicant.get().getIdentityNumber(),
-    						applicant.get().getIdentityTypeId(),
-    						applicant.get().getApplicantAccount(),
-    						applicant.get().getApplicantName(),
-    						applicant.get().getMobileNumber(),
-    						applicant.get().getEmailAddress(),
-    						issueDate,
-    						expiryDate,
-    						authDetails.getUserName(),
-    						authDetails.getUserName(),
-    						invoiceAmount,
-    						invoiceAmount,
-    						Constants.PAY_OPT_PRECISE_ID,
-    						currencyCode,
-    						exchangeRate,
-    						Constants.PAY_PLAN_POSTPAID_ID,
-    						invoiceServices,
-    						authDetails.getUserId(),
-    						application.get().getId(),
-    						Constants.DATA_PATH_1,
-    						application.get().getApplicationNumber()
-    						);
-    				invoiceDetailList.add(invoiceDetail);
-    				InvoiceSubmissionApiReqDetailsDto apiReqDetails = new InvoiceSubmissionApiReqDetailsDto(invoiceDetailList);
-    				InvoiceSubmissionApiReqHeaderDto apiReqHeader = new InvoiceSubmissionApiReqHeaderDto(
-    						invoiceRequestId,Constants.INVOICE_CALLBACK,Constants.INVOICE_TYPE_SINGLE,detailCount,institutionCode);
-    				
-    				InvoiceSubmissionApiReqBodyDto invoiceSubmissionApiReqBody = new InvoiceSubmissionApiReqBodyDto(
-    						apiReqHeader,apiReqDetails);
-    				//Send request for bill
-    				
-    				String receivedTime = utils.getLocalDateTime(new Date()).format(dateTimeFormatter);
-    				String processRequestId = utils.getToken();
-    				Long apiVersionNumber = 1L;
-    				
-    				String routingKeySuffix = invoiceOutRoutingKey.substring(invoiceOutRoutingKey.indexOf("*")+1);
-					String routingKey = routingKeyPrefix+"."+institutionCode+routingKeySuffix;
-					Map<String,String> amqHeaders = new HashMap<String,String>();
-					amqHeaders.put("receivedTime", receivedTime);
-					amqHeaders.put("requestId", invoiceRequestId);
-					amqHeaders.put("processRequestId", processRequestId);
-					amqHeaders.put("clientCode",institutionCode);
-					amqHeaders.put("clientKey", Constants.IRCS_CORE_CLIENT_KEY);
-					amqHeaders.put("apiVersion",String.valueOf(apiVersionNumber));
-					
-					
-					boolean saveStatus = invoiceRequestConsumerService.saveInvoiceRequestDetails(invoiceSubmissionApiReqBody, amqHeaders, receivedTime);
-					if(saveStatus) {
-						
-						boolean publishStatus = utils.publishMsgToExchange(messageOutExchange,routingKey,invoiceSubmissionApiReqBody,amqHeaders);
-	    				
-	    				application.get().setWorkFlowActionName(Constants.ACTION_BILLING_INITIATED);
-	    				application.get().setWorkFlowActionId(Constants.ACTION_BILLING_INITIATED_ID);
-	    				application.get().setUpdatedBy(authDetails.getUserId());
-	    				application.get().setUpdatedByUserName(authDetails.getUserName());
-	    				application.get().setUpdatedDate(today);
-	    				application.get().setWorkFlowRemark(Constants.ACTION_BILLING_INITIATED);
-	    				
-	    				FormData1 newFormData = formDataService.saveFormData1(application.get());
-	    				if(newFormData != null) {
-	    					
-	    					/**
-	            			 * Create Workflow
-	            			 */
-	            			ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-	            					newFormData.getApplicationUid(),newFormData.getWorkFlowId(),newFormData.getWorkFlowName(),newFormData.getWorkFlowActionId(),
-	            					newFormData.getWorkFlowActionName(),newFormData.getWorkFlowRemark());
-	            			
-	            			applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
-	        				
-	        				message = messageSource.getMessage("general.processing.success", new Object[] { "Invoice Request" },currentLocale);
-	    					status = messageSource.getMessage("code.1001", null, currentLocale);
-	    					error = false;
-	    					
-	    				} else {
-	    					message = messageSource.getMessage("general.processing.failure", new Object[] { "Invoice Request" },currentLocale);
-	    					status = messageSource.getMessage("code.1002", null, currentLocale);
-	    					error = true;
-	    				}
-					} else {
-						message = messageSource.getMessage("general.processing.failure", new Object[] { "Invoice Request" },currentLocale);
-    					status = messageSource.getMessage("code.1002", null, currentLocale);
-    					error = true;
-					}
-            	} else {
-					message = messageSource.getMessage("message.1007", null, currentLocale);
-					status = messageSource.getMessage("code.1007", null, currentLocale);
-					error = true;
-    			}
-    		}
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		message = messageSource.getMessage("message.1004",null, currentLocale);
-			status = messageSource.getMessage("code.1004",null, currentLocale);
-			error  = true;
-    	}
-		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,null,request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+                                                                @PathVariable("path") String dataPath, JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        try {
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+
+            if (dataPath.equals(Constants.DATA_PATH_1)) {
+
+                Optional<FormData1> application = formDataService.findFormData1ByApplicationUid(
+                        UUID.fromString(appProcessingDto.getApplicationUid()));
+                Date today = new Date();
+                if (application.isPresent()) {
+                    /**
+                     * GenerateBill
+                     */
+                    //Get applicant detals
+                    Optional<Applicant> applicant = applicantService.findById(application.get().getApplicantId());
+                    //Get costing details
+                    List<AppliedServiceCosting> appliedServiceCostings = appliedServiceCostingService.
+                            findByReferenceApplicationIdAndReferenceApplicationTableAndRecordStatusId(
+                                    application.get().getId(), Constants.FORM_DATA_1, Constants.RECORD_STATUS_ACTIVE);
+
+                    //Prepare invoice message
+                    List<InvoiceSubmissionApiReqServiceDto> invoiceServiceDetailList = new ArrayList<>();
+                    RevenueSource revenueSource = null;
+                    String invoicedescription = null;
+                    BigDecimal invoiceAmount = new BigDecimal("0.00");
+                    String currencyCode = null;
+                    Double exchangeRate = 1.0D;
+                    Integer paymentPriority = 1;
+                    for (AppliedServiceCosting appliedService : appliedServiceCostings) {
+
+                        invoiceServiceDetailList.add(new InvoiceSubmissionApiReqServiceDto(
+                                appliedService.getRevenueSource().getServiceDepartment().getDepartmentCode(),
+                                appliedService.getServiceTypeCode(),
+                                String.valueOf(appliedService.getReferenceApplicationId()),
+                                appliedService.getTotalCost(), paymentPriority, appliedService.getRevenueSource()));
+
+                        paymentPriority++;
+                        invoiceAmount = invoiceAmount.add(appliedService.getTotalCost());
+                        currencyCode = appliedService.getCurrencyCode();
+                        exchangeRate = appliedService.getExchangeRate();
+                        revenueSource = appliedService.getRevenueSource();
+                        invoicedescription = appliedService.getServiceTypeName();
+                    }
+                    InvoiceSubmissionApiReqServicesDto invoiceServices = new InvoiceSubmissionApiReqServicesDto(invoiceServiceDetailList);
+
+                    List<InvoiceSubmissionApiReqDetailDto> invoiceDetailList = new ArrayList<>();
+                    String invoiceRequestId = utils.generateTokenNumberByUse(Constants.TOKEN_TYPE_REQUEST_ID);
+                    String invoiceNumber = utils.generateTokenNumberByUse(Constants.TOKEN_TYPE_INVOICE_NUMBER);
+                    String issueDate = LocalDateTime.now().format(dateTimeFormatter);
+                    String expiryDate = LocalDateTime.now().plusDays(Constants.DEFAULT_INVOICE_DURATION).format(dateTimeFormatter);
+                    Integer detailCount = 1;
+                    String institutionCode = revenueSource.getServiceDepartment().getServiceInstitution().getInstitutionCode();
+
+                    InvoiceSubmissionApiReqDetailDto invoiceDetail = new InvoiceSubmissionApiReqDetailDto(
+                            invoiceNumber,
+                            institutionCode,
+                            authDetails.getWorkStation(),
+                            invoicedescription,
+                            applicant.get().getIdentityNumber(),
+                            applicant.get().getIdentityTypeId(),
+                            applicant.get().getApplicantAccount(),
+                            applicant.get().getApplicantName(),
+                            applicant.get().getMobileNumber(),
+                            applicant.get().getEmailAddress(),
+                            issueDate,
+                            expiryDate,
+                            authDetails.getUserName(),
+                            authDetails.getUserName(),
+                            invoiceAmount,
+                            invoiceAmount,
+                            Constants.PAY_OPT_PRECISE_ID,
+                            currencyCode,
+                            exchangeRate,
+                            Constants.PAY_PLAN_POSTPAID_ID,
+                            invoiceServices,
+                            authDetails.getUserId(),
+                            application.get().getId(),
+                            Constants.DATA_PATH_1,
+                            application.get().getApplicationNumber()
+                    );
+                    invoiceDetailList.add(invoiceDetail);
+                    InvoiceSubmissionApiReqDetailsDto apiReqDetails = new InvoiceSubmissionApiReqDetailsDto(invoiceDetailList);
+                    InvoiceSubmissionApiReqHeaderDto apiReqHeader = new InvoiceSubmissionApiReqHeaderDto(
+                            invoiceRequestId, Constants.INVOICE_CALLBACK, Constants.INVOICE_TYPE_SINGLE, detailCount, institutionCode);
+
+                    InvoiceSubmissionApiReqBodyDto invoiceSubmissionApiReqBody = new InvoiceSubmissionApiReqBodyDto(
+                            apiReqHeader, apiReqDetails);
+                    //Send request for bill
+
+                    String receivedTime = utils.getLocalDateTime(new Date()).format(dateTimeFormatter);
+                    String processRequestId = utils.getToken();
+                    Long apiVersionNumber = 1L;
+
+                    String routingKeySuffix = invoiceOutRoutingKey.substring(invoiceOutRoutingKey.indexOf("*") + 1);
+                    String routingKey = routingKeyPrefix + "." + institutionCode + routingKeySuffix;
+                    Map<String, String> amqHeaders = new HashMap<String, String>();
+                    amqHeaders.put("receivedTime", receivedTime);
+                    amqHeaders.put("requestId", invoiceRequestId);
+                    amqHeaders.put("processRequestId", processRequestId);
+                    amqHeaders.put("clientCode", institutionCode);
+                    amqHeaders.put("clientKey", Constants.IRCS_CORE_CLIENT_KEY);
+                    amqHeaders.put("apiVersion", String.valueOf(apiVersionNumber));
+
+
+                    boolean saveStatus = invoiceRequestConsumerService.saveInvoiceRequestDetails(invoiceSubmissionApiReqBody, amqHeaders, receivedTime);
+                    if (saveStatus) {
+
+                        boolean publishStatus = utils.publishMsgToExchange(messageOutExchange, routingKey, invoiceSubmissionApiReqBody, amqHeaders);
+
+                        application.get().setWorkFlowActionName(Constants.ACTION_BILLING_INITIATED);
+                        application.get().setWorkFlowActionId(Constants.ACTION_BILLING_INITIATED_ID);
+                        application.get().setUpdatedBy(authDetails.getUserId());
+                        application.get().setUpdatedByUserName(authDetails.getUserName());
+                        application.get().setUpdatedDate(today);
+                        application.get().setWorkFlowRemark(Constants.ACTION_BILLING_INITIATED);
+
+                        FormData1 newFormData = formDataService.saveFormData1(application.get());
+                        if (newFormData != null) {
+
+                            /**
+                             * Create Workflow
+                             */
+                            ApplicationWorkFlow workFlow = new ApplicationWorkFlow(authDetails.getUserId(), authDetails.getUserName(), newFormData.getId(),
+                                    newFormData.getApplicationUid(), newFormData.getWorkFlowId(), newFormData.getWorkFlowName(), newFormData.getWorkFlowActionId(),
+                                    newFormData.getWorkFlowActionName(), newFormData.getWorkFlowRemark());
+
+                            applicationWorkFlowService.saveApplicationWorkFlow(workFlow);
+
+                            message = messageSource.getMessage("general.processing.success", new Object[]{"Invoice Request"}, currentLocale);
+                            status = messageSource.getMessage("code.1001", null, currentLocale);
+                            error = false;
+
+                        } else {
+                            message = messageSource.getMessage("general.processing.failure", new Object[]{"Invoice Request"}, currentLocale);
+                            status = messageSource.getMessage("code.1002", null, currentLocale);
+                            error = true;
+                        }
+                    } else {
+                        message = messageSource.getMessage("general.processing.failure", new Object[]{"Invoice Request"}, currentLocale);
+                        status = messageSource.getMessage("code.1002", null, currentLocale);
+                        error = true;
+                    }
+                } else {
+                    message = messageSource.getMessage("message.1007", null, currentLocale);
+                    status = messageSource.getMessage("code.1007", null, currentLocale);
+                    error = true;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            error = true;
+        }
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+
+    @PostMapping("/generatebill/other")
+    public ResponseEntity<?> generatesOtherBill(@RequestBody OtherBillProcessingDto otherBillProcessingDto,
+                                                JwtAuthenticationToken auth, HttpServletRequest request) {
+
+        try {
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+            AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
+
+            Date today = new Date();
+
+
+            Applicant applicant;
+
+            if (otherBillProcessingDto.getApplicantId() != null) {
+                applicant = applicantService.findById(otherBillProcessingDto.getApplicantId()).orElse(null);
+            } else {
+                applicant = createNewApplicant(otherBillProcessingDto);
+
+                if (applicant == null) {
+                    // Handle case when applicant creation fails
+                    String message = messageSource.getMessage("message.1070", new Object[]{"Invoice Request"}, currentLocale);
+                    String status = messageSource.getMessage("code.1070", null, currentLocale);
+                    return getResponseEntity(request, message, status, true);
+                }
+            }
+
+
+            Optional<RevenueSource> revenueSourceOptional = revenueSourceService.findById(otherBillProcessingDto.getRevenueSourceId());
+
+            if(!revenueSourceOptional.isPresent()){
+                message = messageSource.getMessage("message.1071", new Object[]{"Invoice Request"}, currentLocale);
+                status = messageSource.getMessage("code.1071", null, currentLocale);
+                return getResponseEntity(request, message, status, true);
+            }
+
+            RevenueSource revenueSource = revenueSourceOptional.get();
+
+
+            BigDecimal invoiceAmount = new BigDecimal(otherBillProcessingDto.getAmount());
+            String currencyCode = otherBillProcessingDto.getCurrency();
+            Double exchangeRate = 1.0D;
+
+
+            //Prepare invoice message
+            List<InvoiceSubmissionApiReqServiceDto> invoiceServiceDetailList = new ArrayList<>();
+            InvoiceSubmissionApiReqServiceDto invoiceSubmissionApiReqServiceDto = new InvoiceSubmissionApiReqServiceDto();
+            invoiceSubmissionApiReqServiceDto.setServiceType(otherBillProcessingDto.getServiceType());
+            invoiceSubmissionApiReqServiceDto.setRevenueSource(revenueSource);
+            invoiceSubmissionApiReqServiceDto.setServiceAmount(invoiceAmount);
+            invoiceSubmissionApiReqServiceDto.setServiceDepartment(otherBillProcessingDto.getServiceDepartment());
+            invoiceSubmissionApiReqServiceDto.setPaymentPriority(1);
+            invoiceServiceDetailList.add(invoiceSubmissionApiReqServiceDto);
+
+
+            InvoiceSubmissionApiReqServicesDto invoiceServices = new InvoiceSubmissionApiReqServicesDto(invoiceServiceDetailList);
+
+            List<InvoiceSubmissionApiReqDetailDto> invoiceDetailList = new ArrayList<>();
+            String invoiceRequestId = utils.generateTokenNumberByUse(Constants.TOKEN_TYPE_REQUEST_ID);
+            String invoiceNumber = utils.generateTokenNumberByUse(Constants.TOKEN_TYPE_INVOICE_NUMBER);
+            String issueDate = LocalDateTime.now().format(dateTimeFormatter);
+            String expiryDate = LocalDateTime.now().plusDays(Constants.DEFAULT_INVOICE_DURATION).format(dateTimeFormatter);
+            Integer detailCount = 1;
+
+
+            String institutionCode = revenueSource.getServiceDepartment().getServiceInstitution().getInstitutionCode();
+            Long invoiceReference = utils.generateUniqueLong();
+
+            InvoiceSubmissionApiReqDetailDto invoiceDetail = new InvoiceSubmissionApiReqDetailDto(
+                    invoiceNumber,
+                    institutionCode,
+                    authDetails.getWorkStation(),
+                    otherBillProcessingDto.getDescription(),
+                    applicant.getIdentityNumber(),
+                    applicant.getIdentityTypeId(),
+                    applicant.getApplicantAccount(),
+                    applicant.getApplicantName(),
+                    applicant.getMobileNumber(),
+                    applicant.getEmailAddress(),
+                    issueDate,
+                    expiryDate,
+                    authDetails.getUserName(),
+                    authDetails.getUserName(),
+                    invoiceAmount,
+                    invoiceAmount,
+                    Constants.PAY_OPT_PRECISE_ID,
+                    currencyCode,
+                    exchangeRate,
+                    Constants.PAY_PLAN_POSTPAID_ID,
+                    invoiceServices,
+                    authDetails.getUserId(),
+                    invoiceReference,
+                    Constants.DATA_PATH_1,
+                    invoiceReference.toString()
+            );
+
+            invoiceDetailList.add(invoiceDetail);
+            InvoiceSubmissionApiReqDetailsDto apiReqDetails = new InvoiceSubmissionApiReqDetailsDto(invoiceDetailList);
+
+            InvoiceSubmissionApiReqHeaderDto apiReqHeader = new InvoiceSubmissionApiReqHeaderDto(
+                    invoiceRequestId, Constants.INVOICE_CALLBACK, Constants.INVOICE_TYPE_SINGLE, detailCount, institutionCode);
+
+            InvoiceSubmissionApiReqBodyDto invoiceSubmissionApiReqBody = new InvoiceSubmissionApiReqBodyDto(
+                    apiReqHeader, apiReqDetails);
+
+            //Send request for bill
+            String receivedTime = utils.getLocalDateTime(new Date()).format(dateTimeFormatter);
+            String processRequestId = utils.getToken();
+            Long apiVersionNumber = 1L;
+
+            String routingKeySuffix = invoiceOutRoutingKey.substring(invoiceOutRoutingKey.indexOf("*") + 1);
+            String routingKey = routingKeyPrefix + "." + institutionCode + routingKeySuffix;
+            Map<String, String> amqHeaders = new HashMap<String, String>();
+            amqHeaders.put("receivedTime", receivedTime);
+            amqHeaders.put("requestId", invoiceRequestId);
+            amqHeaders.put("processRequestId", processRequestId);
+            amqHeaders.put("clientCode", institutionCode);
+            amqHeaders.put("clientKey", Constants.IRCS_CORE_CLIENT_KEY);
+            amqHeaders.put("apiVersion", String.valueOf(apiVersionNumber));
+
+
+            boolean saveStatus = invoiceRequestConsumerService.saveInvoiceRequestDetails(invoiceSubmissionApiReqBody, amqHeaders, receivedTime);
+
+
+            if (!saveStatus) {
+                message = messageSource.getMessage("general.processing.failure", new Object[]{"Invoice Request"}, currentLocale);
+                status = messageSource.getMessage("code.1002", null, currentLocale);
+                return getResponseEntity(request, message, status, true);
+            }
+
+            utils.publishMsgToExchange(messageOutExchange, routingKey, invoiceSubmissionApiReqBody, amqHeaders);
+            message = messageSource.getMessage("general.processing.success", new Object[]{"Invoice Request"}, currentLocale);
+            status = messageSource.getMessage("code.1001", null, currentLocale);
+            return getResponseEntity(request, message, status,false);
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            message = messageSource.getMessage("message.1004", null, currentLocale);
+            status = messageSource.getMessage("code.1004", null, currentLocale);
+            return getResponseEntity(request, message, status, true);
+        }
+    }
+
+    private ResponseEntity<?> getResponseEntity(HttpServletRequest request, String message, String status, boolean error) {
+
+        Response response = new Response(String.valueOf(Calendar.getInstance().getTime()), status, error, message, null, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    private Applicant createNewApplicant(OtherBillProcessingDto otherBillProcessingDto) {
+
+        Applicant applicant;
+        applicant = new Applicant();
+        applicant.setApplicantName(otherBillProcessingDto.getApplicantName());
+        applicant.setIdentityTypeId(otherBillProcessingDto.getIdentityType());
+        applicant.setIdentityNumber(otherBillProcessingDto.getIdentityNumber());
+        applicant.setMobileNumber(otherBillProcessingDto.getMobileNumber());
+        applicant.setEmailAddress(otherBillProcessingDto.getEmail());
+        applicant.setNationality(otherBillProcessingDto.getNationality());
+        applicant.setApplicantAccount(otherBillProcessingDto.getApplicantAccount());
+
+        // Save the new Applicant object
+        applicant = applicantService.saveApplicant(applicant);
+
+        return applicant;
+    }
+
 }
 
 

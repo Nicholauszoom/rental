@@ -54,8 +54,10 @@ import com.dflex.ircs.portal.module.service.AppFormService;
 import com.dflex.ircs.portal.setup.entity.Currency;
 import com.dflex.ircs.portal.setup.entity.RevenueSource;
 import com.dflex.ircs.portal.setup.entity.ServiceType;
+import com.dflex.ircs.portal.setup.entity.WorkFlowCost;
 import com.dflex.ircs.portal.setup.entity.WorkStation;
 import com.dflex.ircs.portal.setup.service.RevenueSourceService;
+import com.dflex.ircs.portal.setup.service.WorkFlowCostService;
 import com.dflex.ircs.portal.setup.service.WorkStationService;
 import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.Response;
@@ -95,7 +97,7 @@ public class FormDataController {
     private RevenueSourceService revenueSourceService;
 	
 	@Autowired
-    private WorkStationService workStationService;
+    private WorkFlowCostService workFlowCostService;
 	
 	@Autowired
     private ApplicationWorkFlowService applicationWorkFlowService;
@@ -136,37 +138,26 @@ public class FormDataController {
     		AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
     		
     		ObjectMapper objectMapper = new ObjectMapper();
+    		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    		FormData1 formData = objectMapper.readValue(data,FormData1.class);
     		if(dataPath.equals(Constants.DATA_PATH_1)) {
     			
-    			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    			
-    			/**
-    			 * Create Applicant
-    			 */
-    			Applicant applicant = new Applicant();
-    			applicant = objectMapper.readValue(data,Applicant.class);
-    			String applicantAccount = utils.generateRandomNumber(8);
-    			applicant.setApplicantAccount(applicantAccount);
-    			applicant.setCreatedBy(authDetails.getUserId());
-    			applicant.setCreatedByUserName(authDetails.getUserName());
-    			
-    			System.out.println("applicant***************************"+applicant);
-    			
-    			Applicant newApplicant = applicantService.saveApplicant(applicant);
-    			if(newApplicant != null) {
+    			String applicantUid = dataJson.getString("applicantUid");
+    			Applicant applicant = applicantService.findByApplicantUid(UUID.fromString(applicantUid));
+    			if(applicant != null) {
     				
     				/**
         			 * Create Application Details
         			 */
     				String applicationNumber = utils.getToken();
     				
-    				FormData1 formData = objectMapper.readValue(data,FormData1.class);
+    				
     				
         			formData.setCreatedBy(authDetails.getUserId());
             		formData.setCreatedByUserName(authDetails.getUserName());
             		formData.setApplicationNumber(applicationNumber);
-            		formData.setApplicantId(newApplicant.getId());
-            		formData.setApplicantUid(newApplicant.getApplicantUid());
+            		formData.setApplicantId(applicant.getId());
+            		formData.setApplicantUid(applicant.getApplicantUid());
             		formData.setWorkFlowId(Constants.WORK_FLOW_APPLICATION_ID);
             		formData.setWorkFlowName(Constants.WORK_FLOW_APPLICATION);
             		formData.setWorkFlowActionId(Constants.ACTION_APPLICATION_SUBMITTED_ID);
@@ -181,17 +172,28 @@ public class FormDataController {
             			 */
             			String revenueSourceUid = dataJson.getString("revenueSourceUid");
             			RevenueSource revenueSource = revenueSourceService.findByRevenueSourceUid(UUID.fromString(revenueSourceUid));
-            			ServiceType serviceType = revenueSource.getServiceType();
-            			Currency currency = revenueSource.getCurrency();
-            			Integer unitCount = 1;
-            			Double exchangeRate = 1.0D;
-            			 
-            			AppliedServiceCosting costing = new AppliedServiceCosting(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
-            					Constants.FORM_DATA_1,serviceType.getServiceTypeCode(),serviceType.getServiceTypeName(),
-            					revenueSource, revenueSource.getFixedAmount(),unitCount, revenueSource.getFixedAmount(),currency.getId(),
-            					currency.getCurrencyCode(), exchangeRate);
-            			appliedServiceCostingService.saveAppliedServiceCosting(costing);
+            			Long workFlowId = Long.parseLong(dataJson.getString("workFlowId"));
+            			List<WorkFlowCost> workFlowCosts = workFlowCostService.findByRevenueSourceIdAndWorkFlowIdAndRecordStatusId(
+            					revenueSource.getId(),workFlowId,Constants.RECORD_STATUS_ACTIVE);
             			
+            			if(workFlowCosts != null && !workFlowCosts.isEmpty()) {
+            				
+            				for(WorkFlowCost workFlowCost : workFlowCosts) {
+            					
+            					ServiceType serviceType = workFlowCost.getRevenueSource().getServiceType();
+                    			Currency currency = workFlowCost.getRevenueSource().getCurrency();
+                    			Integer unitCount = 1;
+                    			Double exchangeRate = 1.0D;
+                    			 
+                    			AppliedServiceCosting costing = new AppliedServiceCosting(authDetails.getUserId(),authDetails.getUserName(),newFormData.getId(),
+                    					Constants.FORM_DATA_1,serviceType.getServiceTypeCode(),serviceType.getServiceTypeName(),
+                    					revenueSource, revenueSource.getFixedAmount(),unitCount, revenueSource.getFixedAmount(),currency.getId(),
+                    					currency.getCurrencyCode(), exchangeRate);
+                    			appliedServiceCostingService.saveAppliedServiceCosting(costing);
+            					
+            					
+            				}
+            			}
             			
             			/**
             			 * Create Workflow

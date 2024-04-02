@@ -104,6 +104,18 @@ public class AppFormField extends CommonEntity implements Serializable {
 	@Column(name = "show_on_list", nullable = false)
 	private Boolean showOnList = false;
 	
+	@Column(name = "read_only", nullable = false)
+	private Boolean readOnly = false;
+	
+	@Column(name = "disabled", nullable = false)
+	private Boolean disabled = false;
+	
+	@Column(name = "is_searchable", nullable = false)
+	private Boolean isSearchable = false;
+	
+	@Column(name = "search_data", nullable = true,length=50)
+	private String searchData;
+	
 	@Column(name = "show_on_detail", nullable = false)
 	private Boolean showOnDetail = false;
 	

@@ -91,7 +91,8 @@ public class AppFormFieldController {
     						field.getValueMinimumSize(),field.getValueMaximumSize(),field.getValueDefault(),field.getDataType(),
     						field.getFormDisplayText(),field.getListDisplayText(),field.getDataFieldName(),field.getDataFieldKey(),field.getDataSourceTypeId(),
     						field.getRecordStatusId(),field.getAppLookupType()==null?"":String.valueOf(field.getAppLookupType().getAppLookupTypeUid()),
-    						field.getAppForm().getId(),field.getDisplaySizeClass(),field.getValidation(),field.getShowOnList(),fieldlookupData));
+    						field.getAppForm().getId(),field.getDisplaySizeClass(),field.getValidation(),field.getShowOnList(),field.getReadOnly(),
+    						field.getDisabled(),field.getIsSearchable(),field.getSearchData(),fieldlookupData));
     			}
     			message = messageSource.getMessage("message.1001",null, currentLocale);
     			status = messageSource.getMessage("code.1001",null, currentLocale);

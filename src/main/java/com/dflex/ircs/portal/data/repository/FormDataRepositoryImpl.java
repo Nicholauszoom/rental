@@ -89,6 +89,7 @@ public class FormDataRepositoryImpl implements FormDataRepositoryCustom  {
 		String sqlQuery = "select " +StringUtils.join(dataFields,',')
 				+ " from  "+tableName+" "+tableName+" "
 				+ " left join tab_applicant tab_applicant on tab_applicant.id ="+tableName+".applicant_id "
+				+ " left join viw_license viw_license on viw_license.detail_reference_id ="+tableName+".id "
 				+ " where "+tableName+".app_form_uid =:appFormUid "
 				+ " and "+tableName+".application_uid =:applicationUid "
 				+ " and "+tableName+".record_status_id =:recordStatusId "
@@ -144,6 +145,7 @@ public class FormDataRepositoryImpl implements FormDataRepositoryCustom  {
 		String sqlQuery = "select " +StringUtils.join(dataListFields,',')
 				+ " from  "+tableName+" "+tableName+" "
 				+ " left join tab_applicant tab_applicant on tab_applicant.id ="+tableName+".applicant_id "
+				+ " left join viw_license viw_license on viw_license.detail_reference_id ="+tableName+".id "
 				+ " where "+tableName+".app_form_uid =:appFormUid "
 				+ " and "+tableName+".record_status_id =:recordStatusId "
 				+ " and "+tableName+".work_flow_id =:workFlowId "

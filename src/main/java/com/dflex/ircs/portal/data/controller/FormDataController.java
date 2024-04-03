@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.dflex.ircs.portal.data.dto.OtherBillProcessingDto;
+import com.dflex.ircs.portal.data.dto.OtherBillRevenueDto;
+import com.dflex.ircs.portal.setup.service.ServiceTypeService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +79,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/api/formdata")
 public class FormDataController {
 
+    @Autowired
+    private ServiceTypeService serviceTypeService;
 
     @Autowired
     private ApplicantService applicantService;
@@ -733,10 +737,12 @@ public class FormDataController {
 
         try {
 
+
+            utils.print(otherBillProcessingDto);
+
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
             AuthDetailsDto authDetails = utils.getTokenAuthenticationDetails(auth);
 
-            Date today = new Date();
 
 
             Applicant applicant;
@@ -755,31 +761,45 @@ public class FormDataController {
             }
 
 
-            Optional<RevenueSource> revenueSourceOptional = revenueSourceService.findById(otherBillProcessingDto.getRevenueSourceId());
 
-            if(!revenueSourceOptional.isPresent()){
-                message = messageSource.getMessage("message.1071", new Object[]{"Invoice Request"}, currentLocale);
-                status = messageSource.getMessage("code.1071", null, currentLocale);
-                return getResponseEntity(request, message, status, true);
+            BigDecimal totalAmount = new BigDecimal(0);
+            String institutionCode = "";
+            String currencyCode = "";
+
+            List<InvoiceSubmissionApiReqServiceDto> invoiceServiceDetailList = new ArrayList<>();
+            for(OtherBillRevenueDto otherBillRevenueDto : otherBillProcessingDto.getRevenues()){
+
+                Optional<RevenueSource> revenueSourceOptional = revenueSourceService.findById(Long.valueOf(otherBillRevenueDto.getServiceType()));
+
+                if(!revenueSourceOptional.isPresent()){
+                    message = messageSource.getMessage("message.1071", new Object[]{"Invoice Request"}, currentLocale);
+                    status = messageSource.getMessage("code.1071", null, currentLocale);
+                    return getResponseEntity(request, message, status, true);
+                }
+
+                BigDecimal amount = new BigDecimal(otherBillRevenueDto.getAmount());
+                institutionCode = revenueSourceOptional.get().getServiceDepartment().getServiceInstitution().getInstitutionCode();
+                currencyCode = revenueSourceOptional.get().getCurrency().getCurrencyCode();
+
+
+                InvoiceSubmissionApiReqServiceDto invoiceSubmissionApiReqServiceDto = new InvoiceSubmissionApiReqServiceDto();
+                invoiceSubmissionApiReqServiceDto.setServiceType(String.valueOf(revenueSourceOptional.get().getServiceType().getId()));
+                invoiceSubmissionApiReqServiceDto.setRevenueSource(revenueSourceOptional.get());
+                invoiceSubmissionApiReqServiceDto.setServiceAmount(amount);
+                invoiceSubmissionApiReqServiceDto.setServiceDepartment(revenueSourceOptional.get().getServiceDepartment().getDepartmentCode());
+                invoiceSubmissionApiReqServiceDto.setPaymentPriority(1);
+                totalAmount = totalAmount.add(amount);
+                invoiceServiceDetailList.add(invoiceSubmissionApiReqServiceDto);
+
             }
 
-            RevenueSource revenueSource = revenueSourceOptional.get();
 
+            System.out.println(totalAmount);
 
-            BigDecimal invoiceAmount = new BigDecimal(otherBillProcessingDto.getAmount());
-            String currencyCode = otherBillProcessingDto.getCurrency();
-            Double exchangeRate = 1.0D;
 
 
             //Prepare invoice message
-            List<InvoiceSubmissionApiReqServiceDto> invoiceServiceDetailList = new ArrayList<>();
-            InvoiceSubmissionApiReqServiceDto invoiceSubmissionApiReqServiceDto = new InvoiceSubmissionApiReqServiceDto();
-            invoiceSubmissionApiReqServiceDto.setServiceType(otherBillProcessingDto.getServiceType());
-            invoiceSubmissionApiReqServiceDto.setRevenueSource(revenueSource);
-            invoiceSubmissionApiReqServiceDto.setServiceAmount(invoiceAmount);
-            invoiceSubmissionApiReqServiceDto.setServiceDepartment(otherBillProcessingDto.getServiceDepartment());
-            invoiceSubmissionApiReqServiceDto.setPaymentPriority(1);
-            invoiceServiceDetailList.add(invoiceSubmissionApiReqServiceDto);
+            Double exchangeRate = 1.0D;
 
 
             InvoiceSubmissionApiReqServicesDto invoiceServices = new InvoiceSubmissionApiReqServicesDto(invoiceServiceDetailList);
@@ -792,7 +812,6 @@ public class FormDataController {
             Integer detailCount = 1;
 
 
-            String institutionCode = revenueSource.getServiceDepartment().getServiceInstitution().getInstitutionCode();
             Long invoiceReference = utils.generateUniqueLong();
 
             InvoiceSubmissionApiReqDetailDto invoiceDetail = new InvoiceSubmissionApiReqDetailDto(
@@ -810,8 +829,8 @@ public class FormDataController {
                     expiryDate,
                     authDetails.getUserName(),
                     authDetails.getUserName(),
-                    invoiceAmount,
-                    invoiceAmount,
+                    totalAmount,
+                    totalAmount,
                     Constants.PAY_OPT_PRECISE_ID,
                     currencyCode,
                     exchangeRate,

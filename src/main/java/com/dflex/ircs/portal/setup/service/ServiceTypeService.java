@@ -20,5 +20,7 @@ public interface ServiceTypeService {
 	
 	public ServiceType findByServiceTypeCodeAndRecordStatusId(String serviceTypeCode,Long statusId);
 
+	ServiceType findByServiceTypeDisplayTextAndRecordStatusId(String ServiceTypeDisplayText,Long statusId);
+
 	public List<ServiceType> findAll();
 }

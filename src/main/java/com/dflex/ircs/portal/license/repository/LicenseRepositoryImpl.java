@@ -38,7 +38,7 @@ public class LicenseRepositoryImpl implements LicenseRepositoryCustom  {
 					+ "a.applicant_name,a.applicant_account,a.identity_number,to_char(l.issued_date,'dd-Mon-yyyy') as issued_date,"
 					+ "to_char(l.commenced_date,'dd-Mon-yyyy') as commenced_date,l.tenure,to_char(l.expiry_date,'dd-Mon-yyyy') as expiry_date,"
 					+ "l.license_status_id,s.license_status_name,l.has_renew_request,l.has_transfer_request,l.is_paid,"
-					+ "l.previous_license_id "
+					+ "l.previous_license_id, a.mobile_number, a.email_address , a.id"
 					+ " from tab_license l join tab_applicant a on l.applicant_id = a.id "
 					+ " join tab_license_type t on l.license_type_id = t.id "
 					+ " join tab_license_status s on l.license_status_id = s.id "
@@ -70,7 +70,11 @@ public class LicenseRepositoryImpl implements LicenseRepositoryCustom  {
 							res[17] == null?null:Long.parseLong(res[17].toString()),res[18] == null?"":res[18].toString(),
 							res[19] == null?null:Boolean.valueOf(res[19].toString()),res[20] == null?null:Boolean.valueOf(res[20].toString()),
 							
-							res[21] == null?null:Boolean.valueOf(res[21].toString()),res[22] == null?null:Long.parseLong(res[22].toString())
+							res[21] == null?null:Boolean.valueOf(res[21].toString()),res[22] == null?null:Long.parseLong(res[22].toString()),
+									res[23] == null?null:res[23].toString(),
+									res[24] == null?null:res[24].toString(),
+									res[25] == null?null:Long.parseLong(res[25].toString())
+
 									)
 							);
 				}

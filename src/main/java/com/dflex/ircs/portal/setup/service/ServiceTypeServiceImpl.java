@@ -35,6 +35,12 @@ public class ServiceTypeServiceImpl implements ServiceTypeService{
 	public ServiceType findByServiceTypeCodeAndRecordStatusId(String serviceTypeCode,Long statusId) {
 		return serviceTypeRepository.findByServiceTypeCodeAndRecordStatusId(serviceTypeCode,statusId);
 	}
+
+	@Override
+	public ServiceType findByServiceTypeDisplayTextAndRecordStatusId(String ServiceTypeDisplayText, Long statusId) {
+		return serviceTypeRepository.findByServiceTypeDisplayTextAndRecordStatusId(ServiceTypeDisplayText, statusId);
+	}
+
 	@Override
 	public List<ServiceType> findAll(){return serviceTypeRepository.findAll();}
 }

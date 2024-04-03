@@ -11,4 +11,7 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType, Long> 
 
 //	public ServiceType findByServiceTypeAndId (String serviceTypeUid, Long id);
 
+
+	ServiceType findByServiceTypeDisplayTextAndRecordStatusId(String ServiceTypeDisplayText,Long statusId);
+
 }

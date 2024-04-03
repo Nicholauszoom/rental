@@ -24,4 +24,6 @@ public interface RevenueSourceService {
 	List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndRecordStatusId(UUID departmentUid, Long recordStatusId);
 
 
+
+
 }

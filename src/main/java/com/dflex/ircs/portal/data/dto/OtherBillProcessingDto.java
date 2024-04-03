@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 
 /**
@@ -40,18 +41,11 @@ public class OtherBillProcessingDto {
 
     private String applicantAccount;
 
-    private String currency;
-
-
-    private String serviceType;
-
-    private Long revenueSourceId;
-
-    private String amount;
-
     private String serviceDepartment;
 
     private String description;
+
+    private List<OtherBillRevenueDto> revenues;
 
 
 

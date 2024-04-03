@@ -34,6 +34,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -925,5 +927,26 @@ public class Utils {
 
 			return (timestamp << 16) | sequence;
 		}
+
+
+	public  void print(Object obj) {
+		ObjectMapper mapper = new ObjectMapper();
+		String className = "";
+		if (obj == null) {
+			className = "You've passed null object";
+		} else {
+			className = obj.getClass().getSimpleName();
+		}
+		System.out.println("--------------------------" + className
+				+ "----------------------------------------------------------");
+		try {
+			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj));
+		} catch (JsonProcessingException e) {
+			System.out.println("########################ERROR########################");
+			e.printStackTrace();
+		}
+		System.out.println(
+				"-----------------------------------------------------------------------------------------------------");
+	}
 
 }

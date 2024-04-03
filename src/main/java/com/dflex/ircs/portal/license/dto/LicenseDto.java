@@ -68,4 +68,10 @@ public class LicenseDto implements  Serializable{
 
 	private Long previousLicenseId;
 
+	private String mobileNumber;
+
+	private String emailAdress;
+
+	private Long applicantId;
+
 }

@@ -68,6 +68,14 @@ public class InvoiceDetailDto implements Serializable {
 	
 	private Long paymentOptionId;
 
+	private String invoiceNumber;
+
+	private String formattedExpiryDate;
+
+	private Long invoiceId;
+
+	private String customerIdentityNumber;
+
 	private List<InvoiceServiceDetailDto> serviceDetails;
 
 }

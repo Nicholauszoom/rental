@@ -1,46 +1,27 @@
 package com.dflex.ircs.portal.invoice.api.controller;
 
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.dflex.ircs.portal.application.entity.ApplicationWorkFlow;
 import com.dflex.ircs.portal.application.service.ApplicationWorkFlowService;
-import com.dflex.ircs.portal.auth.dto.CommunicationApiDetailsDto;
 import com.dflex.ircs.portal.auth.service.ClientSystemHostService;
 import com.dflex.ircs.portal.auth.service.CommunicationApiService;
 import com.dflex.ircs.portal.data.entity.FormData1;
 import com.dflex.ircs.portal.data.service.FormDataService;
 import com.dflex.ircs.portal.invoice.api.dto.InvoiceDetailDto;
 import com.dflex.ircs.portal.invoice.api.dto.InvoiceServiceDetailDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiAckBodyDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiAckDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiResBodyDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiResDetailDto;
-import com.dflex.ircs.portal.invoice.api.dto.InvoiceSubmissionApiResDto;
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 import com.dflex.ircs.portal.invoice.entity.InvoiceItem;
 import com.dflex.ircs.portal.invoice.service.InvoiceItemService;
@@ -49,10 +30,7 @@ import com.dflex.ircs.portal.util.Constants;
 import com.dflex.ircs.portal.util.PKIUtils;
 import com.dflex.ircs.portal.util.Response;
 import com.dflex.ircs.portal.util.Utils;
-
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Unmarshaller;
 
 /**
  * 
@@ -107,44 +85,108 @@ public class InvoiceController {
 			
 			Invoice invoice = invoiceService.findByReferenceAndReferencePath(String.valueOf(application.get().getId()),Constants.DATA_PATH_1);
 			if(invoice != null) {
-				
-				List<InvoiceItem> invoiceItems = invoiceItemService.findByInvoiceIdAndRecordStatusId(invoice.getId(),Constants.RECORD_STATUS_ACTIVE);
-				
-				invoiceDetail.setServiceInstitutionCode(invoice.getServiceInstitutionCode());
-				invoiceDetail.setServiceInstitutionName(invoice.getServiceInstitution().getInstitutionName());
-				invoiceDetail.setBillPaymentOption(invoice.getPaymentOptionId());
-				invoiceDetail.setBillPaymentOptionName(invoice.getPaymentOptionName());
-				invoiceDetail.setCurrencyCode(invoice.getCurrencyCode());
-				invoiceDetail.setCustomerEmail(invoice.getCustomerEmail());
-				invoiceDetail.setCustomerName(invoice.getCustomerName());
-				invoiceDetail.setCustomerPhoneNumber(invoice.getCustomerPhoneNumber());
-				invoiceDetail.setInvoiceAmount(invoice.getInvoiceAmount());
-				invoiceDetail.setInvoiceMinPayAmount(invoice.getMinimumPaymentAmount());
-				invoiceDetail.setInvoiceDescription(invoice.getInvoiceDescription());
-				invoiceDetail.setInvoiceExpiryDate(invoice.getInvoiceExpiryDate());
-				invoiceDetail.setInvoiceIssuedDate(invoice.getInvoiceIssueDate());
-				invoiceDetail.setPaymentNumber(invoice.getPaymentNumber());
-				invoiceDetail.setInvoicePaymentNumber(invoice.getInvoicePaymentNumber());
-				invoiceDetail.setInvoiceReference(invoice.getReference());
-				invoiceDetail.setApplicationNumber(invoice.getApplicationNumber());
-				invoiceDetail.setWorkStationCode(invoice.getWorkStationCode());
-				invoiceDetail.setWorkStationName(invoice.getWorkStation().getWorkStationName());
-				invoiceDetail.setPaymentOptionName(invoice.getPaymentOptionName());
-				invoiceDetail.setPaymentOptionId(invoice.getPaymentOptionId());
-				
-				InvoiceServiceDetailDto serviceDetail = new InvoiceServiceDetailDto();
-				serviceDetail.setServiceAmount(invoiceItems.get(0).getServiceAmount());
-				serviceDetail.setServiceTypeCode(invoiceItems.get(0).getServiceTypeCode());
-				serviceDetail.setServiceTypeName(invoiceItems.get(0).getServiceTypeName());
-				serviceDetail.setTotalUnits(1);
-				List<InvoiceServiceDetailDto> serviceDetails = new ArrayList<>();
-				serviceDetails.add(serviceDetail);
-				
-				invoiceDetail.setServiceDetails(serviceDetails);
+				invoiceDetail = getInvoiceDetailDto(invoice);
 			}
 		}
 		Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,invoiceDetail,request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
-		
+
+	@PostMapping("/details/departmentuid/{departmentuid}")
+	public ResponseEntity<?> getInvoiceDetailsDepartmentUid(@PathVariable("departmentuid") String departmentuid
+			,HttpServletRequest request) {
+
+		try {
+
+			List<Invoice> invoiceList = invoiceService.findByDepartmentId(UUID.fromString(departmentuid));
+			List<InvoiceDetailDto> invoiceDetailDtos = new ArrayList<>();
+
+			if(!invoiceList.isEmpty()){
+				for(Invoice invoice: invoiceList){
+					InvoiceDetailDto invoiceDetailDto = getInvoiceDetailDto(invoice);
+					invoiceDetailDtos.add(invoiceDetailDto);
+				}
+			}
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message,invoiceDetailDtos,request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+
+		}catch (Exception e){
+			e.printStackTrace();
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status, true,message,null,request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
+	}
+
+
+	@PostMapping("/details/invoiceId/{invoiceId}")
+	public ResponseEntity<?> getInvoiceDetailsByAppicationUid(@PathVariable("invoiceId") Long invoiceId
+			,HttpServletRequest request) {
+		try {
+			Optional<Invoice> invoiceOptional = invoiceService.findById(invoiceId);
+
+			if(invoiceOptional.isPresent()){
+				Invoice invoice  = invoiceOptional.get();
+				InvoiceDetailDto invoiceDetailDto = getInvoiceDetailDto(invoice);
+
+				Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status,error,message, invoiceDetailDto,request.getRequestURI());
+				return ResponseEntity.status(HttpStatus.OK).body(response);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			Response response = new Response(String.valueOf(Calendar.getInstance().getTime()),status, true,message,null,request.getRequestURI());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		}
+		return null;
+	}
+
+
+	InvoiceDetailDto getInvoiceDetailDto(Invoice invoice){
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		InvoiceDetailDto invoiceDetail = new InvoiceDetailDto();
+
+		List<InvoiceItem> invoiceItems = invoiceItemService.findByInvoiceIdAndRecordStatusId(invoice.getId(),Constants.RECORD_STATUS_ACTIVE);
+		invoiceDetail.setServiceInstitutionCode(invoice.getServiceInstitutionCode());
+		invoiceDetail.setServiceInstitutionName(invoice.getServiceInstitution().getInstitutionName());
+		invoiceDetail.setBillPaymentOption(invoice.getPaymentOptionId());
+		invoiceDetail.setBillPaymentOptionName(invoice.getPaymentOptionName());
+		invoiceDetail.setCurrencyCode(invoice.getCurrencyCode());
+		invoiceDetail.setCustomerEmail(invoice.getCustomerEmail());
+		invoiceDetail.setCustomerName(invoice.getCustomerName());
+		invoiceDetail.setCustomerPhoneNumber(invoice.getCustomerPhoneNumber());
+		invoiceDetail.setInvoiceAmount(invoice.getInvoiceAmount());
+		invoiceDetail.setInvoiceMinPayAmount(invoice.getMinimumPaymentAmount());
+		invoiceDetail.setInvoiceDescription(invoice.getInvoiceDescription());
+		invoiceDetail.setInvoiceExpiryDate(invoice.getInvoiceExpiryDate());
+		invoiceDetail.setFormattedExpiryDate(sdf.format(invoice.getInvoiceExpiryDate()));
+		invoiceDetail.setInvoiceIssuedDate(invoice.getInvoiceIssueDate());
+		invoiceDetail.setPaymentNumber(invoice.getPaymentNumber());
+		invoiceDetail.setInvoicePaymentNumber(invoice.getInvoicePaymentNumber());
+		invoiceDetail.setInvoiceReference(invoice.getReference());
+		invoiceDetail.setApplicationNumber(invoice.getApplicationNumber());
+		invoiceDetail.setWorkStationCode(invoice.getWorkStationCode());
+		invoiceDetail.setWorkStationName(invoice.getWorkStation().getWorkStationName());
+		invoiceDetail.setPaymentOptionName(invoice.getPaymentOptionName());
+		invoiceDetail.setPaymentOptionId(invoice.getPaymentOptionId());
+		invoiceDetail.setInvoiceNumber(invoice.getInvoiceNumber());
+		invoiceDetail.setInvoiceId(invoice.getId());
+		invoiceDetail.setCustomerIdentityNumber(invoice.getCustomerIdentity());
+
+		List<InvoiceServiceDetailDto> serviceDetails = new ArrayList<>();
+
+		for(InvoiceItem invoiceItem: invoiceItems){
+			InvoiceServiceDetailDto serviceDetail = new InvoiceServiceDetailDto();
+			serviceDetail.setServiceAmount(invoiceItem.getServiceAmount());
+			serviceDetail.setServiceTypeCode(invoiceItem.getServiceTypeCode());
+			serviceDetail.setServiceTypeName(invoiceItem.getServiceTypeName());
+			serviceDetail.setTotalUnits(1);
+
+			serviceDetails.add(serviceDetail);
+		}
+
+		invoiceDetail.setServiceDetails(serviceDetails);
+
+
+		return invoiceDetail;
+	}
 }

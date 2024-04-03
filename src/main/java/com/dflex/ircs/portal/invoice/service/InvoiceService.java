@@ -2,6 +2,7 @@ package com.dflex.ircs.portal.invoice.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.dflex.ircs.portal.invoice.entity.Invoice;
 
@@ -30,5 +31,8 @@ public interface InvoiceService {
 	public Invoice findByInvoiceNumber(String invoiceNumber);
 
 	public Invoice findByReferenceAndReferencePath(String reference, String referencePath);
+
+
+	List<Invoice>  findByDepartmentId(UUID departmentId);
 	
 }

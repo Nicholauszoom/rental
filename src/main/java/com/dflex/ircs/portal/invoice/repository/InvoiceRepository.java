@@ -1,6 +1,7 @@
 package com.dflex.ircs.portal.invoice.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,9 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
 	@Query("from Invoice i where i.reference =:reference and i.referencePath =:referencePath")
 	public Invoice findByReferenceAndReferencePath(String reference, String referencePath);
+
+
+	@Query("from Invoice i join ServiceInstitution  s ON i.serviceInstitution.id = s.id JOIN ServiceDepartment d on  s.id  = d.serviceInstitution.id  where d.serviceDepartmentUid =:departmentId order by i.createdDate desc")
+	List<Invoice> findInvoicesByDepartmentId(UUID departmentId);
 
 }

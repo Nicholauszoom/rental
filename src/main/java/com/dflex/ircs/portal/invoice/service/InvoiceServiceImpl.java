@@ -2,6 +2,7 @@ package com.dflex.ircs.portal.invoice.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	public Invoice findByReferenceAndReferencePath(String reference, String referencePath) {
 		return invoiceRepository.findByReferenceAndReferencePath(reference, referencePath);
 	}
-	
-	
+
+	@Override
+	public List<Invoice> findByDepartmentId(UUID departmentId) {
+		return invoiceRepository.findInvoicesByDepartmentId(departmentId);
+	}
+
+
 }

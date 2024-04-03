@@ -750,7 +750,7 @@ public class FormDataController {
             if (otherBillProcessingDto.getApplicantId() != null) {
                 applicant = applicantService.findById(otherBillProcessingDto.getApplicantId()).orElse(null);
             } else {
-                applicant = createNewApplicant(otherBillProcessingDto);
+                applicant = createNewApplicant(otherBillProcessingDto, authDetails);
 
                 if (applicant == null) {
                     // Handle case when applicant creation fails
@@ -792,9 +792,6 @@ public class FormDataController {
                 invoiceServiceDetailList.add(invoiceSubmissionApiReqServiceDto);
 
             }
-
-
-            System.out.println(totalAmount);
 
 
 
@@ -897,7 +894,9 @@ public class FormDataController {
     }
 
 
-    private Applicant createNewApplicant(OtherBillProcessingDto otherBillProcessingDto) {
+    private Applicant createNewApplicant(OtherBillProcessingDto otherBillProcessingDto, AuthDetailsDto authDetailsDto) {
+
+        Date today = new Date();
 
         Applicant applicant;
         applicant = new Applicant();
@@ -908,6 +907,13 @@ public class FormDataController {
         applicant.setEmailAddress(otherBillProcessingDto.getEmail());
         applicant.setNationality(otherBillProcessingDto.getNationality());
         applicant.setApplicantAccount(otherBillProcessingDto.getApplicantAccount());
+        applicant.setCreatedBy(authDetailsDto.getUserId());
+        applicant.setCreatedByUserName(authDetailsDto.getUserName());
+        applicant.setCreatedDate(today);
+
+        applicant.setUpdatedBy(authDetailsDto.getUserId());
+        applicant.setUpdatedByUserName(authDetailsDto.getUserName());
+        applicant.setUpdatedDate(today);
 
         // Save the new Applicant object
         applicant = applicantService.saveApplicant(applicant);

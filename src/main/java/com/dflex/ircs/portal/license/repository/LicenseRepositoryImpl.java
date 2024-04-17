@@ -43,11 +43,11 @@ public class LicenseRepositoryImpl implements LicenseRepositoryCustom  {
 					+ " join tab_license_type t on l.license_type_id = t.id "
 					+ " join tab_license_status s on l.license_status_id = s.id "
 					+ " where upper(l.license_name) like '%"+licenseName+"%' "
-					+ " or upper(l.license_number) like '%"+licenseNumber+"%' "
-					+ " or upper(a.applicant_name) like '%"+applicantName+"%' "
-					+ " or upper(a.applicant_account) like '%"+applicantAccount+"%' "
-					+ " or upper(a.identity_number) like '%"+identityNumber+"%' "
-					+ " or a.record_status_id =:recordStatusId "
+					+ " and upper(l.license_number) like '%"+licenseNumber+"%' "
+					+ " and upper(a.applicant_name) like '%"+applicantName+"%' "
+					+ " and upper(a.applicant_account) like '%"+applicantAccount+"%' "
+					+ " and upper(a.identity_number) like '%"+identityNumber+"%' "
+					+ " and a.record_status_id =:recordStatusId "
 					+ " order by l.license_name limit :limit ";
 			Query q = entityManager.createNativeQuery(sqlQuery);
 			q.setParameter("recordStatusId", recordStatusId);

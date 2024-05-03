@@ -204,7 +204,6 @@ public class PaymentApiController {
                                                                 } else {
                                                                     responseStatusCode = Constants.INVOICE_NOTFOUND;
                                                                     logger.info("no  invoice found {} with code {}", invoiceRequired, responseStatusCode);
-
                                                                 }
                                                             } else {
 

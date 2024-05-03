@@ -19,7 +19,7 @@ public interface RevenueSourceRepository extends JpaRepository<RevenueSource, Lo
 	@Query("from RevenueSource r where r.revenueSourceUid =:revenueSourceUid ")
 	public RevenueSource findByRevenueSourceUid(UUID revenueSourceUid);
 
-	List<RevenueSource> findRevenueSourcesByServiceDepartment_ServiceInstitution(Long serviceInstitutionId);
+	//List<RevenueSource> findRevenueSourcesByServiceDepartment_ServiceInstitution(Long serviceInstitutionId);
 
 
 	List<RevenueSourceDetailsDto> findDetailsByServiceDepartmentUidAndRecordStatusId(

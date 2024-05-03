@@ -100,6 +100,7 @@ public class WebSecurityConfig {
 						.requestMatchers("/api/invoice/validation-v1","/api/payment/validation-v1",
 								"/api/invoice/submit/response-v1","/api/payment/submit/request-v1").permitAll()
 						.requestMatchers("/api/invoice/InvoiceAll","/api/invoice/InvoiceById/{id}").permitAll()
+						.requestMatchers("/api/building/**", "/api/unit/**", "/api/rate/**","/api/status/**").permitAll()
 						.requestMatchers("/api/servicetype/list","/api/servicetype/create/servicetype","/api/servicetype/update/servicetype").permitAll()
 						.anyRequest().authenticated())
 				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher)
@@ -135,7 +136,7 @@ public class WebSecurityConfig {
 	public RegisteredClientRepository registeredClientRepository() {
 
 		List<RegisteredClient> registrations = new ArrayList<>();
-		
+
 		RegisteredClient portalClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("portal")
 				.clientSecret(passwordEncoder().encode("portal321"))
@@ -175,7 +176,7 @@ public class WebSecurityConfig {
 						.build())
 				.build();
 		registrations.add(mobileClient);
-		
+
 		RegisteredClient portalCore = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("portalcore")
 				.clientSecret(passwordEncoder().encode("portalcore321"))
@@ -253,7 +254,7 @@ public class WebSecurityConfig {
 				Set<String> authorities = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 						.collect(Collectors.toSet());
 				context.getClaims().claim("role", authorities);
-			
+
 				if(principal.getPrincipal() instanceof  UserPrincipal) {
 					UserPrincipal customUser = (UserPrincipal)principal.getPrincipal();
 					context.getClaims().claim("uuid", customUser.getId());
@@ -274,7 +275,7 @@ public class WebSecurityConfig {
 
 		return converter;
 	}
-	
+
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration config = new CorsConfiguration();

@@ -14,4 +14,6 @@ public interface RentalApplicationService {
 
     List<RentalApplicationDto> getAllRentalApplication(HttpServletRequest request);
 
+    void deleteRentalApplication(Long rentalApplicationId);
+
 }

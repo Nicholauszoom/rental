@@ -19,4 +19,8 @@ public interface UnitService {
     ResponseEntity<Unit> saveUnit(UnitDto unitDto, HttpServletRequest request);
 
     List<UnitDto> findAllByBuildingId(Long buildingId);
+
+    void deleteUnit(Long unitId);
+
+    void updateUnit(Long unitId, UnitDto unitDto);
 }

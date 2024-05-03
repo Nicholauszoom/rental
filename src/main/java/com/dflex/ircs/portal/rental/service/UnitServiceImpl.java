@@ -1,15 +1,14 @@
 package com.dflex.ircs.portal.rental.service;
 
 
+import com.dflex.ircs.portal.payer.repository.PayerRepository;
 import com.dflex.ircs.portal.rental.dto.UnitDto;
 import com.dflex.ircs.portal.rental.entity.Building;
-import com.dflex.ircs.portal.rental.entity.Status;
 import com.dflex.ircs.portal.rental.entity.Unit;
 import com.dflex.ircs.portal.rental.repository.BuildingRepository;
 import com.dflex.ircs.portal.rental.repository.StatusRepository;
 import com.dflex.ircs.portal.rental.repository.UnitRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,9 @@ public class UnitServiceImpl implements  UnitService{
     StatusService statusService;
 
     StatusRepository statusRepository;
+
+    PayerRepository payerRepository;
+
 
 
     @Override
@@ -94,6 +96,27 @@ public class UnitServiceImpl implements  UnitService{
         }
 
         return unitDTOs;
+    }
+
+    @Override
+    public void deleteUnit(Long unitId) {
+        buildingRepository.deleteById(unitId);
+    }
+
+    @Override
+    public void updateUnit(Long unitId, UnitDto unitDto) {
+        Unit unit = unitRepository.findById(unitId)
+                .orElseThrow(() -> new RuntimeException());
+
+        unit.setUnitNumber(unitDto.getUnitNumber());
+        unit.setUnitSize(unitDto.getUnitSize());
+        unit.setUnitName(unitDto.getUnitName());
+        unit.setTypeSize(unitDto.getTypeSize());
+        unit.setStatus(unitDto.getStatus());
+        unit.setBuilding(buildingRepository.findById(unitDto.getBuildingId()).orElseThrow());
+        unit.setPayer(payerRepository.findById(unitDto.getPayer()).orElseThrow());
+
+        unitRepository.save(unit);
     }
 
 }

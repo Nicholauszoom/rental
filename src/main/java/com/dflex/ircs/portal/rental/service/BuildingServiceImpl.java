@@ -67,6 +67,28 @@ public class BuildingServiceImpl implements BuildingService{
         }
     }
 
+    @Override
+    public void deleteBuilding(Long buildingId) {
+        buildingRepository.deleteById(buildingId);
+    }
+
+    @Override
+    public void updateBuilding(Long buildingId, BuildingDto buildingDto) {
+        Building building = buildingRepository.findById(buildingId)
+                .orElseThrow(() -> new RuntimeException());
+
+        building.setPropertyName(buildingDto.getPropertyName());
+        building.setBlockNumber(buildingDto.getBlockNumber());
+        building.setPropertyNumber(buildingDto.getPropertyNumber());
+        building.setPlotNumber(buildingDto.getPlotNumber());
+        building.setLocation(buildingDto.getLocation());
+        building.setPropertyRegion(buildingDto.getPropertyRegion());
+        building.setPropertyDistrict(buildingDto.getPropertyRegion());
+        building.setPropertyArea(buildingDto.getPropertyArea());
+        building.setPropertySize(buildingDto.getPropertySize());
+
+        buildingRepository.save(building);
+    }
 
 
 }

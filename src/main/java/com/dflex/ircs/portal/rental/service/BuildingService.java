@@ -17,6 +17,8 @@ public interface BuildingService {
     ResponseEntity<Building> saveBuilding(BuildingDto buildingDto, HttpServletRequest request);
 
 
+    void deleteBuilding(Long buildingId);
 
 
+    void updateBuilding(Long buildingId, BuildingDto buildingDto);
 }

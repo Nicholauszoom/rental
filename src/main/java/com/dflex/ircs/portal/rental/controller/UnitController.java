@@ -69,4 +69,16 @@ public class UnitController {
         }
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUnit(@PathVariable("id") Long unitId) {
+        unitService.deleteUnit(unitId);
+        return ResponseEntity.ok("Unit deleted successfully");
+    }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<String> updateUnit(@PathVariable("id") Long unitId, @RequestBody UnitDto unitDto) {
+        unitService.updateUnit(unitId, unitDto);
+        return ResponseEntity.ok("Unit updated successfully");
+    }
+
 }

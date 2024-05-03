@@ -2,6 +2,7 @@ package com.dflex.ircs.portal.rental.controller;
 
 import com.dflex.ircs.portal.rental.dto.BuildingDto;
 import com.dflex.ircs.portal.rental.dto.RentalApplicationDto;
+import com.dflex.ircs.portal.rental.dto.UnitDto;
 import com.dflex.ircs.portal.rental.entity.Building;
 import com.dflex.ircs.portal.rental.entity.RentalApplication;
 import com.dflex.ircs.portal.rental.service.RentalApplicationService;
@@ -36,5 +37,12 @@ public class RentalAplicationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteApplication(@PathVariable("id") Long rentalApplicationId) {
+        rentalApplicationService.deleteRentalApplication(rentalApplicationId);
+        return ResponseEntity.ok("Rental Application deleted successfully");
+    }
+
 
 }

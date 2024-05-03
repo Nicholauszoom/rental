@@ -1,5 +1,7 @@
 package com.dflex.ircs.portal.rental.dto;
 
+import com.dflex.ircs.portal.payer.entity.Payer;
+import com.dflex.ircs.portal.rental.entity.Building;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +26,7 @@ public class UnitDto implements Serializable {
     private String typeSize;
     private String status;
     private String propertyNumber;
-//    private Long statusId;
+    private Long buildingId;
+    private Long payer;
 
 }

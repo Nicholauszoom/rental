@@ -24,6 +24,8 @@ public class RentalApplicationDto implements Serializable {
 
     private Long payerId;
 
+    private Long unitId;
+
     private String propertyName;
 
     private String blockNumber;

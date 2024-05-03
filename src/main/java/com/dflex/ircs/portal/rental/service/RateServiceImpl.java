@@ -43,8 +43,7 @@ public class RateServiceImpl implements RateService{
             rate.setPriceType(rateDto.getPriceType());
             rate.setDynamicPrice(rateDto.getDynamicPrice());
             rate.setBuilding(buildingRepository.findByPropertyNumber(rateDto.getPropertyNumber()));
-            rate.setUnit(unitRepository.findByUnitNumber(rateDto.getUnitNumber()));
-
+            rate.setUnit(unitRepository.findById(rateDto.getUnitId()).orElseThrow());
             Rate savedRate = rateRepository.save(rate);
 
             return ResponseEntity.ok(savedRate);

@@ -41,14 +41,26 @@ public class BuildingController {
         }
     }
 
-@PostMapping("/create")
-public ResponseEntity<Building> saveBuilding(@RequestBody BuildingDto buildingDto, HttpServletRequest request) {
+    @PostMapping("/create")
+    public ResponseEntity<Building> saveBuilding(@RequestBody BuildingDto buildingDto, HttpServletRequest request) {
     try {
         return buildingService.saveBuilding(buildingDto, request);
     } catch (Exception e) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-}
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBuilding(@PathVariable("id") Long buildingId) {
+        buildingService.deleteBuilding(buildingId);
+        return ResponseEntity.ok("Building deleted successfully");
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateBuilding(@PathVariable("id") Long buildingId, @RequestBody BuildingDto buildingDto) {
+        buildingService.updateBuilding(buildingId, buildingDto);
+        return ResponseEntity.ok("Building updated successfully");
+    }
 
 
 

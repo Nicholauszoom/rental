@@ -18,5 +18,6 @@ public class RateDto {
     private String priceType;
     private BigDecimal dynamicPrice;
     private BigDecimal fixedPrice;
+    private Long unitId;
 
 }

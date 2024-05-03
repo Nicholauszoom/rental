@@ -39,10 +39,10 @@ public class RentalApplicationServiceImpl implements RentalApplicationService{
             rentalApplication.getId();
             String.valueOf(rentalApplication.getRentalApplicationUid());
 
-            rentalApplication.setBuilding(buildingRepository.findByPropertyNumber(rentalApplicationDto.getPropertyNumber()));
-            rentalApplication.setUnit(unitRepository.findByUnitNumber(rentalApplicationDto.getUnitNumber()));
+            Unit unit = unitRepository.findById(rentalApplicationDto.getUnitId()).orElseThrow();
             rentalApplication.setPayer(payerRepository.getReferenceById(rentalApplication.getId()));
-
+            rentalApplication.setBuilding(unit.getBuilding());
+            rentalApplication.setUnit(unit);
             RentalApplication savedApplication = rentalApplicationRepository.save(rentalApplication);
 
             return ResponseEntity.ok(savedApplication);
@@ -78,4 +78,11 @@ public class RentalApplicationServiceImpl implements RentalApplicationService{
 
         return rentalApplicationDtos;
     }
+
+    @Override
+    public void deleteRentalApplication(Long rentalApplicationId) {
+        rentalApplicationRepository.deleteById(rentalApplicationId);
+    }
+
+
 }

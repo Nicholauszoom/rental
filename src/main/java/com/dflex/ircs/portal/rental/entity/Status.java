@@ -33,6 +33,7 @@ public class Status implements Serializable {
 
     @PrePersist
     protected void onCreate() {
+
         setStatusUid(java.util.UUID.randomUUID());
     }
 

@@ -19,14 +19,23 @@ public class UnitDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private  Long id;
+
     private String unitUid;
+
     private String unitNumber;
+
     private String unitName;
+
     private String unitSize;
+
     private String typeSize;
-    private String status;
+
     private String propertyNumber;
+
     private Long buildingId;
+
     private Long payer;
+
+    private Long statusId;
 
 }

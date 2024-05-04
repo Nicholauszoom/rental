@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.rental.entity;
 
+import com.dflex.ircs.portal.application.entity.Applicant;
 import com.dflex.ircs.portal.payer.entity.Payer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,10 @@ import java.util.UUID;
 public class Unit  implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "unit_id_generator")
-    @SequenceGenerator(name = "unit_id_generator", sequenceName = "seq_unit", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "unit_id_generator")
+    @SequenceGenerator(name = "unit_id_generator", sequenceName = "seq_unit",
+            initialValue = 1, allocationSize = 1)
     @Column(name = "id", nullable = false, precision = 11)
     private Long id;
 
@@ -31,6 +34,7 @@ public class Unit  implements Serializable {
     private UUID unitUid;
     @PrePersist
     protected void onCreate() {
+
         setUnitUid(java.util.UUID.randomUUID());
     }
 
@@ -46,22 +50,20 @@ public class Unit  implements Serializable {
     @Column(name = "type_size", length = 100, nullable = false)
     private String typeSize;
 
-    @Column(name = "status", length = 100, nullable = false)
-    private String status;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "building_id", nullable = false)
     private Building building;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "payer_id", nullable = false)
-    private Payer payer;
+    @JoinColumn(name = "applicant_id", nullable = false)
+    private Applicant applicant;
 
     @OneToOne(mappedBy = "unit")
     private Rate rate;
 
-//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-//    @JoinColumn(name = "status_id", nullable = false)
-//    private Status status;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
 
 }

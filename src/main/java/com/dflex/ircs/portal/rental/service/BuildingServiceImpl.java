@@ -14,7 +14,11 @@ import java.util.Optional;
 @Service
 public class BuildingServiceImpl implements BuildingService{
 
-    BuildingRepository buildingRepository;
+    private final BuildingRepository buildingRepository;
+
+    public BuildingServiceImpl(BuildingRepository buildingRepository) {
+        this.buildingRepository = buildingRepository;
+    }
 
     @Override
     public List<BuildingDto> getAllBuildings(HttpServletRequest request) {
@@ -40,11 +44,13 @@ public class BuildingServiceImpl implements BuildingService{
 
     @Override
     public Optional<Building> findById(Long buildingId) {
+
         return buildingRepository.findById(buildingId);
     }
 
     @Override
-    public ResponseEntity<Building> saveBuilding(BuildingDto buildingDto, HttpServletRequest request) {
+    public ResponseEntity<Building> saveBuilding(
+            BuildingDto buildingDto, HttpServletRequest request) {
         try {
             Building building = new Building();
             building.getId();
@@ -69,6 +75,7 @@ public class BuildingServiceImpl implements BuildingService{
 
     @Override
     public void deleteBuilding(Long buildingId) {
+
         buildingRepository.deleteById(buildingId);
     }
 

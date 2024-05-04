@@ -22,8 +22,10 @@ public class Building  implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "building_id_generator")
-    @SequenceGenerator(name = "building_id_generator", sequenceName = "seq_building", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "building_id_generator")
+    @SequenceGenerator(name = "building_id_generator",
+            sequenceName = "seq_building", initialValue = 1, allocationSize = 1)
     @Column(name = "id", nullable = false, precision = 11)
     private Long id;
 
@@ -34,6 +36,7 @@ public class Building  implements Serializable {
 
     @PrePersist
     protected void onCreate() {
+
         setBuildingUid(java.util.UUID.randomUUID());
     }
 

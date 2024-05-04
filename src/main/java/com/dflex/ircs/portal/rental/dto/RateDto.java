@@ -14,10 +14,17 @@ import java.math.BigDecimal;
 public class RateDto {
 
     private String unitNumber;
+
     private String propertyNumber;
+
     private String priceType;
+
     private BigDecimal dynamicPrice;
+
     private BigDecimal fixedPrice;
+
     private Long unitId;
+
+    private Long buildingId;
 
 }

@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.rental.service;
 
+import com.dflex.ircs.portal.application.repository.ApplicantRepository;
 import com.dflex.ircs.portal.payer.repository.PayerRepository;
 
 import com.dflex.ircs.portal.rental.dto.RentalApplicationDto;
@@ -24,23 +25,40 @@ import java.util.Optional;
 @Service
 public class RentalApplicationServiceImpl implements RentalApplicationService{
 
-    BuildingRepository buildingRepository;
-    UnitRepository unitRepository;
-    PayerRepository payerRepository;
+    private final BuildingRepository buildingRepository;
+    private final  UnitRepository unitRepository;
+    private final  PayerRepository payerRepository;
 
-    RateRepository rateRepository;
+    private final   ApplicantRepository applicantRepository;
 
-    RentalApplicationRepository rentalApplicationRepository;
+    private final RateRepository rateRepository;
+
+    private final RentalApplicationRepository rentalApplicationRepository;
+
+    public RentalApplicationServiceImpl(BuildingRepository buildingRepository,
+                                        UnitRepository unitRepository,
+                                        PayerRepository payerRepository,
+                                        ApplicantRepository applicantRepository,
+                                        RateRepository rateRepository,
+                                        RentalApplicationRepository rentalApplicationRepository) {
+        this.buildingRepository = buildingRepository;
+        this.unitRepository = unitRepository;
+        this.payerRepository = payerRepository;
+        this.applicantRepository = applicantRepository;
+        this.rateRepository = rateRepository;
+        this.rentalApplicationRepository = rentalApplicationRepository;
+    }
 
     @Override
-    public ResponseEntity<RentalApplication> saveRentalApplication(RentalApplicationDto rentalApplicationDto, HttpServletRequest request) {
+    public ResponseEntity<RentalApplication> saveRentalApplication(
+            RentalApplicationDto rentalApplicationDto,
+            HttpServletRequest request) {
         try {
             RentalApplication rentalApplication = new RentalApplication();
             rentalApplication.getId();
             String.valueOf(rentalApplication.getRentalApplicationUid());
-
             Unit unit = unitRepository.findById(rentalApplicationDto.getUnitId()).orElseThrow();
-            rentalApplication.setPayer(payerRepository.getReferenceById(rentalApplication.getId()));
+            rentalApplication.setApplicant(applicantRepository.getReferenceById(rentalApplication.getId()));
             rentalApplication.setBuilding(unit.getBuilding());
             rentalApplication.setUnit(unit);
             RentalApplication savedApplication = rentalApplicationRepository.save(rentalApplication);
@@ -82,6 +100,11 @@ public class RentalApplicationServiceImpl implements RentalApplicationService{
     @Override
     public void deleteRentalApplication(Long rentalApplicationId) {
         rentalApplicationRepository.deleteById(rentalApplicationId);
+    }
+
+    @Override
+    public Optional<RentalApplication> findById(Long rentalApplicationId) {
+        return rentalApplicationRepository.findById(rentalApplicationId);
     }
 
 

@@ -52,7 +52,4 @@ public class RentalApplicationDto implements Serializable {
 
     private String typeSize;
 
-
-
-
 }

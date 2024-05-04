@@ -6,5 +6,10 @@ public enum Status {
     DELETED,
     LOCKED,
     PAID,
-    UNPAID;
+    UNPAID,
+    SUBMITTED,
+    PENDING_APPROVAL,
+    APPROVED,
+    REJECTED;
+
 }

@@ -13,4 +13,8 @@ public interface RateService {
     Optional<Rate> findByUnitId(Long unitId);
 
     ResponseEntity<Rate> saveRate(RateDto rateDto, HttpServletRequest request);
+
+    void deleteRate(Long rateId);
+
+    void updateRate(Long rateId, RateDto rateDto);
 }

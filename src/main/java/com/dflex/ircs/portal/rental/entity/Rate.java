@@ -22,8 +22,10 @@ public class Rate implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rate_id_generator")
-    @SequenceGenerator(name = "rate_id_generator", sequenceName = "seq_rate", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "rate_id_generator")
+    @SequenceGenerator(name = "rate_id_generator",
+            sequenceName = "seq_rate", initialValue = 1, allocationSize = 1)
     @Column(name = "id", nullable = false, precision = 11)
     private Long id;
 
@@ -34,6 +36,7 @@ public class Rate implements Serializable {
 
     @PrePersist
     protected void onCreate() {
+
         setRateUid(java.util.UUID.randomUUID());
     }
 

@@ -16,20 +16,21 @@ import java.util.Optional;
 @RequestMapping("/api/unit/")
 public class UnitController {
 
-    UnitService unitService;
+    private final UnitService unitService;
 
     public UnitController(UnitService unitService) {
         this.unitService = unitService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<?> getAllUnits(HttpServletRequest request) {
         try {
             List<Unit> units = unitService.getAllUnits(request);
             return ResponseEntity.ok(units);
         } catch (Exception e) {
             String errorMessage = "Failed to retrieve the list of unit";
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            return ResponseEntity.status(HttpStatus.
+                    INTERNAL_SERVER_ERROR).body(errorMessage);
         }
     }
 
@@ -43,7 +44,8 @@ public class UnitController {
         }
     }
     @GetMapping("/{buildingId}")
-    public ResponseEntity<Unit> findByBuildingId(@PathVariable("buildingId") Long buildingId) {
+    public ResponseEntity<Unit> findByBuildingId(
+            @PathVariable("buildingId") Long buildingId) {
         Optional<Unit> unitOptional = unitService.findByBuildingId(buildingId);
         if (unitOptional.isPresent()) {
             return new ResponseEntity<>(unitOptional.get(), HttpStatus.OK);
@@ -52,7 +54,8 @@ public class UnitController {
         }
     }
     @GetMapping("/list/{buildingId}")
-    public ResponseEntity<?> findAllByBuildingId(@PathVariable("buildingId") Long buildingId) {
+    public ResponseEntity<?> findAllByBuildingId(
+            @PathVariable("buildingId") Long buildingId) {
         List<UnitDto> unitList = unitService.findAllByBuildingId(buildingId);
         if (unitList != null) {
             return new ResponseEntity<>(unitList, HttpStatus.OK);
@@ -61,7 +64,8 @@ public class UnitController {
         }
     }
     @PostMapping("/create")
-    public ResponseEntity<Unit> saveUnit(@RequestBody UnitDto unitDto, HttpServletRequest request) {
+    public ResponseEntity<Unit> saveUnit(
+            @RequestBody UnitDto unitDto, HttpServletRequest request) {
         try {
             return unitService.saveUnit(unitDto, request);
         } catch (Exception e) {
@@ -76,7 +80,8 @@ public class UnitController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<String> updateUnit(@PathVariable("id") Long unitId, @RequestBody UnitDto unitDto) {
+    public ResponseEntity<String> updateUnit(
+            @PathVariable("id") Long unitId, @RequestBody UnitDto unitDto) {
         unitService.updateUnit(unitId, unitDto);
         return ResponseEntity.ok("Unit updated successfully");
     }

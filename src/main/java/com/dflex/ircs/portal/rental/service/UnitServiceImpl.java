@@ -1,6 +1,7 @@
 package com.dflex.ircs.portal.rental.service;
 
 
+import com.dflex.ircs.portal.application.repository.ApplicantRepository;
 import com.dflex.ircs.portal.payer.repository.PayerRepository;
 import com.dflex.ircs.portal.rental.dto.UnitDto;
 import com.dflex.ircs.portal.rental.entity.Building;
@@ -20,16 +21,31 @@ import java.util.Optional;
 @Service
 public class UnitServiceImpl implements  UnitService{
 
-    UnitRepository unitRepository;
+    private final UnitRepository unitRepository;
 
-    BuildingRepository buildingRepository;
+    private final BuildingRepository buildingRepository;
 
-    StatusService statusService;
+    private final StatusService statusService;
 
-    StatusRepository statusRepository;
+    private final StatusRepository statusRepository;
 
-    PayerRepository payerRepository;
+    private final PayerRepository payerRepository;
 
+    private final ApplicantRepository applicantRepository;
+
+    public UnitServiceImpl(UnitRepository unitRepository,
+                           BuildingRepository buildingRepository,
+                           StatusService statusService,
+                           StatusRepository statusRepository,
+                           PayerRepository payerRepository,
+                           ApplicantRepository applicantRepository) {
+        this.unitRepository = unitRepository;
+        this.buildingRepository = buildingRepository;
+        this.statusService = statusService;
+        this.statusRepository = statusRepository;
+        this.payerRepository = payerRepository;
+        this.applicantRepository = applicantRepository;
+    }
 
 
     @Override
@@ -41,11 +57,13 @@ public class UnitServiceImpl implements  UnitService{
 
     @Override
     public Optional<Unit> findById(Long unitId) {
+
         return unitRepository.findById(unitId);
     }
 
     @Override
     public Optional<Unit> findByBuildingId(Long buildingId) {
+
         return unitRepository.findByBuildingId(buildingId);
     }
 
@@ -62,7 +80,7 @@ public class UnitServiceImpl implements  UnitService{
             unit.setUnitNumber(unitDto.getUnitNumber());
             unit.setUnitSize(unitDto.getUnitSize());
             unit.setBuilding(buildingRepository.findByPropertyNumber(unitDto.getPropertyNumber()));
-            unit.setStatus(unitDto.getStatus());
+            unit.setStatus(statusRepository.findById(unitDto.getStatusId()).orElseThrow(() -> new RuntimeException("cannot find status with id:" + statusRepository.findById(unitDto.getStatusId()))));
 
             Unit savedUnit = unitRepository.save(unit);
 
@@ -84,7 +102,7 @@ public class UnitServiceImpl implements  UnitService{
             unitDTO.setUnitNumber(unit.getUnitNumber());
             unitDTO.setUnitName(unit.getUnitName());
             unitDTO.setUnitSize(unit.getUnitSize());
-            unitDTO.setStatus(unit.getStatus());
+            unitDTO.setStatusId(unit.getStatus().getId());
             Optional<Building> building =buildingRepository.findById(buildingId);
             if (building.isPresent()) {
                 unitDTO.setPropertyNumber(building.get().getPropertyNumber());
@@ -112,9 +130,9 @@ public class UnitServiceImpl implements  UnitService{
         unit.setUnitSize(unitDto.getUnitSize());
         unit.setUnitName(unitDto.getUnitName());
         unit.setTypeSize(unitDto.getTypeSize());
-        unit.setStatus(unitDto.getStatus());
+        unit.setStatus(statusRepository.findById(unitDto.getStatusId()).orElseThrow());
         unit.setBuilding(buildingRepository.findById(unitDto.getBuildingId()).orElseThrow());
-        unit.setPayer(payerRepository.findById(unitDto.getPayer()).orElseThrow());
+        unit.setApplicant(applicantRepository.findById(unitDto.getPayer()).orElseThrow());
 
         unitRepository.save(unit);
     }

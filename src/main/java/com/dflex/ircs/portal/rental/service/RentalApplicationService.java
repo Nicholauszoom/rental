@@ -7,13 +7,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RentalApplicationService {
-    ResponseEntity<RentalApplication> saveRentalApplication(RentalApplicationDto rentalApplicationDto, HttpServletRequest request);
+    ResponseEntity<RentalApplication> saveRentalApplication(
+            RentalApplicationDto rentalApplicationDto, HttpServletRequest request);
 
 
     List<RentalApplicationDto> getAllRentalApplication(HttpServletRequest request);
 
     void deleteRentalApplication(Long rentalApplicationId);
 
+    Optional<RentalApplication> findById(Long rentalApplicationId);
 }

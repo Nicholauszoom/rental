@@ -11,21 +11,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/building/")
+@RequestMapping("/api/rental_property/")
 public class BuildingController {
 
-     BuildingService buildingService;
+    private final BuildingService buildingService;
 
-    @GetMapping("/")
+    public BuildingController(BuildingService buildingService) {
+        this.buildingService = buildingService;
+    }
+
+    @GetMapping("/list")
     public ResponseEntity<?> getAllBuildings(HttpServletRequest request) {
         try {
             List<BuildingDto> buildings = buildingService.getAllBuildings(request);
-            System.out.println("ok for building........");
             return ResponseEntity.ok(buildings);
 
         } catch (Exception e) {
             String errorMessage = "Failed to retrieve the list of buildings";
-            System.out.println("fail for building........");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
 
         }
@@ -42,7 +44,8 @@ public class BuildingController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Building> saveBuilding(@RequestBody BuildingDto buildingDto, HttpServletRequest request) {
+    public ResponseEntity<Building> saveBuilding(
+            @RequestBody BuildingDto buildingDto, HttpServletRequest request) {
     try {
         return buildingService.saveBuilding(buildingDto, request);
     } catch (Exception e) {
@@ -57,7 +60,9 @@ public class BuildingController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateBuilding(@PathVariable("id") Long buildingId, @RequestBody BuildingDto buildingDto) {
+    public ResponseEntity<String> updateBuilding(
+            @PathVariable("id") Long buildingId,
+            @RequestBody BuildingDto buildingDto) {
         buildingService.updateBuilding(buildingId, buildingDto);
         return ResponseEntity.ok("Building updated successfully");
     }

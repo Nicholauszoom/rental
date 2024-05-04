@@ -1,5 +1,6 @@
 package com.dflex.ircs.portal.rental.controller;
 
+import com.dflex.ircs.portal.rental.dto.BuildingDto;
 import com.dflex.ircs.portal.rental.dto.RateDto;
 import com.dflex.ircs.portal.rental.dto.UnitDto;
 import com.dflex.ircs.portal.rental.entity.Rate;
@@ -14,7 +15,11 @@ import java.util.Optional;
 
 @RequestMapping("/api/rate/")
 public class RateController {
-    RateService rateService;
+    private final RateService rateService;
+
+    public RateController(RateService rateService) {
+        this.rateService = rateService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Rate> findById(@PathVariable("id") Long rateId) {
@@ -43,5 +48,17 @@ public class RateController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteRate(@PathVariable("id") Long rateId) {
+        rateService.deleteRate(rateId);
+        return ResponseEntity.ok("Rate deleted successfully");
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateRate(@PathVariable("id") Long rateId, @RequestBody RateDto rateDto) {
+        rateService.updateRate(rateId, rateDto);
+        return ResponseEntity.ok("Rate updated successfully");
     }
 }

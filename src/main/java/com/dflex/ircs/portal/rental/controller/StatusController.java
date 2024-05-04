@@ -16,7 +16,11 @@ import java.util.List;
 @RequestMapping("/api/status/")
 public class StatusController {
 
-    StatusService statusService;
+    private final StatusService statusService;
+
+    public StatusController(StatusService statusService) {
+        this.statusService = statusService;
+    }
 
     @GetMapping("/list")
     public ResponseEntity<?> getAllStatus(HttpServletRequest request) {
@@ -30,7 +34,8 @@ public class StatusController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Status> saveStatus(@RequestBody StatusDto statusDto, HttpServletRequest request) {
+    public ResponseEntity<Status> saveStatus(
+            @RequestBody StatusDto statusDto, HttpServletRequest request) {
         try {
             return statusService.saveStatus(statusDto, request);
         } catch (Exception e) {

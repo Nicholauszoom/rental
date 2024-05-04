@@ -14,7 +14,11 @@ import java.util.Optional;
 @Service
 public class StatusServiceImpl implements StatusService{
 
-    StatusRepository statusRepository;
+    private final StatusRepository statusRepository;
+
+    public StatusServiceImpl(StatusRepository statusRepository) {
+        this.statusRepository = statusRepository;
+    }
 
     @Override
     public List<StatusDto> getAllStatus(HttpServletRequest request) {
@@ -32,11 +36,14 @@ public class StatusServiceImpl implements StatusService{
 
     @Override
     public Optional<Status> findById(Long statusId) {
+
         return statusRepository.findById(statusId);
     }
 
     @Override
-    public ResponseEntity<Status> saveStatus(StatusDto statusDto, HttpServletRequest request) {
+    public ResponseEntity<Status> saveStatus(
+            StatusDto statusDto,
+            HttpServletRequest request) {
         try {
             Status status = new Status();
             status.getId();
